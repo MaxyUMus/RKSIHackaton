@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-
         email = findViewById(R.id.et_email);
         password = findViewById(R.id.et_password);
 
@@ -84,56 +83,59 @@ public class MainActivity extends AppCompatActivity {
 
         aut.setOnClickListener(view -> {
 
-            String emailText = email.getText().toString().trim();
-            String passwordText = password.getText().toString().trim();
+            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+            startActivity(intent);
 
-            if (emailText.isEmpty() || passwordText.isEmpty()) {
-                Toast.makeText(MainActivity.this, "Email and password cannot be empty", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            String json = "{\"email\":\"" + emailText + "\", \"password\":\"" + passwordText + "\", \"action\":\"login\"}";
-
-            new Thread(() -> {
-                RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
-
-                Request request = new Request.Builder()
-                        .url("https://0a0d-94-141-124-197.ngrok-free.app/login")
-                        .post(body)
-                        .build();
-
-                try (Response response = client.newCall(request).execute()) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        String responseBody = response.body().string();
-                        runOnUiThread(() -> {
-                            try {
-                                JSONObject jsonResponse = new JSONObject(responseBody);
-                                String status = jsonResponse.getString("status");
-                                String message = jsonResponse.getString("message");
-
-
-                                if ("success".equals(status)) {
-                                    Toast.makeText(MainActivity.this, "Login successful: " + message, Toast.LENGTH_LONG).show();
-                                    // Переход на вторую активность
-                                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-                                    startActivity(intent);
-                                } else {
-                                    Toast.makeText(MainActivity.this, "Login failed: " + message, Toast.LENGTH_LONG).show();
-                                }
-                            } catch (JSONException e) {
-                                Toast.makeText(MainActivity.this, "Error parsing response", Toast.LENGTH_LONG).show();
-                            }
-                        });
-                    } else {
-                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "Authorization failed. Server error.", Toast.LENGTH_LONG).show());
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    runOnUiThread(() -> {
-                        Toast.makeText(MainActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    });
-                }
-            }).start();
+//            String emailText = email.getText().toString().trim();
+//            String passwordText = password.getText().toString().trim();
+//
+//            if (emailText.isEmpty() || passwordText.isEmpty()) {
+//                Toast.makeText(MainActivity.this, "Email and password cannot be empty", Toast.LENGTH_LONG).show();
+//                return;
+//            }
+//
+//            String json = "{\"email\":\"" + emailText + "\", \"password\":\"" + passwordText + "\", \"action\":\"login\"}";
+//
+//            new Thread(() -> {
+//                RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
+//
+//                Request request = new Request.Builder()
+//                        .url("https://0a0d-94-141-124-197.ngrok-free.app/login")
+//                        .post(body)
+//                        .build();
+//
+//                try (Response response = client.newCall(request).execute()) {
+//                    if (response.isSuccessful() && response.body() != null) {
+//                        String responseBody = response.body().string();
+//                        runOnUiThread(() -> {
+//                            try {
+//                                JSONObject jsonResponse = new JSONObject(responseBody);
+//                                String status = jsonResponse.getString("status");
+//                                String message = jsonResponse.getString("message");
+//
+//
+//                                if ("success".equals(status)) {
+//                                    Toast.makeText(MainActivity.this, "Login successful: " + message, Toast.LENGTH_LONG).show();
+//                                    // Переход на вторую активность
+//                                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+//                                    startActivity(intent);
+//                                } else {
+//                                    Toast.makeText(MainActivity.this, "Login failed: " + message, Toast.LENGTH_LONG).show();
+//                                }
+//                            } catch (JSONException e) {
+//                                Toast.makeText(MainActivity.this, "Error parsing response", Toast.LENGTH_LONG).show();
+//                            }
+//                        });
+//                    } else {
+//                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "Authorization failed. Server error.", Toast.LENGTH_LONG).show());
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                    runOnUiThread(() -> {
+//                        Toast.makeText(MainActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+//                    });
+//                }
+//            }).start();
         });
 
 
@@ -269,7 +271,6 @@ public class MainActivity extends AppCompatActivity {
         palladium_set.setColor(ColorTemplate.rgb("b1b1b1"));
         GraphBuilder.BuildLineGraph(lineChart, gold_set, silver_set, platinum_set, palladium_set);
     }
-
 
     private OkHttpClient createHttpClient() {
         try {
