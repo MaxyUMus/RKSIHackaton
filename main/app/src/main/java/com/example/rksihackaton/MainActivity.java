@@ -42,6 +42,7 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.utils.ColorTemplate;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -184,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void showBarChart() {
         ArrayList<BarEntry> entries = new ArrayList<>();
+        ArrayList<BarEntry> entries1 = new ArrayList<>();
 
         // Пример данных
         entries.add(new BarEntry(0, 4f));
@@ -191,21 +193,33 @@ public class MainActivity extends AppCompatActivity {
         entries.add(new BarEntry(2, 2f));
         entries.add(new BarEntry(3, 8f));
         entries.add(new BarEntry(4, 5f));
+        entries.add(new BarEntry(5, 2f));
+        entries.add(new BarEntry(6, 3f));
+        entries.add(new BarEntry(7, 3f));
+
+        entries1.add(new BarEntry(0, 3f));
+        entries1.add(new BarEntry(1, 8f));
+        entries1.add(new BarEntry(2, 5f));
+        entries1.add(new BarEntry(3, 12f));
+        entries1.add(new BarEntry(4, 0f));
+        entries1.add(new BarEntry(5, 3f));
+        entries1.add(new BarEntry(6, 3f));
+        entries1.add(new BarEntry(7, 9f));
 
         BarDataSet dataSet = new BarDataSet(entries, "Label"); // Название графика
-        dataSet.setDrawValues(false); // Отключение значений над столбиками
-        BarData barData = new BarData(dataSet);
-        barChart.setData(barData);
+        BarDataSet dataSet1 = new BarDataSet(entries1, "Label2"); // Название графика
+        dataSet1.setColor(ColorTemplate.rgb("FFD700"));
 
-        // Отключение вертикальных линий сетки
-        barChart.getXAxis().setDrawGridLines(false); // Горизонтальная ось
+        float groupSpace = 0.06f;
+        float barSpace = 0.02f; // x2 dataset
+        float barWidth = 0.45f; // x2 dataset
 
-        barChart.invalidate(); // Обновление графика
+        GraphBuilder.BuildBarGraph(barChart, groupSpace, barSpace, barWidth, dataSet, dataSet1);
     }
 
     private void showLineChart() {
         ArrayList<Entry> entries = new ArrayList<>();
-
+        ArrayList<Entry> entries1 = new ArrayList<>();
         // Пример данных
         entries.add(new Entry(0, 1));
         entries.add(new Entry(1, 3));
@@ -213,10 +227,16 @@ public class MainActivity extends AppCompatActivity {
         entries.add(new Entry(3, 5));
         entries.add(new Entry(4, 4));
 
+        entries1.add(new Entry(0, 2));
+        entries1.add(new Entry(1, 8));
+        entries1.add(new Entry(2, 1));
+        entries1.add(new Entry(3, 2));
+        entries1.add(new Entry(4, 12));
+
         LineDataSet dataSet = new LineDataSet(entries, "Label"); // Название графика
-        LineData lineData = new LineData(dataSet);
-        lineChart.setData(lineData);
-        lineChart.invalidate(); // Обновление графика
+        LineDataSet dataSet1 = new LineDataSet(entries1, "Label1"); // Название графика
+        dataSet.setColor(ColorTemplate.rgb("FFD700"));
+        GraphBuilder.BuildLineGraph(lineChart, dataSet, dataSet1);
     }
 
 
