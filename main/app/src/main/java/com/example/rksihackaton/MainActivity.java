@@ -9,6 +9,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -40,6 +41,9 @@ import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 public class MainActivity extends AppCompatActivity {
     Button aut;
@@ -88,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
                 RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
 
                 Request request = new Request.Builder()
-                        .url("http://10.0.2.2:8080/login")
+                        .url("https://0a0d-94-141-124-197.ngrok-free.app/login")
                         .post(body)
                         .build();
 
@@ -138,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                 RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
 
                 Request request = new Request.Builder()
-                        .url("http://10.0.2.2:8080/register")
+                        .url("https://0a0d-94-141-124-197.ngrok-free.app/register")
                         .post(body)
                         .build();
 
@@ -172,8 +176,10 @@ public class MainActivity extends AppCompatActivity {
             }).start();
         });
 
-//        lineChart = findViewById(R.id.graph);
-//        showLineChart();
+        lineChart = findViewById(R.id.lineChart);
+
+
+        showLineChart();
 //
 //        barChart = findViewById(R.id.barChart);
 //        showBarChart();
@@ -214,25 +220,45 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showLineChart() {
-        ArrayList<Entry> entries = new ArrayList<>();
-        ArrayList<Entry> entries1 = new ArrayList<>();
-        // Пример данных
-        entries.add(new Entry(0, 1));
-        entries.add(new Entry(1, 3));
-        entries.add(new Entry(2, 2));
-        entries.add(new Entry(3, 5));
-        entries.add(new Entry(4, 4));
+        String jsonString = "{\"metals\":{\"metal\":[{\"date\":\"11.12.2024\",\"gold_price\":\"8593.1299999999992\",\"silver_price\":\"101.73\",\"platinum_price\":\"3058.52\",\"palladium_price\":\"3161.4400000000001\"},{\"date\":\"10.12.2024\",\"gold_price\":\"8426.1900000000005\",\"silver_price\":\"99.400000000000006\",\"platinum_price\":\"2990.5300000000002\",\"palladium_price\":\"3089.5700000000002\"},{\"date\":\"07.12.2024\",\"gold_price\":\"8439.1700000000001\",\"silver_price\":\"100.19\",\"platinum_price\":\"3011.0799999999999\",\"palladium_price\":\"3116.5599999999999\"},{\"date\":\"06.12.2024\",\"gold_price\":\"8803.7399999999998\",\"silver_price\":\"102.48999999999999\",\"platinum_price\":\"3131.0799999999999\",\"palladium_price\":\"3250.7399999999998\"},{\"date\":\"05.12.2024\",\"gold_price\":\"8849.5200000000004\",\"silver_price\":\"103.56999999999999\",\"platinum_price\":\"3200.46\",\"palladium_price\":\"3327.8099999999999\"},{\"date\":\"04.12.2024\",\"gold_price\":\"9020.3400000000001\",\"silver_price\":\"103.97\",\"platinum_price\":\"3216\",\"palladium_price\":\"3369.6300000000001\"},{\"date\":\"03.12.2024\",\"gold_price\":\"9134.9300000000003\",\"silver_price\":\"105.79000000000001\",\"platinum_price\":\"3239.0300000000002\",\"palladium_price\":\"3387.1999999999998\"}]}}";
 
-        entries1.add(new Entry(0, 2));
-        entries1.add(new Entry(1, 8));
-        entries1.add(new Entry(2, 1));
-        entries1.add(new Entry(3, 2));
-        entries1.add(new Entry(4, 12));
+        // Используем Gson для разбора JSON
+        Gson gson = new Gson();
+        JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
+        JsonObject metals = jsonObject.getAsJsonObject("metals");
+        JsonArray metalArray = metals.getAsJsonArray("metal");
 
-        LineDataSet dataSet = new LineDataSet(entries, "Label"); // Название графика
-        LineDataSet dataSet1 = new LineDataSet(entries1, "Label1"); // Название графика
-        dataSet.setColor(ColorTemplate.rgb("FFD700"));
-        GraphBuilder.BuildLineGraph(lineChart, dataSet, dataSet1);
+        // Создаем списки для хранения данных графика
+        List<Entry> goldPrices = new ArrayList<>();
+        List<Entry> silverPrices = new ArrayList<>();
+        List<Entry> platinumPrices = new ArrayList<>();
+        List<Entry> palladiumPrices = new ArrayList<>();
+
+        // Заполняем списки данными
+        for (int i = 0; i < metalArray.size(); i++) {
+            JsonObject metalData = metalArray.get(i).getAsJsonObject();
+            String date = metalData.get("date").getAsString();
+            float goldPrice = metalData.get("gold_price").getAsFloat();
+            float silverPrice = metalData.get("silver_price").getAsFloat();
+            float platinumPrice = metalData.get("platinum_price").getAsFloat();
+            float palladiumPrice = metalData.get("palladium_price").getAsFloat();
+
+            // Добавляем данные в соответствующий список
+            goldPrices.add(new Entry(i, goldPrice));
+            silverPrices.add(new Entry(i, silverPrice));
+            platinumPrices.add(new Entry(i, platinumPrice));
+            palladiumPrices.add(new Entry(i, palladiumPrice));
+        }
+
+        LineDataSet gold_set = new LineDataSet(goldPrices, "Золото"); // Название графика
+        LineDataSet silver_set = new LineDataSet(silverPrices, "Серебро"); // Название графика
+        LineDataSet platinum_set = new LineDataSet(platinumPrices, "Платина"); // Название графика
+        LineDataSet palladium_set = new LineDataSet(palladiumPrices, "Палладий"); // Название графика
+        gold_set.setColor(ColorTemplate.rgb("FFD700"));
+        silver_set.setColor(ColorTemplate.rgb("C0C0C0"));
+        platinum_set.setColor(ColorTemplate.rgb("e5e4e2"));
+        palladium_set.setColor(ColorTemplate.rgb("b1b1b1"));
+        GraphBuilder.BuildLineGraph(lineChart, gold_set, silver_set, platinum_set, palladium_set);
     }
 
 

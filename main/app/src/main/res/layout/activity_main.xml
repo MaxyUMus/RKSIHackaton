@@ -116,6 +116,13 @@
                     android:layout_marginTop="12dp" />
 
 
+                <com.github.mikephil.charting.charts.LineChart
+                    android:id="@+id/lineChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="300sp">
+
+                </com.github.mikephil.charting.charts.LineChart>
+
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
