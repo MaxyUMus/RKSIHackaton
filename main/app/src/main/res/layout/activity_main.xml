@@ -82,7 +82,7 @@
                     android:text="Войти"
                     android:layout_marginBottom="12dp"
                     style="@style/Widget.MaterialComponents.Button"
-                    android:backgroundTint="#00695C"
+                    android:backgroundTint="@color/btns_color"
                     app:cornerRadius="16dp"
                     android:textColor="@android:color/white" />
 
@@ -95,7 +95,7 @@
                     android:strokeWidth="1"
                     android:layout_marginBottom="16dp"
                     app:cornerRadius="16dp"
-                    android:textColor="#00695C" />
+                    android:textColor="@color/btns_color" />
 
                 <TextView
                     android:id="@+id/tv_forgot_password"
@@ -104,7 +104,7 @@
                     android:text="Забыли пароль?"
                     android:textSize="14sp"
                     android:layout_gravity="center"
-                    android:textColor="#00695C"
+                    android:textColor="@color/btns_color"
                     android:padding="8dp" />
 
                 <com.google.android.material.checkbox.MaterialCheckBox
@@ -112,7 +112,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Входить автоматически"
-                    android:textColor="#00695C"
+                    android:textColor="@color/btns_color"
                     android:layout_marginTop="12dp" />
 
 

@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
+
         email = findViewById(R.id.et_email);
         password = findViewById(R.id.et_password);
 

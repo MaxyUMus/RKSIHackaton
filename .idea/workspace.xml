@@ -22,13 +22,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8c455c64-c804-4111-8b4f-7fe317acb692" name="Changes" comment="Добавление главной страницы">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/HomeActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/HomeActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/drawable/moscow_exchange_logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/drawable/moscow_logo.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_home.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_home.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/values/colors.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -763,7 +758,15 @@
       <option name="project" value="LOCAL" />
       <updated>1733848705195</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Добавление главной страницы">
+      <option name="closed" value="true" />
+      <created>1733854657322</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1733854657322</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
