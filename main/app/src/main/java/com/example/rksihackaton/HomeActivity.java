@@ -49,6 +49,50 @@ public class HomeActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        more_currencies_btn = findViewById(R.id.more_currencies_btn);
+        back_btn = findViewById(R.id.back_btn);
+        currenciesLayout = findViewById(R.id.currenciesLayout);
+        currenciesScroll = findViewById(R.id.currenciesScroll);
+
+        metalsChart = findViewById(R.id.metalsChart);
+        ag_btn = findViewById(R.id.ag_btn);
+        au_btn = findViewById(R.id.au_btn);
+        pt_btn = findViewById(R.id.pt_btn);
+        pd_btn = findViewById(R.id.pd_btn);
+
+        currenciesNgraphs = findViewById(R.id.currenciesNgraphs);
+        majorContent = findViewById(R.id.majorContent);
+
+
+
+        String currenciesJson = "{ \"currencies\": [ {\"currency\": \"AUD\", \"value\": \"63\"}, {\"currency\": \"AZN\", \"value\": \"58\"}, {\"currency\": \"AMD\", \"value\": \"25\"}, {\"currency\": \"BYN\", \"value\": \"29\"}, {\"currency\": \"BGN\", \"value\": \"54\"}, {\"currency\": \"BRL\", \"value\": \"16\"}, {\"currency\": \"HUF\", \"value\": \"25\"}, {\"currency\": \"KRW\", \"value\": \"69\"}, {\"currency\": \"VND\", \"value\": \"41\"}, {\"currency\": \"HKD\", \"value\": \"12\"}, {\"currency\": \"GEL\", \"value\": \"35\"}, {\"currency\": \"DKK\", \"value\": \"14\"}, {\"currency\": \"AED\", \"value\": \"27\"}, {\"currency\": \"USD\", \"value\": \"100\"}, {\"currency\": \"EUR\", \"value\": \"106\"}, {\"currency\": \"EGP\", \"value\": \"19\"}, {\"currency\": \"INR\", \"value\": \"11\"}, {\"currency\": \"IDR\", \"value\": \"63\"}, {\"currency\": \"KZT\", \"value\": \"19\"}, {\"currency\": \"CAD\", \"value\": \"70\"}, {\"currency\": \"QAR\", \"value\": \"27\"}, {\"currency\": \"KGS\", \"value\": \"11\"}, {\"currency\": \"CNY\", \"value\": \"13\"}, {\"currency\": \"MDL\", \"value\": \"54\"}, {\"currency\": \"NZD\", \"value\": \"58\"}, {\"currency\": \"TMT\", \"value\": \"28\"}, {\"currency\": \"NOK\", \"value\": \"90\"}, {\"currency\": \"PLN\", \"value\": \"24\"}, {\"currency\": \"RON\", \"value\": \"21\"}, {\"currency\": \"XDR\", \"value\": \"131\"}, {\"currency\": \"RSD\", \"value\": \"90\"}, {\"currency\": \"SGD\", \"value\": \"74\"}, {\"currency\": \"TJS\", \"value\": \"91\"}, {\"currency\": \"THB\", \"value\": \"29\"}, {\"currency\": \"TRY\", \"value\": \"28\"}, {\"currency\": \"UZS\", \"value\": \"77\"}, {\"currency\": \"UAH\", \"value\": \"24\"},\n {\"currency\": \"GBP\", \"value\": \"128\"},\n {\"currency\": \"CZK\", \"value\": \"42\"},\n {\"currency\": \"SEK\", \"value\": \"91\"}, {\"currency\": \"CHF\", \"value\": \"113\"}, {\"currency\": \"ZAR\", \"value\": \"56\"}, {\"currency\": \"JPY\", \"value\": \"66\"} ] }";
+
+        try {
+            JSONObject currenciesJsonObject = new JSONObject(currenciesJson);
+            JSONArray currencies = currenciesJsonObject.getJSONArray("currencies");
+
+            for (int i = 0; i < currencies.length(); i++) {
+                JSONObject currencyObject = currencies.getJSONObject(i);
+                String currency = currencyObject.getString("currency");
+                String value = currencyObject.getString("value");
+
+                TableRow.LayoutParams row_params = new TableRow.LayoutParams(
+                        TableRow.LayoutParams.MATCH_PARENT,
+                        100);
+
+                TableRow tableRow = new TableRow(HomeActivity.this);
+                tableRow.setLayoutParams(row_params);
+
+                CreateTextView(currency, tableRow);
+                CreateTextView(value, tableRow);
+
+                currenciesLayout.addView(tableRow);
+            }
+
+        } catch (JSONException e) {
+            throw new RuntimeException(e);
+        }
+
 
         String metalsJson = "{\"metals\":{\"metal\":[{\"date\":\"11.12.2024\",\"gold_price\":\"8593.1299999999992\",\"silver_price\":\"101.73\",\"platinum_price\":\"3058.52\",\"palladium_price\":\"3161.4400000000001\"},{\"date\":\"10.12.2024\",\"gold_price\":\"8426.1900000000005\",\"silver_price\":\"99.400000000000006\",\"platinum_price\":\"2990.5300000000002\",\"palladium_price\":\"3089.5700000000002\"},{\"date\":\"07.12.2024\",\"gold_price\":\"8439.1700000000001\",\"silver_price\":\"100.19\",\"platinum_price\":\"3011.0799999999999\",\"palladium_price\":\"3116.5599999999999\"},{\"date\":\"06.12.2024\",\"gold_price\":\"8803.7399999999998\",\"silver_price\":\"102.48999999999999\",\"platinum_price\":\"3131.0799999999999\",\"palladium_price\":\"3250.7399999999998\"},{\"date\":\"05.12.2024\",\"gold_price\":\"8849.5200000000004\",\"silver_price\":\"103.56999999999999\",\"platinum_price\":\"3200.46\",\"palladium_price\":\"3327.8099999999999\"},{\"date\":\"04.12.2024\",\"gold_price\":\"9020.3400000000001\",\"silver_price\":\"103.97\",\"platinum_price\":\"3216\",\"palladium_price\":\"3369.6300000000001\"},{\"date\":\"03.12.2024\",\"gold_price\":\"9134.9300000000003\",\"silver_price\":\"105.79000000000001\",\"platinum_price\":\"3239.0300000000002\",\"palladium_price\":\"3387.1999999999998\"}]}}";
 
@@ -89,55 +133,11 @@ public class HomeActivity extends AppCompatActivity {
         platinum_set.setColor(ColorTemplate.rgb("e5e4e2"));
         palladium_set.setColor(ColorTemplate.rgb("b1b1b1"));
 
-        more_currencies_btn = findViewById(R.id.more_currencies_btn);
-        back_btn = findViewById(R.id.back_btn);
-        currenciesLayout = findViewById(R.id.currenciesLayout);
-        currenciesScroll = findViewById(R.id.currenciesScroll);
-
-        metalsChart = findViewById(R.id.metalsChart);
-        ag_btn = findViewById(R.id.ag_btn);
-        au_btn = findViewById(R.id.au_btn);
-        pt_btn = findViewById(R.id.pt_btn);
-        pd_btn = findViewById(R.id.pd_btn);
-
-        currenciesNgraphs = findViewById(R.id.currenciesNgraphs);
-        majorContent = findViewById(R.id.majorContent);
-
         more_currencies_btn.setOnClickListener(view -> {
-
             majorContent.setVisibility(View.GONE);
             currenciesNgraphs.setVisibility(View.VISIBLE);
             currenciesScroll.setVisibility(View.VISIBLE);
             metalsChart.setVisibility(View.GONE);
-
-            String currenciesJson = "{ \"currencies\": [ {\"currency\": \"AUD\", \"value\": \"63\"}, {\"currency\": \"AZN\", \"value\": \"58\"}, {\"currency\": \"AMD\", \"value\": \"25\"}, {\"currency\": \"BYN\", \"value\": \"29\"}, {\"currency\": \"BGN\", \"value\": \"54\"}, {\"currency\": \"BRL\", \"value\": \"16\"}, {\"currency\": \"HUF\", \"value\": \"25\"}, {\"currency\": \"KRW\", \"value\": \"69\"}, {\"currency\": \"VND\", \"value\": \"41\"}, {\"currency\": \"HKD\", \"value\": \"12\"}, {\"currency\": \"GEL\", \"value\": \"35\"}, {\"currency\": \"DKK\", \"value\": \"14\"}, {\"currency\": \"AED\", \"value\": \"27\"}, {\"currency\": \"USD\", \"value\": \"100\"}, {\"currency\": \"EUR\", \"value\": \"106\"}, {\"currency\": \"EGP\", \"value\": \"19\"}, {\"currency\": \"INR\", \"value\": \"11\"}, {\"currency\": \"IDR\", \"value\": \"63\"}, {\"currency\": \"KZT\", \"value\": \"19\"}, {\"currency\": \"CAD\", \"value\": \"70\"}, {\"currency\": \"QAR\", \"value\": \"27\"}, {\"currency\": \"KGS\", \"value\": \"11\"}, {\"currency\": \"CNY\", \"value\": \"13\"}, {\"currency\": \"MDL\", \"value\": \"54\"}, {\"currency\": \"NZD\", \"value\": \"58\"}, {\"currency\": \"TMT\", \"value\": \"28\"}, {\"currency\": \"NOK\", \"value\": \"90\"}, {\"currency\": \"PLN\", \"value\": \"24\"}, {\"currency\": \"RON\", \"value\": \"21\"}, {\"currency\": \"XDR\", \"value\": \"131\"}, {\"currency\": \"RSD\", \"value\": \"90\"}, {\"currency\": \"SGD\", \"value\": \"74\"}, {\"currency\": \"TJS\", \"value\": \"91\"}, {\"currency\": \"THB\", \"value\": \"29\"}, {\"currency\": \"TRY\", \"value\": \"28\"}, {\"currency\": \"UZS\", \"value\": \"77\"}, {\"currency\": \"UAH\", \"value\": \"24\"},\n {\"currency\": \"GBP\", \"value\": \"128\"},\n {\"currency\": \"CZK\", \"value\": \"42\"},\n {\"currency\": \"SEK\", \"value\": \"91\"}, {\"currency\": \"CHF\", \"value\": \"113\"}, {\"currency\": \"ZAR\", \"value\": \"56\"}, {\"currency\": \"JPY\", \"value\": \"66\"} ] }";
-
-            try {
-                JSONObject currenciesJsonObject = new JSONObject(currenciesJson);
-                JSONArray currencies = currenciesJsonObject.getJSONArray("currencies");
-
-            for (int i = 0; i < currencies.length(); i++) {
-                JSONObject currencyObject = currencies.getJSONObject(i);
-                String currency = currencyObject.getString("currency");
-                String value = currencyObject.getString("value");
-
-                TableRow.LayoutParams row_params = new TableRow.LayoutParams(
-                        TableRow.LayoutParams.MATCH_PARENT,
-                        100);
-
-                TableRow tableRow = new TableRow(HomeActivity.this);
-                tableRow.setLayoutParams(row_params);
-
-                CreateTextView(currency, tableRow);
-                CreateTextView(value, tableRow);
-
-                currenciesLayout.addView(tableRow);
-            }
-
-            } catch (JSONException e) {
-                throw new RuntimeException(e);
-            }
-
         });
 
         back_btn.setOnClickListener(view -> {
