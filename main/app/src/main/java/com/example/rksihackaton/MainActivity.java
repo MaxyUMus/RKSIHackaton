@@ -4,9 +4,6 @@ import static android.content.ContentValues.TAG;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Editable;
-import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -44,7 +41,6 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 
-
 public class MainActivity extends AppCompatActivity {
     Button aut;
     Button reg;
@@ -72,12 +68,15 @@ public class MainActivity extends AppCompatActivity {
 
         client = createHttpClient();
 
-
-
         aut = findViewById(R.id.btn_login);
         reg = findViewById(R.id.btn_register);
 
         aut.setOnClickListener(view -> {
+
+            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+            startActivity(intent);
+
+
             String emailText = email.getText().toString().trim();
             String passwordText = password.getText().toString().trim();
 
@@ -109,8 +108,8 @@ public class MainActivity extends AppCompatActivity {
                                 if ("success".equals(status)) {
                                     Toast.makeText(MainActivity.this, "Login successful: " + message, Toast.LENGTH_LONG).show();
                                     // Переход на вторую активность
-                                    // Intent intent = new Intent(MainActivity.this, activity_home.class);
-                                    // startActivity(intent);
+//                                     Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+//                                     startActivity(intent);
                                 } else {
                                     Toast.makeText(MainActivity.this, "Login failed: " + message, Toast.LENGTH_LONG).show();
                                 }
@@ -176,11 +175,11 @@ public class MainActivity extends AppCompatActivity {
             }).start();
         });
 
-        lineChart = findViewById(R.id.graph);
-        showLineChart();
-
-        barChart = findViewById(R.id.barChart);
-        showBarChart();
+//        lineChart = findViewById(R.id.graph);
+//        showLineChart();
+//
+//        barChart = findViewById(R.id.barChart);
+//        showBarChart();
     }
 
     private void showBarChart() {

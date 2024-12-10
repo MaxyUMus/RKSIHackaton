@@ -4,8 +4,292 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
+    android:background="@color/btns_color"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".HomeActivity">
 
-  </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Курс валют"
+        android:textSize="22dp"
+        android:textStyle="bold"
+        android:textColor="@color/gold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintVertical_bias="0.02"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TableLayout
+        android:id="@+id/tableLayout"
+        android:layout_width="250sp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_bias="0.25"
+        app:layout_constraintVertical_bias="0.125">
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/dollarText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:text="Доллар" />
+
+            <TextView
+                android:id="@+id/dollarRate"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textAlignment="textEnd"
+                android:text="100" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/euroText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:text="Евро" />
+
+            <TextView
+                android:id="@+id/euroRate"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textAlignment="textEnd"
+                android:text="85" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/rubText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:text="Рубль" />
+
+            <TextView
+                android:id="@+id/rubRate"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textAlignment="textEnd"
+                android:text="1" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/uanText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:text="Юань" />
+
+            <TextView
+                android:id="@+id/uanRate"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textAlignment="textEnd"
+                android:text="14" />
+        </TableRow>
+
+
+    </TableLayout>
+
+    <ImageButton
+        android:id="@+id/profile_btn"
+        android:layout_width="50sp"
+        android:layout_height="50sp"
+        app:srcCompat="@drawable/ic_launcher_foreground"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintVertical_bias="0.02"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"  />
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="500sp"
+        android:layout_marginTop="230sp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="5sp"
+            android:background="@color/grey"
+            android:layout_gravity="center"
+            android:layout_marginBottom="40sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Акции инвесторов"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="19sp"
+            android:layout_margin="16sp" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="125sp"
+            android:layout_marginTop="60sp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_marginHorizontal="4sp">
+
+                <ImageButton
+                    android:layout_width="90sp"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@color/btns_color"
+                    android:layout_marginHorizontal="5sp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/gazprom_logo"
+                    app:cornerRadius="5sp" />
+
+                <ImageButton
+                    android:layout_width="90sp"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@color/btns_color"
+                    android:layout_marginHorizontal="5sp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/moscow_exchange_logo"
+                    app:cornerRadius="5sp" />
+
+                <ImageButton
+                    android:layout_width="90sp"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@color/btns_color"
+                    android:layout_marginHorizontal="5sp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/sber_logo"
+                    app:cornerRadius="5sp" />
+
+                <ImageButton
+                    android:layout_width="90sp"
+                    android:layout_height="match_parent"
+                    android:backgroundTint="@color/btns_color"
+                    android:layout_marginHorizontal="5sp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/rosneft_logo"
+                    app:cornerRadius="5sp" />
+
+            </LinearLayout>
+
+        </HorizontalScrollView>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="10sp"
+            android:layout_gravity="bottom"
+            android:padding="16sp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Стоимость металлов на рынке"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textSize="19sp"
+                />
+
+            <!--  app:strokeWidth="3px"
+                app:strokeColor="@color/black"-->
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8sp"
+                android:text="Серебро"
+                android:textSize="15sp"
+                android:textColor="@color/btns_color"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                app:cornerRadius="10sp"
+                app:strokeWidth="3px"
+                app:strokeColor="@color/black"
+                />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8sp"
+                android:text="Золото"
+                android:textSize="15sp"
+                android:textColor="@color/btns_color"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                app:cornerRadius="10sp"
+                app:strokeWidth="3px"
+                app:strokeColor="@color/black"
+              />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8sp"
+                android:text="Платина"
+                android:textSize="15sp"
+                android:textColor="@color/btns_color"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                app:cornerRadius="10sp"
+                app:strokeWidth="3px"
+                app:strokeColor="@color/black"
+               />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8sp"
+                android:text="Палладий"
+                android:textSize="15sp"
+                android:textColor="@color/btns_color"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                app:cornerRadius="10sp"
+                app:strokeWidth="3px"
+                app:strokeColor="@color/black"
+                />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
