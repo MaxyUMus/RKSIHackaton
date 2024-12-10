@@ -3,13 +3,16 @@ package com.example.rksihackaton;
 import static android.content.ContentValues.TAG;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -40,10 +43,13 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class MainActivity extends AppCompatActivity {
     Button aut;
@@ -177,46 +183,49 @@ public class MainActivity extends AppCompatActivity {
         });
 
         lineChart = findViewById(R.id.lineChart);
-
-
         showLineChart();
-//
-//        barChart = findViewById(R.id.barChart);
-//        showBarChart();
+
+        barChart = findViewById(R.id.barChart);
+        showBarChart();
     }
 
     private void showBarChart() {
-        ArrayList<BarEntry> entries = new ArrayList<>();
-        ArrayList<BarEntry> entries1 = new ArrayList<>();
+        // Пример JSON-строки
+        String jsonString = "{\"currencies\":[{\"name\":\"AUD\",\"value\":\"63\"},{\"name\":\"AZN\",\"value\":\"58\"},{\"name\":\"AMD\",\"value\":\"25\"},{\"name\":\"BYN\",\"value\":\"29\"},{\"name\":\"BGN\",\"value\":\"54\"},{\"name\":\"BRL\",\"value\":\"16\"},{\"name\":\"HUF\",\"value\":\"25\"},{\"name\":\"KRW\",\"value\":\"69\"},{\"name\":\"VND\",\"value\":\"41\"},{\"name\":\"HKD\",\"value\":\"12\"},{\"name\":\"GEL\",\"value\":\"35\"},{\"name\":\"DKK\",\"value\":\"14\"},{\"name\":\"AED\",\"value\":\"27\"},{\"name\":\"USD\",\"value\":\"100\"},{\"name\":\"EUR\",\"value\":\"106\"},{\"name\":\"EGP\",\"value\":\"19\"},{\"name\":\"INR\",\"value\":\"11\"},{\"name\":\"IDR\",\"value\":\"63\"},{\"name\":\"KZT\",\"value\":\"19\"},{\"name\":\"CAD\",\"value\":\"70\"},{\"name\":\"QAR\",\"value\":\"27\"},{\"name\":\"KGS\",\"value\":\"11\"},{\"name\":\"CNY\",\"value\":\"13\"},{\"name\":\"MDL\",\"value\":\"54\"},{\"name\":\"NZD\",\"value\":\"58\"},{\"name\":\"TMT\",\"value\":\"28\"},{\"name\":\"NOK\",\"value\":\"90\"},{\"name\":\"PLN\",\"value\":\"24\"},{\"name\":\"RON\",\"value\":\"21\"},{\"name\":\"XDR\",\"value\":\"131\"},{\"name\":\"RSD\",\"value\":\"90\"},{\"name\":\"SGD\",\"value\":\"74\"},{\"name\":\"TJS\",\"value\":\"91\"},{\"name\":\"THB\",\"value\":\"29\"},{\"name\":\"TRY\",\"value\":\"28\"},{\"name\":\"UZS\",\"value\":\"77\"},{\"name\":\"UAH\",\"value\":\"24\"},{\"name\":\"GBP\",\"value\":\"128\"},{\"name\":\"CZK\",\"value\":\"42\"},{\"name\":\"SEK\",\"value\":\"91\"},{\"name\":\"CHF\",\"value\":\"113\"},{\"name\":\"ZAR\",\"value\":\"56\"},{\"name\":\"JPY\",\"value\":\"66\"}]}";
 
-        // Пример данных
-        entries.add(new BarEntry(0, 4f));
-        entries.add(new BarEntry(1, 6f));
-        entries.add(new BarEntry(2, 2f));
-        entries.add(new BarEntry(3, 8f));
-        entries.add(new BarEntry(4, 5f));
-        entries.add(new BarEntry(5, 2f));
-        entries.add(new BarEntry(6, 3f));
-        entries.add(new BarEntry(7, 3f));
+        Gson gson = new Gson();
+        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
+        JsonArray currenciesArray = jsonObject.getAsJsonArray("currencies");
 
-        entries1.add(new BarEntry(0, 3f));
-        entries1.add(new BarEntry(1, 8f));
-        entries1.add(new BarEntry(2, 5f));
-        entries1.add(new BarEntry(3, 12f));
-        entries1.add(new BarEntry(4, 0f));
-        entries1.add(new BarEntry(5, 3f));
-        entries1.add(new BarEntry(6, 3f));
-        entries1.add(new BarEntry(7, 9f));
+        Map<String, List<BarEntry>> groupedEntries = new HashMap<>();
 
-        BarDataSet dataSet = new BarDataSet(entries, "Label"); // Название графика
-        BarDataSet dataSet1 = new BarDataSet(entries1, "Label2"); // Название графика
-        dataSet1.setColor(ColorTemplate.rgb("FFD700"));
+        for (int i = 0; i < currenciesArray.size(); i++) {
+            JsonObject currency = currenciesArray.get(i).getAsJsonObject();
+            String name = currency.get("name").getAsString();
+            float value = Float.parseFloat(currency.get("value").getAsString());
 
-        float groupSpace = 0.06f;
-        float barSpace = 0.02f; // x2 dataset
-        float barWidth = 0.45f; // x2 dataset
+            if (!groupedEntries.containsKey(name)) {
+                groupedEntries.put(name, new ArrayList<>());
+            }
 
-        GraphBuilder.BuildBarGraph(barChart, groupSpace, barSpace, barWidth, dataSet, dataSet1);
+            groupedEntries.get(name).add(new BarEntry(i, value));
+        }
+
+        List<BarDataSet> dataSets = new ArrayList<>();
+
+        for (String name : groupedEntries.keySet()) {
+            List<BarEntry> entries = groupedEntries.get(name);
+            BarDataSet dataSet = new BarDataSet(entries, name);
+            int color = Color.rgb((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255));
+            dataSet.setColor(color);
+            dataSets.add(dataSet);
+        }
+
+        IBarDataSet[] dataSetArray = dataSets.toArray(new IBarDataSet[0]);
+        barChart.animateY(1000);
+        GraphBuilder.BuildBarGraph(barChart, 1.0f, 0.0f, 0.0f, dataSetArray);
+        barChart.invalidate();
+
     }
 
     private void showLineChart() {

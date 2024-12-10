@@ -26,19 +26,11 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c455c64-c804-4111-8b4f-7fe317acb692" name="Changes" comment="Добавление страницы с графиками">
-      <change afterPath="$PROJECT_DIR$/main/app/src/main/res/drawable/gprom.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/app/src/main/res/drawable/mel.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/app/src/main/res/drawable/rneft.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/app/src/main/res/drawable/sber.png" afterDir="false" />
+    <list default="true" id="8c455c64-c804-4111-8b4f-7fe317acb692" name="Changes" comment="Изменение логотипов">
       <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/GraphBuilder.java" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/GraphBuilder.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/drawable/gazprom_logo.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/drawable/rosneft_logo.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/drawable/sber_logo.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_graphs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_graphs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_home.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_home.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_main.xml" afterDir="false" />
     </list>
@@ -826,7 +818,15 @@
       <option name="project" value="LOCAL" />
       <updated>1733856341967</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="Изменение логотипов">
+      <option name="closed" value="true" />
+      <created>1733857440375</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1733857440375</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -847,6 +847,7 @@
     <MESSAGE value="Доработка и тестирование графиков 0.1" />
     <MESSAGE value="Добавление главной страницы" />
     <MESSAGE value="Добавление страницы с графиками" />
-    <option name="LAST_COMMIT_MESSAGE" value="Добавление страницы с графиками" />
+    <MESSAGE value="Изменение логотипов" />
+    <option name="LAST_COMMIT_MESSAGE" value="Изменение логотипов" />
   </component>
 </project>
