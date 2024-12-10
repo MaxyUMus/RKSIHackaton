@@ -34,7 +34,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
@@ -49,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     private LineChart lineChart;
+    private BarChart barChart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,6 +177,30 @@ public class MainActivity extends AppCompatActivity {
 
         lineChart = findViewById(R.id.graph);
         showLineChart();
+
+        barChart = findViewById(R.id.barChart);
+        showBarChart();
+    }
+
+    private void showBarChart() {
+        ArrayList<BarEntry> entries = new ArrayList<>();
+
+        // Пример данных
+        entries.add(new BarEntry(0, 4f));
+        entries.add(new BarEntry(1, 6f));
+        entries.add(new BarEntry(2, 2f));
+        entries.add(new BarEntry(3, 8f));
+        entries.add(new BarEntry(4, 5f));
+
+        BarDataSet dataSet = new BarDataSet(entries, "Label"); // Название графика
+        dataSet.setDrawValues(false); // Отключение значений над столбиками
+        BarData barData = new BarData(dataSet);
+        barChart.setData(barData);
+
+        // Отключение вертикальных линий сетки
+        barChart.getXAxis().setDrawGridLines(false); // Горизонтальная ось
+
+        barChart.invalidate(); // Обновление графика
     }
 
     private void showLineChart() {

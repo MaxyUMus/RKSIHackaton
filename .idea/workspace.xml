@@ -21,22 +21,10 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c455c64-c804-4111-8b4f-7fe317acb692" name="Changes" comment="Тестовый комит">
-      <change afterPath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/HomeActivity.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_home.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="8c455c64-c804-4111-8b4f-7fe317acb692" name="Changes" comment="Добавление графиков">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/androidTest/java/com/example/rksihackaton/ExampleInstrumentedTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/androidTest/java/com/example/rksihackaton/ExampleInstrumentedTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/AndroidManifest.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/MainActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_main.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/values/strings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/test/java/com/example/rksihackaton/ExampleUnitTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/test/java/com/example/rksihackaton/ExampleUnitTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/settings.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/main/settings.gradle.kts" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -776,7 +764,15 @@
       <option name="project" value="LOCAL" />
       <updated>1733820341715</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Добавление графиков">
+      <option name="closed" value="true" />
+      <created>1733833816515</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1733833816515</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -793,6 +789,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Удаление лишнего" />
     <MESSAGE value="Тестовый комит" />
-    <option name="LAST_COMMIT_MESSAGE" value="Тестовый комит" />
+    <MESSAGE value="Добавление графиков" />
+    <option name="LAST_COMMIT_MESSAGE" value="Добавление графиков" />
   </component>
 </project>
