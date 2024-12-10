@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
@@ -33,6 +34,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
+
 
 public class MainActivity extends AppCompatActivity {
     Button aut;
@@ -41,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
     EditText email;
     EditText password;
 
+
+    private LineChart lineChart;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,7 +169,27 @@ public class MainActivity extends AppCompatActivity {
                 }
             }).start();
         });
+
+        lineChart = findViewById(R.id.graph);
+        showLineChart();
     }
+
+    private void showLineChart() {
+        ArrayList<Entry> entries = new ArrayList<>();
+
+        // Пример данных
+        entries.add(new Entry(0, 1));
+        entries.add(new Entry(1, 3));
+        entries.add(new Entry(2, 2));
+        entries.add(new Entry(3, 5));
+        entries.add(new Entry(4, 4));
+
+        LineDataSet dataSet = new LineDataSet(entries, "Label"); // Название графика
+        LineData lineData = new LineData(dataSet);
+        lineChart.setData(lineData);
+        lineChart.invalidate(); // Обновление графика
+    }
+
 
     private OkHttpClient createHttpClient() {
         try {
