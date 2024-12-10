@@ -21,32 +21,14 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c455c64-c804-4111-8b4f-7fe317acb692" name="Changes" comment="Доработка и тестирование графиков 0.1">
-      <change afterPath="$PROJECT_DIR$/main/app/src/main/ic_launcher-playstore.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/GraphBuilder.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/app/src/main/res/mipmap-hdpi/ic_launcher_foreground.webp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/app/src/main/res/mipmap-mdpi/ic_launcher_foreground.webp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/app/src/main/res/mipmap-xhdpi/ic_launcher_foreground.webp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/app/src/main/res/mipmap-xxhdpi/ic_launcher_foreground.webp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher_foreground.webp" afterDir="false" />
+    <list default="true" id="8c455c64-c804-4111-8b4f-7fe317acb692" name="Changes" comment="Добавление главной страницы">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/HomeActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/HomeActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/drawable/ic_launcher_background.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/drawable/ic_launcher_background.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/mipmap-anydpi/ic_launcher.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/mipmap-anydpi/ic_launcher_round.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/mipmap-hdpi/ic_launcher.webp" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/mipmap-hdpi/ic_launcher.webp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/mipmap-hdpi/ic_launcher_round.webp" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/mipmap-hdpi/ic_launcher_round.webp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/mipmap-mdpi/ic_launcher.webp" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/mipmap-mdpi/ic_launcher.webp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/mipmap-xhdpi/ic_launcher.webp" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/mipmap-xhdpi/ic_launcher.webp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/mipmap-xxhdpi/ic_launcher.webp" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/mipmap-xxhdpi/ic_launcher.webp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/drawable/moscow_exchange_logo.png" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/drawable/moscow_logo.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_home.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_home.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/values/colors.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,7 +38,7 @@
   <component name="ClangdSettings">
     <option name="formatViaClangd" value="false" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=11163553CC001966)]" />
+  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=/home/solver/.android/avd/Medium_Phone_API_35.avd)]" />
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$/main">
       <ProjectState />
@@ -70,30 +52,7 @@
         </task>
         <projects_view>
           <tree_state>
-            <expand>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="RKSIhackaton" type="f1a62948:ProjectNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="RKSIhackaton" type="f1a62948:ProjectNode" />
-                <item name="app" type="2d1252cf:ModuleNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="RKSIhackaton" type="f1a62948:ProjectNode" />
-                <item name="app" type="2d1252cf:ModuleNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-              </path>
-              <path>
-                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="RKSIhackaton" type="f1a62948:ProjectNode" />
-                <item name="app" type="2d1252cf:ModuleNode" />
-                <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="other" type="c8890929:TasksNode$1" />
-              </path>
-            </expand>
+            <expand />
             <select />
           </tree_state>
         </projects_view>
@@ -116,12 +75,12 @@
     &quot;assignee&quot;: &quot;AbsoluteSolver&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/MaxyUMus/RKSIHackaton&quot;,
-    &quot;accountId&quot;: &quot;e0904356-ed64-41d2-9d3c-a8eee62c3621&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/MaxyUMus/RKSIHackaton",
+    "accountId": "af253521-ebf5-45f7-9359-ea0a5072c465"
   }
-}</component>
+}]]></component>
   <component name="ProblemsViewState">
     <option name="selectedTabId" value="CurrentFile" />
   </component>
@@ -137,34 +96,37 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Android App.RKSI_Hackaton.app.main.executor": "Run",
-    "Android App.main.RKSIhackaton.app.executor": "Run",
-    "Notification.DisplayName-DoNotAsk-Android Gradle Upgrade Notification": "Android Gradle Upgrade Notification",
-    "Notification.DoNotAsk-Android Gradle Upgrade Notification": "true",
-    "ResourceManagerPrefKey.ModuleName": "RKSIhackaton.app.main",
-    "ResourceManagerPrefKey.ResourceType": "DRAWABLE",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.cidr.known.project.marker": "true",
-    "RunOnceActivity.readMode.enableVisualFormatting": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "cf.first.check.clang-format": "false",
-    "cidr.known.project.marker": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/pilip/AndroidStudioProjects/RKSIHackaton",
-    "project.structure.last.edited": "Dependencies",
-    "project.structure.proportion": "0.17",
-    "project.structure.side.proportion": "0.2"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Android App.RKSI_Hackaton.app.main.executor&quot;: &quot;Run&quot;,
+    &quot;Android App.main.RKSIhackaton.app.executor&quot;: &quot;Run&quot;,
+    &quot;Notification.DisplayName-DoNotAsk-Android Gradle Upgrade Notification&quot;: &quot;Android Gradle Upgrade Notification&quot;,
+    &quot;Notification.DoNotAsk-Android Gradle Upgrade Notification&quot;: &quot;true&quot;,
+    &quot;ResourceManagerPrefKey.ModuleName&quot;: &quot;RKSIhackaton.app.main&quot;,
+    &quot;ResourceManagerPrefKey.ResourceType&quot;: &quot;DRAWABLE&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/solver/AndroidStudioProjects/RKSIHackaton/main/app/src/main/res/drawable&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Dependencies&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/main/app/src/main/res/drawable" />
+    </key>
     <key name="android.template.214438224">
       <recent name="com.example.rksihackaton" />
     </key>
   </component>
-  <component name="RunManager" selected="Android App.RKSI_Hackaton.app.main">
+  <component name="RunManager" selected="Android App.main.RKSIhackaton.app">
     <configuration name="RKSI_Hackaton.app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
       <module name="RKSI_Hackaton.app" />
       <option name="DEPLOY" value="true" />
@@ -178,8 +140,6 @@
       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
       <option name="MODE" value="default_activity" />
-      <option name="RESTORE_ENABLED" value="false" />
-      <option name="RESTORE_FILE" value="" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
@@ -246,8 +206,6 @@
       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
       <option name="MODE" value="default_activity" />
-      <option name="RESTORE_ENABLED" value="false" />
-      <option name="RESTORE_FILE" value="" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
@@ -314,8 +272,6 @@
       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
       <option name="MODE" value="default_activity" />
-      <option name="RESTORE_ENABLED" value="false" />
-      <option name="RESTORE_FILE" value="" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
@@ -382,8 +338,6 @@
       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
       <option name="MODE" value="default_activity" />
-      <option name="RESTORE_ENABLED" value="false" />
-      <option name="RESTORE_FILE" value="" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
@@ -450,8 +404,6 @@
       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
       <option name="MODE" value="default_activity" />
-      <option name="RESTORE_ENABLED" value="false" />
-      <option name="RESTORE_FILE" value="" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
@@ -518,8 +470,6 @@
       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
       <option name="MODE" value="default_activity" />
-      <option name="RESTORE_ENABLED" value="false" />
-      <option name="RESTORE_FILE" value="" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
@@ -586,8 +536,6 @@
       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
       <option name="MODE" value="default_activity" />
-      <option name="RESTORE_ENABLED" value="false" />
-      <option name="RESTORE_FILE" value="" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
@@ -654,8 +602,6 @@
       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
       <option name="MODE" value="default_activity" />
-      <option name="RESTORE_ENABLED" value="false" />
-      <option name="RESTORE_FILE" value="" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
@@ -722,8 +668,6 @@
       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
       <option name="MODE" value="default_activity" />
-      <option name="RESTORE_ENABLED" value="false" />
-      <option name="RESTORE_FILE" value="" />
       <option name="CLEAR_LOGCAT" value="false" />
       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
@@ -811,7 +755,15 @@
       <option name="project" value="LOCAL" />
       <updated>1733834442054</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Добавление главной страницы">
+      <option name="closed" value="true" />
+      <created>1733848705195</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1733848705195</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -830,6 +782,7 @@
     <MESSAGE value="Тестовый комит" />
     <MESSAGE value="Добавление графиков" />
     <MESSAGE value="Доработка и тестирование графиков 0.1" />
-    <option name="LAST_COMMIT_MESSAGE" value="Доработка и тестирование графиков 0.1" />
+    <MESSAGE value="Добавление главной страницы" />
+    <option name="LAST_COMMIT_MESSAGE" value="Добавление главной страницы" />
   </component>
 </project>

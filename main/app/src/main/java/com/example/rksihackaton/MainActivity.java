@@ -73,10 +73,6 @@ public class MainActivity extends AppCompatActivity {
 
         aut.setOnClickListener(view -> {
 
-            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-            startActivity(intent);
-
-
             String emailText = email.getText().toString().trim();
             String passwordText = password.getText().toString().trim();
 
@@ -108,8 +104,8 @@ public class MainActivity extends AppCompatActivity {
                                 if ("success".equals(status)) {
                                     Toast.makeText(MainActivity.this, "Login successful: " + message, Toast.LENGTH_LONG).show();
                                     // Переход на вторую активность
-//                                     Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-//                                     startActivity(intent);
+                                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                                    startActivity(intent);
                                 } else {
                                     Toast.makeText(MainActivity.this, "Login failed: " + message, Toast.LENGTH_LONG).show();
                                 }
