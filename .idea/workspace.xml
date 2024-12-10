@@ -5,6 +5,11 @@
       <config />
     </shared>
     <layouts>
+      <layout url="file://$PROJECT_DIR$/main/app/src/main/res/layout/activity_graphs.xml">
+        <config>
+          <theme>@style/Theme.RKSIhackaton</theme>
+        </config>
+      </layout>
       <layout url="file://$PROJECT_DIR$/main/app/src/main/res/layout/activity_home.xml">
         <config>
           <theme>@style/Theme.RKSIhackaton</theme>
@@ -21,9 +26,12 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c455c64-c804-4111-8b4f-7fe317acb692" name="Changes" comment="Добавление главной страницы">
+    <list default="true" id="8c455c64-c804-4111-8b4f-7fe317acb692" name="Changes" comment="Добавление страницы с графиками">
+      <change afterPath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_graphs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/build.gradle.kts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/MainActivity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_main.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,6 +66,7 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Class" />
+        <option value="layoutResourceFile" />
       </list>
     </option>
   </component>
@@ -766,7 +775,15 @@
       <option name="project" value="LOCAL" />
       <updated>1733854657322</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Добавление страницы с графиками">
+      <option name="closed" value="true" />
+      <created>1733855683472</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1733855683472</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -786,6 +803,7 @@
     <MESSAGE value="Добавление графиков" />
     <MESSAGE value="Доработка и тестирование графиков 0.1" />
     <MESSAGE value="Добавление главной страницы" />
-    <option name="LAST_COMMIT_MESSAGE" value="Добавление главной страницы" />
+    <MESSAGE value="Добавление страницы с графиками" />
+    <option name="LAST_COMMIT_MESSAGE" value="Добавление страницы с графиками" />
   </component>
 </project>
