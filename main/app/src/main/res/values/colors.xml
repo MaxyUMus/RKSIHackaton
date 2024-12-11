@@ -2,8 +2,17 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="btns_color">#0f6387</color>
-    <color name="text_color">#dae0e0d2</color>
     <color name="blue">#362abb</color>
     <color name="grey">#9C9393</color>
+
+    <color name="btns_color">#0f6387</color>
+    <color name="cardView_color">#307FA1</color>
+    <color name="text_color">#dae0e0d2</color>
+
+    <color name="gazprom">#1e90ff</color>
+    <color name="moex">#ff0000</color>
+    <color name="sber">#21a038</color>
+    <color name="rosneft">#ffff00</color>
+
+
 </resources>

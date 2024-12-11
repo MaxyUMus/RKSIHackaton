@@ -13,66 +13,77 @@
         android:id="@+id/majorContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible">
+        android:visibility="gone">
 
-    <Button
-        android:id="@+id/more_currencies_btn"
-        android:layout_width="120dp"
-        android:layout_height="42dp"
-        android:backgroundTint="@color/white"
-        android:padding="0dp"
-        android:text="Больше валют"
-        android:textColor="@color/btns_color"
-        android:textSize="15sp"
-        app:cornerRadius="6sp"
-        app:layout_constraintBottom_toBottomOf="@+id/cardView"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.955"
-        app:layout_constraintVertical_bias="0.238" />
+        <Button
+            android:id="@+id/more_currencies_btn"
+            android:layout_width="135dp"
+            android:layout_height="45dp"
+            android:backgroundTint="@color/white"
+            android:padding="0dp"
+            android:text="Больше валют ➜"
+            android:textColor="@color/btns_color"
+            android:textSize="15sp"
+            app:cornerRadius="6sp"
+            app:layout_constraintBottom_toBottomOf="@+id/cardView"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.96"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.243" />
 
-    <TextView
-        android:id="@+id/mobileInvestor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Мобильный инвестор"
-        android:textSize="22dp"
-        android:textStyle="bold"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.05"
-        app:layout_constraintVertical_bias="0.02"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/mobileInvestor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Мобильный инвестор"
+            android:textSize="22dp"
+            android:textStyle="bold"
+            android:textColor="@color/white"
+            android:fontFamily="sans-serif-medium"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.05"
+            app:layout_constraintVertical_bias="0.02"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/mostPopular"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Основные валюты мира"
+            android:textColor="@color/white"
+            android:textSize="18dp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_bias="0.1"
+            app:layout_constraintVertical_bias="0.095" />
 
-    <TextView
-        android:id="@+id/mostPopular"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Основные валюты мира"
-        android:textColor="@color/white"
-        android:textSize="18dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.1"
-        app:layout_constraintVertical_bias="0.095" />
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:backgroundTint="@color/cardView_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_bias="0.1"
+            app:layout_constraintVertical_bias="0.155"
+            app:cardCornerRadius="8sp"
+            app:cardElevation="20dp">
+
 
     <TableLayout
         android:id="@+id/tableLayout"
-        android:layout_width="200sp"
+        android:layout_width="185sp"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_bias="0.1"
-        app:layout_constraintVertical_bias="0.155">
+        android:padding="4sp">
 
         <TableRow>
             <TextView
@@ -82,6 +93,7 @@
                 android:layout_weight="1"
                 android:textColor="@color/white"
                 android:textSize="20sp"
+                android:fontFamily="sans-serif-medium"
                 android:text="Доллар" />
 
             <TextView
@@ -91,6 +103,7 @@
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textAlignment="textEnd"
+                android:fontFamily="sans-serif-medium"
                 android:text="100" />
         </TableRow>
 
@@ -103,6 +116,7 @@
                 android:layout_weight="1"
                 android:textColor="@color/white"
                 android:textSize="20sp"
+                android:fontFamily="sans-serif-medium"
                 android:text="Евро" />
 
             <TextView
@@ -112,6 +126,7 @@
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textAlignment="textEnd"
+                android:fontFamily="sans-serif-medium"
                 android:text="85" />
         </TableRow>
 
@@ -124,6 +139,7 @@
                 android:layout_weight="1"
                 android:textColor="@color/white"
                 android:textSize="20sp"
+                android:fontFamily="sans-serif-medium"
                 android:text="Рубль" />
 
             <TextView
@@ -133,6 +149,8 @@
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textAlignment="textEnd"
+                android:fontFamily="sans-serif-medium"
+
                 android:text="1" />
         </TableRow>
 
@@ -145,6 +163,7 @@
                 android:layout_weight="1"
                 android:textColor="@color/white"
                 android:textSize="20sp"
+                android:fontFamily="sans-serif-medium"
                 android:text="Юань" />
 
             <TextView
@@ -154,29 +173,34 @@
                 android:textColor="@color/white"
                 android:textSize="20sp"
                 android:textAlignment="textEnd"
+                android:fontFamily="sans-serif-medium"
                 android:text="14" />
         </TableRow>
 
+        </TableLayout>
+        </androidx.cardview.widget.CardView>
 
-    </TableLayout>
 
     <ImageButton
         android:id="@+id/profile_btn"
-        android:layout_width="50sp"
-        android:layout_height="50sp"
-        app:srcCompat="@drawable/ic_launcher_foreground"
+        android:layout_width="60sp"
+        android:layout_height="60sp"
+        app:srcCompat="@drawable/app_icon"
+        android:background="@color/btns_color"
+        android:scaleType="centerCrop"
         app:layout_constraintHorizontal_bias="0.95"
         app:layout_constraintVertical_bias="0.02"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"  />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="500sp"
         android:layout_marginTop="230sp"
+        app:cardElevation="120sp"
         app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="25sp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -196,9 +220,10 @@
             android:layout_height="wrap_content"
             android:layout_margin="16sp"
             android:text="Акции инвесторов"
+            android:fontFamily="sans-serif-medium"
             android:textColor="@color/black"
             android:textSize="19sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
         <HorizontalScrollView
             android:layout_width="match_parent"
@@ -206,51 +231,59 @@
             android:layout_marginTop="60sp">
 
             <LinearLayout
+                android:id="@+id/investorsLayout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginHorizontal="4sp"
                 android:orientation="horizontal">
 
                 <ImageButton
+                    android:id="@+id/gazprom"
                     android:layout_width="90sp"
                     android:layout_height="match_parent"
                     android:layout_marginHorizontal="5sp"
                     android:backgroundTint="@color/btns_color"
                     android:scaleType="fitCenter"
+                    android:elevation="10sp"
                     android:src="@drawable/gprom"
                     app:cornerRadius="5sp" />
 
                 <ImageButton
+                    android:id="@+id/moex"
                     android:layout_width="90sp"
                     android:layout_height="match_parent"
                     android:layout_marginHorizontal="5sp"
                     android:backgroundTint="@color/btns_color"
                     android:scaleType="fitCenter"
+                    android:elevation="10sp"
                     android:src="@drawable/mel"
                     app:cornerRadius="5sp" />
 
                 <ImageButton
+                    android:id="@+id/sberbank"
                     android:layout_width="90sp"
                     android:layout_height="match_parent"
                     android:layout_marginHorizontal="5sp"
                     android:backgroundTint="@color/btns_color"
                     android:scaleType="fitCenter"
                     android:src="@drawable/sber"
+                    android:elevation="10sp"
                     app:cornerRadius="5sp" />
 
                 <ImageButton
+                    android:id="@+id/rosneft"
                     android:layout_width="90sp"
                     android:layout_height="match_parent"
                     android:layout_marginHorizontal="5sp"
                     android:backgroundTint="@color/btns_color"
                     android:scaleType="fitCenter"
                     android:src="@drawable/rneft"
+                    android:elevation="10sp"
                     app:cornerRadius="5sp" />
 
             </LinearLayout>
 
         </HorizontalScrollView>
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -264,6 +297,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Стоимость металлов на рынке"
+                android:fontFamily="sans-serif-medium"
                 android:textColor="@color/black"
                 android:textSize="19sp"
                 android:textStyle="bold" />
@@ -277,6 +311,7 @@
                 android:text="Серебро"
                 android:textColor="@color/btns_color"
                 android:textSize="15sp"
+                android:textStyle="bold"
                 app:cornerRadius="10sp"
                 app:strokeColor="@color/black"
                 app:strokeWidth="3px" />
@@ -290,6 +325,7 @@
                 android:text="Золото"
                 android:textColor="@color/btns_color"
                 android:textSize="15sp"
+                android:textStyle="bold"
                 app:cornerRadius="10sp"
                 app:strokeColor="@color/black"
                 app:strokeWidth="3px" />
@@ -303,6 +339,7 @@
                 android:text="Платина"
                 android:textColor="@color/btns_color"
                 android:textSize="15sp"
+                android:textStyle="bold"
                 app:cornerRadius="10sp"
                 app:strokeColor="@color/black"
                 app:strokeWidth="3px" />
@@ -316,6 +353,7 @@
                 android:text="Палладий"
                 android:textColor="@color/btns_color"
                 android:textSize="15sp"
+                android:textStyle="bold"
                 app:cornerRadius="10sp"
                 app:strokeColor="@color/black"
                 app:strokeWidth="3px" />
@@ -336,6 +374,7 @@
             android:layout_width="match_parent"
             android:layout_height="450sp"
             android:visibility="gone"
+            android:background="@color/cardView_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.3"
@@ -346,7 +385,7 @@
         <ScrollView
             android:id="@+id/currenciesScroll"
             android:layout_width="match_parent"
-            android:layout_height="580sp"
+            android:layout_height="560sp"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -358,7 +397,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="550sp"
                 android:orientation="vertical">
-
             </LinearLayout>
         </ScrollView>
 
@@ -383,5 +421,73 @@
             app:strokeWidth="3px" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/investorsRates"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/cardView_color"
+        android:visibility="visible">
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/investorsChart"
+            android:layout_width="match_parent"
+            android:layout_height="350sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.558">
+
+        </com.github.mikephil.charting.charts.LineChart>
+
+        <ImageView
+            android:id="@+id/investorLogo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.948"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.025"
+            tools:srcCompat="@drawable/gprom" />
+
+        <TextView
+            android:id="@+id/investorDescription"
+            android:layout_width="247dp"
+            android:layout_height="127dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="Здесь находится описание компаний..."
+            android:textColor="@color/gazprom"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.05"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.025" />
+
+        <Button
+            android:id="@+id/back_btn2"
+            android:layout_width="320sp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="50sp"
+            android:text="Назад"
+            android:textColor="@color/gazprom"
+            android:textSize="15sp"
+            app:cornerRadius="10sp"
+            android:backgroundTint="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.494"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.921"
+            app:strokeColor="@color/black"
+            app:strokeWidth="3px" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
