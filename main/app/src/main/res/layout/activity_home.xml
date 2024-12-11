@@ -81,288 +81,287 @@
             app:cardElevation="20dp">
 
 
-    <TableLayout
-        android:id="@+id/tableLayout"
-        android:layout_width="185sp"
-        android:layout_height="wrap_content"
-        android:padding="4sp">
-
-        <TableRow>
-            <TextView
-                android:id="@+id/dollarText"
-                android:layout_width="wrap_content"
+            <TableLayout
+                android:id="@+id/tableLayout"
+                android:layout_width="185sp"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:fontFamily="sans-serif-medium"
-                android:text="USD" />
+                android:padding="4sp">
 
-            <TextView
-                android:id="@+id/dollarRate"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textAlignment="textEnd"
-                android:fontFamily="sans-serif-medium"
-                android:text="Загрузка..." />
-        </TableRow>
+                <TableRow>
+                    <TextView
+                        android:id="@+id/dollarText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="USD" />
 
-        <TableRow>
+                    <TextView
+                        android:id="@+id/dollarRate"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textAlignment="textEnd"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Загрузка..." />
+                </TableRow>
 
-            <TextView
-                android:id="@+id/euroText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:fontFamily="sans-serif-medium"
-                android:text="EUR" />
+                <TableRow>
 
-            <TextView
-                android:id="@+id/euroRate"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textAlignment="textEnd"
-                android:fontFamily="sans-serif-medium"
-                android:text="Загрузка..." />
-        </TableRow>
+                    <TextView
+                        android:id="@+id/euroText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="EUR" />
 
-        <TableRow>
+                    <TextView
+                        android:id="@+id/euroRate"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textAlignment="textEnd"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Загрузка..." />
+                </TableRow>
 
-            <TextView
-                android:id="@+id/rubText"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:fontFamily="sans-serif-medium"
-                android:text="BYN"
-                android:textColor="@color/white"
-                android:textSize="20sp" />
+                <TableRow>
 
-            <TextView
-                android:id="@+id/bynRate"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textAlignment="textEnd"
-                android:fontFamily="sans-serif-medium"
+                    <TextView
+                        android:id="@+id/rubText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="BYN"
+                        android:textColor="@color/white"
+                        android:textSize="20sp" />
 
-                android:text="Загрузка..." />
-        </TableRow>
+                    <TextView
+                        android:id="@+id/bynRate"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textAlignment="textEnd"
+                        android:fontFamily="sans-serif-medium"
 
-        <TableRow>
+                        android:text="Загрузка..." />
+                </TableRow>
 
-            <TextView
-                android:id="@+id/uanText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:fontFamily="sans-serif-medium"
-                android:text="CNY" />
+                <TableRow>
 
-            <TextView
-                android:id="@+id/uanRate"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textAlignment="textEnd"
-                android:fontFamily="sans-serif-medium"
-                android:text="Загрузка..." />
-        </TableRow>
+                    <TextView
+                        android:id="@+id/uanText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="CNY" />
 
-        </TableLayout>
+                    <TextView
+                        android:id="@+id/uanRate"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:textColor="@color/white"
+                        android:textSize="20sp"
+                        android:textAlignment="textEnd"
+                        android:fontFamily="sans-serif-medium"
+                        android:text="Загрузка..." />
+                </TableRow>
+
+            </TableLayout>
         </androidx.cardview.widget.CardView>
 
 
-    <ImageButton
-        android:id="@+id/profile_btn"
-        android:layout_width="60sp"
-        android:layout_height="60sp"
-        app:srcCompat="@drawable/app_icon"
-        android:background="@color/btns_color"
-        android:scaleType="centerCrop"
-        app:layout_constraintHorizontal_bias="0.95"
-        app:layout_constraintVertical_bias="0.02"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        <ImageButton
+            android:id="@+id/profile_btn"
+            android:layout_width="60sp"
+            android:layout_height="60sp"
+            app:srcCompat="@drawable/app_icon"
+            android:background="@color/btns_color"
+            android:scaleType="centerCrop"
+            app:layout_constraintHorizontal_bias="0.95"
+            app:layout_constraintVertical_bias="0.02"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cardView"
-        android:layout_width="match_parent"
-        android:layout_height="500sp"
-        android:layout_marginTop="230sp"
-        app:cardElevation="120sp"
-        app:cardBackgroundColor="@color/white"
-        app:cardCornerRadius="25sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <TextView
-            android:id="@+id/textView2"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardView"
             android:layout_width="match_parent"
-            android:layout_height="5sp"
-            android:layout_gravity="center"
-            android:layout_marginBottom="40sp"
-            android:background="@color/grey" />
+            android:layout_height="500sp"
+            app:cardElevation="120sp"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="25sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="16sp"
-            android:text="Акции инвесторов"
-            android:fontFamily="sans-serif-medium"
-            android:textColor="@color/black"
-            android:textSize="19sp"
-            android:textStyle="bold"/>
-
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="125sp"
-            android:layout_marginTop="60sp">
-
-            <LinearLayout
-                android:id="@+id/investorsLayout"
+            <TextView
+                android:id="@+id/textView2"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="4sp"
-                android:orientation="horizontal">
-
-                <ImageButton
-                    android:id="@+id/gazprom"
-                    android:layout_width="90sp"
-                    android:layout_height="match_parent"
-                    android:layout_marginHorizontal="5sp"
-                    android:backgroundTint="@color/btns_color"
-                    android:scaleType="fitCenter"
-                    android:elevation="10sp"
-                    android:src="@drawable/gprom"
-                    app:cornerRadius="5sp" />
-
-                <ImageButton
-                    android:id="@+id/moex"
-                    android:layout_width="90sp"
-                    android:layout_height="match_parent"
-                    android:layout_marginHorizontal="5sp"
-                    android:backgroundTint="@color/btns_color"
-                    android:scaleType="fitCenter"
-                    android:elevation="10sp"
-                    android:src="@drawable/mel"
-                    app:cornerRadius="5sp" />
-
-                <ImageButton
-                    android:id="@+id/sberbank"
-                    android:layout_width="90sp"
-                    android:layout_height="match_parent"
-                    android:layout_marginHorizontal="5sp"
-                    android:backgroundTint="@color/btns_color"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/sber"
-                    android:elevation="10sp"
-                    app:cornerRadius="5sp" />
-
-                <ImageButton
-                    android:id="@+id/rosneft"
-                    android:layout_width="90sp"
-                    android:layout_height="match_parent"
-                    android:layout_marginHorizontal="5sp"
-                    android:backgroundTint="@color/btns_color"
-                    android:scaleType="fitCenter"
-                    android:src="@drawable/rneft"
-                    android:elevation="10sp"
-                    app:cornerRadius="5sp" />
-
-            </LinearLayout>
-
-        </HorizontalScrollView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:layout_marginBottom="10sp"
-            android:orientation="vertical"
-            android:padding="16sp">
+                android:layout_height="5sp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="40sp"
+                android:background="@color/grey" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Стоимость металлов на рынке"
+                android:layout_margin="16sp"
+                android:text="Акции инвесторов"
                 android:fontFamily="sans-serif-medium"
                 android:textColor="@color/black"
                 android:textSize="19sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
-            <Button
-                android:id="@+id/ag_btn"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            <HorizontalScrollView
+                android:layout_width="match_parent"
+                android:layout_height="125sp"
+                android:layout_marginTop="60sp">
+
+                <LinearLayout
+                    android:id="@+id/investorsLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginHorizontal="4sp"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/gazprom"
+                        android:layout_width="90sp"
+                        android:layout_height="match_parent"
+                        android:layout_marginHorizontal="5sp"
+                        android:backgroundTint="@color/btns_color"
+                        android:scaleType="fitCenter"
+                        android:elevation="10sp"
+                        android:src="@drawable/gprom"
+                        app:cornerRadius="5sp" />
+
+                    <ImageButton
+                        android:id="@+id/moex"
+                        android:layout_width="90sp"
+                        android:layout_height="match_parent"
+                        android:layout_marginHorizontal="5sp"
+                        android:backgroundTint="@color/btns_color"
+                        android:scaleType="fitCenter"
+                        android:elevation="10sp"
+                        android:src="@drawable/mel"
+                        app:cornerRadius="5sp" />
+
+                    <ImageButton
+                        android:id="@+id/sberbank"
+                        android:layout_width="90sp"
+                        android:layout_height="match_parent"
+                        android:layout_marginHorizontal="5sp"
+                        android:backgroundTint="@color/btns_color"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/sber"
+                        android:elevation="10sp"
+                        app:cornerRadius="5sp" />
+
+                    <ImageButton
+                        android:id="@+id/rosneft"
+                        android:layout_width="90sp"
+                        android:layout_height="match_parent"
+                        android:layout_marginHorizontal="5sp"
+                        android:backgroundTint="@color/btns_color"
+                        android:scaleType="fitCenter"
+                        android:src="@drawable/rneft"
+                        android:elevation="10sp"
+                        app:cornerRadius="5sp" />
+
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8sp"
-                android:text="Серебро"
-                android:textColor="@color/btns_color"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                app:cornerRadius="10sp"
-                app:strokeColor="@color/black"
-                app:strokeWidth="3px" />
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="10sp"
+                android:orientation="vertical"
+                android:padding="16sp">
 
-            <Button
-                android:id="@+id/au_btn"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8sp"
-                android:text="Золото"
-                android:textColor="@color/btns_color"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                app:cornerRadius="10sp"
-                app:strokeColor="@color/black"
-                app:strokeWidth="3px" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Стоимость металлов на рынке"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/black"
+                    android:textSize="19sp"
+                    android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/pt_btn"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8sp"
-                android:text="Платина"
-                android:textColor="@color/btns_color"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                app:cornerRadius="10sp"
-                app:strokeColor="@color/black"
-                app:strokeWidth="3px" />
+                <Button
+                    android:id="@+id/ag_btn"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8sp"
+                    android:text="Серебро"
+                    android:textColor="@color/btns_color"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="10sp"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="3px" />
 
-            <Button
-                android:id="@+id/pd_btn"
-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8sp"
-                android:text="Палладий"
-                android:textColor="@color/btns_color"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                app:cornerRadius="10sp"
-                app:strokeColor="@color/black"
-                app:strokeWidth="3px" />
+                <Button
+                    android:id="@+id/au_btn"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8sp"
+                    android:text="Золото"
+                    android:textColor="@color/btns_color"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="10sp"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="3px" />
 
-        </LinearLayout>
+                <Button
+                    android:id="@+id/pt_btn"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8sp"
+                    android:text="Платина"
+                    android:textColor="@color/btns_color"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="10sp"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="3px" />
 
-    </androidx.cardview.widget.CardView>
+                <Button
+                    android:id="@+id/pd_btn"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8sp"
+                    android:text="Палладий"
+                    android:textColor="@color/btns_color"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    app:cornerRadius="10sp"
+                    app:strokeColor="@color/black"
+                    app:strokeWidth="3px" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -430,15 +429,26 @@
         android:layout_height="match_parent"
         android:visibility="gone">
 
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/investorsChart"
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="350sp"
+            android:layout_height="450sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.558">
+            app:layout_constraintVertical_bias="0.558"
+            android:padding="10sp">
 
-        </com.github.mikephil.charting.charts.LineChart>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="450sp">
+                <TextView
+                    android:id="@+id/investorFulld"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                </TextView>
+
+            </LinearLayout>
+        </ScrollView>
 
         <ImageView
             android:id="@+id/investorLogo"

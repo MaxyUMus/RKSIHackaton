@@ -12,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +31,7 @@ import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
@@ -50,12 +52,12 @@ import okhttp3.Response;
 
 public class HomeActivity extends AppCompatActivity {
     private Button more_currencies_btn, back_btn, back_btn2, ag_btn, au_btn, pt_btn, pd_btn;
-    private TextView investorDescription, dollarRate, euroRate, uanRate, bynRate;
+    private TextView investorDescription, dollarRate, euroRate, uanRate, bynRate, investorFD;
     private ImageView investorLogo;
     private ImageButton gazprom, moex, sberbank, rosneft;
     private LinearLayout currenciesLayout, investorsLayout;
     private ScrollView currenciesScroll;
-    private LineChart metalsChart, investorsChart;
+    private LineChart metalsChart;
     private ConstraintLayout majorContent, currenciesNgraphs, investorsRates;
     Map<String, String> flagMap = new HashMap<>();
     public OkHttpClient client;
@@ -103,7 +105,7 @@ public class HomeActivity extends AppCompatActivity {
         //Инфа об инвесторах
         investorDescription = findViewById(R.id.investorDescription);
         investorLogo = findViewById(R.id.investorLogo);
-        investorsChart = findViewById(R.id.investorsChart);
+        investorFD = findViewById(R.id.investorFulld);
         investorsLayout = findViewById(R.id.investorsLayout);
 
         currenciesNgraphs = findViewById(R.id.currenciesNgraphs);
@@ -121,6 +123,12 @@ public class HomeActivity extends AppCompatActivity {
         investorDescr.put(R.id.moex, "MOEX — московская финансовая компания, организующая биржевые торги.");
         investorDescr.put(R.id.sberbank, "Сбер — крупнейший российский банк, предлагающий разнообразные финансовые услуги.");
         investorDescr.put(R.id.rosneft, "Роснефть — крупнейшая нефтяная компания России, занимающаяся добычей, переработкой и продажей нефти.");
+
+        Map<Integer, String> investorQuery = new HashMap<>();
+        investorQuery.put(R.id.gazprom, "getGas");
+        investorQuery.put(R.id.moex, "getMoex");
+        investorQuery.put(R.id.sberbank, "getSbr");
+        investorQuery.put(R.id.rosneft, "getRosn");
 
         InitCurrencies();
 
@@ -337,30 +345,73 @@ public class HomeActivity extends AppCompatActivity {
         for(int i = 0; i < investorsLayout.getChildCount(); i++){
             int loop_id = i;
             investorsLayout.getChildAt(i).setOnClickListener(view -> {
-                investorsRates.setVisibility(View.VISIBLE);
-                majorContent.setVisibility(View.GONE);
+                String act = investorQuery.get(investorsLayout.getChildAt(loop_id).getId());
+                String json = "{\"action\":\"" + act + "\"}";
+                new Thread(() -> {
+                    RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
 
-                String inv = investorDescr.get(investorsLayout.getChildAt(loop_id).getId());
-                investorDescription.setText(inv);
-                int colorResId = getColorId(loop_id);
+                    Request request = new Request.Builder()
+                            .url(Constants.server_url)
+                            .post(body)
+                            .build();
 
-                investorDescription.setTextColor(ContextCompat.getColor(HomeActivity.this, colorResId));
-                List<Entry> actions = new ArrayList<>();
-                Random rand = new Random();
-                actions.add(new Entry(0, rand.nextFloat() * (40 - 12) + 12));
-                actions.add(new Entry(1, rand.nextFloat() * (40 - 12) + 12));
-                actions.add(new Entry(2, rand.nextFloat() * (40 - 12) + 12));
-                actions.add(new Entry(3, rand.nextFloat() * (40 - 12) + 12));
+                    try (Response response = client.newCall(request).execute()) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            String responseBody = response.body().string();
+                            runOnUiThread(() -> {
+                                try {
+                                    JSONObject jsonResponse = new JSONObject(responseBody);
 
-                LineDataSet set = new LineDataSet(actions, "Инвестор");
-                set.setColor(ContextCompat.getColor(HomeActivity.this, colorResId));
+                                    investorFD.setText(ParseInvestor(investorsLayout.getChildAt(loop_id).getId(), jsonResponse.toString()));
 
-                GraphBuilder.BuildLineGraph(investorsChart, set);
+                                    investorsRates.setVisibility(View.VISIBLE);
+                                    majorContent.setVisibility(View.GONE);
 
-                int logoID = getLogoId(loop_id);
-                investorLogo.setImageResource(logoID);
+                                    String inv = investorDescr.get(investorsLayout.getChildAt(loop_id).getId());
+                                    investorDescription.setText(inv);
+                                    int colorResId = getColorId(loop_id);
+                                    investorDescription.setTextColor(ContextCompat.getColor(HomeActivity.this, colorResId));
+
+                                    int logoID = getLogoId(loop_id);
+                                    investorLogo.setImageResource(logoID);
+                                } catch (JSONException e) {
+
+                                }
+                            });
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }).start();
             });
         }
+    }
+
+    public String ParseInvestor(int Investor, String json){
+        String parsed = "";
+
+        if(Investor == R.id.moex) {
+            parsed = json;
+        }
+        else {
+            Gson gson = new Gson();
+            JsonObject jsonObject = gson.fromJson(json, JsonObject.class);
+            JsonArray mainEntityArray = jsonObject.getAsJsonArray("mainEntity");
+
+            StringBuilder unifiedText = new StringBuilder();
+
+            // Извлечение текста
+            for (JsonElement element : mainEntityArray) {
+                JsonObject questionObject = element.getAsJsonObject();
+                String question = questionObject.get("name").getAsString();
+                String answer = questionObject.getAsJsonObject("acceptedAnswer").get("text").getAsString();
+
+                unifiedText.append("Вопрос: ").append(question).append("\n");
+                unifiedText.append("Ответ: ").append(answer).append("\n\n");
+            }
+            parsed = unifiedText.toString();
+        }
+        return parsed;
     }
 
     public void InitCurrencies(){

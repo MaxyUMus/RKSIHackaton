@@ -1,0 +1,551 @@
+Index: main/app/src/main/java/com/example/rksihackaton/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.rksihackaton;\r\n\r\nimport static android.content.ContentValues.TAG;\r\n\r\nimport android.content.Intent;\r\nimport android.os.Bundle;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.Toast;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.concurrent.TimeUnit;\r\n\r\nimport okhttp3.MediaType;\r\nimport okhttp3.OkHttpClient;\r\nimport okhttp3.Request;\r\nimport okhttp3.RequestBody;\r\nimport okhttp3.Response;\r\nimport okhttp3.logging.HttpLoggingInterceptor;\r\n\r\nimport org.json.JSONException;\r\nimport org.json.JSONObject;\r\n\r\nimport javax.net.ssl.SSLContext;\r\nimport javax.net.ssl.TrustManagerFactory;\r\nimport javax.net.ssl.X509TrustManager;\r\n\r\nimport androidx.activity.EdgeToEdge;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.core.graphics.Insets;\r\nimport androidx.core.view.ViewCompat;\r\nimport androidx.core.view.WindowInsetsCompat;\r\n\r\nimport com.github.mikephil.charting.charts.BarChart;\r\nimport com.github.mikephil.charting.charts.LineChart;\r\nimport com.github.mikephil.charting.data.BarData;\r\nimport com.github.mikephil.charting.data.BarDataSet;\r\nimport com.github.mikephil.charting.data.BarEntry;\r\nimport com.github.mikephil.charting.data.Entry;\r\nimport com.github.mikephil.charting.data.LineData;\r\nimport com.github.mikephil.charting.data.LineDataSet;\r\nimport com.github.mikephil.charting.utils.ColorTemplate;\r\n\r\npublic class MainActivity extends AppCompatActivity {\r\n    Button aut;\r\n    Button reg;\r\n    OkHttpClient client;\r\n    EditText email;\r\n    EditText password;\r\n\r\n\r\n    private LineChart lineChart;\r\n    private BarChart barChart;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        EdgeToEdge.enable(this);\r\n        setContentView(R.layout.activity_main);\r\n        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {\r\n            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());\r\n            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);\r\n            return insets;\r\n        });\r\n\r\n\r\n        email = findViewById(R.id.et_email);\r\n        password = findViewById(R.id.et_password);\r\n\r\n        client = createHttpClient();\r\n\r\n        aut = findViewById(R.id.btn_login);\r\n        reg = findViewById(R.id.btn_register);\r\n\r\n        aut.setOnClickListener(view -> {\r\n\r\n            String emailText = email.getText().toString().trim();\r\n            String passwordText = password.getText().toString().trim();\r\n\r\n            if (emailText.isEmpty() || passwordText.isEmpty()) {\r\n                Toast.makeText(MainActivity.this, \"Email and password cannot be empty\", Toast.LENGTH_LONG).show();\r\n                return;\r\n            }\r\n\r\n            String json = \"{\\\"email\\\":\\\"\" + emailText + \"\\\", \\\"password\\\":\\\"\" + passwordText + \"\\\", \\\"action\\\":\\\"login\\\"}\";\r\n\r\n            new Thread(() -> {\r\n                RequestBody body = RequestBody.create(json, MediaType.get(\"application/json; charset=utf-8\"));\r\n\r\n                Request request = new Request.Builder()\r\n                        .url(\"http://10.0.2.2:8080/login\")\r\n                        .post(body)\r\n                        .build();\r\n\r\n                try (Response response = client.newCall(request).execute()) {\r\n                    if (response.isSuccessful() && response.body() != null) {\r\n                        String responseBody = response.body().string();\r\n                        runOnUiThread(() -> {\r\n                            try {\r\n                                JSONObject jsonResponse = new JSONObject(responseBody);\r\n                                String status = jsonResponse.getString(\"status\");\r\n                                String message = jsonResponse.getString(\"message\");\r\n\r\n\r\n                                if (\"success\".equals(status)) {\r\n                                    Toast.makeText(MainActivity.this, \"Login successful: \" + message, Toast.LENGTH_LONG).show();\r\n                                    // Переход на вторую активность\r\n                                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);\r\n                                    startActivity(intent);\r\n                                } else {\r\n                                    Toast.makeText(MainActivity.this, \"Login failed: \" + message, Toast.LENGTH_LONG).show();\r\n                                }\r\n                            } catch (JSONException e) {\r\n                                Toast.makeText(MainActivity.this, \"Error parsing response\", Toast.LENGTH_LONG).show();\r\n                            }\r\n                        });\r\n                    } else {\r\n                        runOnUiThread(() -> Toast.makeText(MainActivity.this, \"Authorization failed. Server error.\", Toast.LENGTH_LONG).show());\r\n                    }\r\n                } catch (Exception e) {\r\n                    e.printStackTrace();\r\n                    runOnUiThread(() -> {\r\n                        Toast.makeText(MainActivity.this, \"Error: \" + e.getMessage(), Toast.LENGTH_LONG).show();\r\n                    });\r\n                }\r\n            }).start();\r\n        });\r\n\r\n\r\n\r\n        reg.setOnClickListener(view -> {\r\n\r\n            String emailText = email.getText().toString().trim();\r\n            String passwordText = password.getText().toString().trim();\r\n            String json = \"{\\\"email\\\":\\\"\" + emailText + \"\\\", \\\"password\\\":\\\"\" + passwordText + \"\\\", \\\"action\\\":\\\"register\\\"}\";\r\n\r\n            new Thread(() -> {\r\n                RequestBody body = RequestBody.create(json, MediaType.get(\"application/json; charset=utf-8\"));\r\n\r\n                Request request = new Request.Builder()\r\n                        .url(\"http://10.0.2.2:8080/register\")\r\n                        .post(body)\r\n                        .build();\r\n\r\n                try (Response response = client.newCall(request).execute()) {\r\n                    if (response.isSuccessful() && response.body() != null) {\r\n                        String responseBody = response.body().string();\r\n                        runOnUiThread(() -> {\r\n                            try {\r\n                                JSONObject jsonResponse = new JSONObject(responseBody);\r\n                                String status = jsonResponse.getString(\"status\");\r\n                                String message = jsonResponse.getString(\"message\");\r\n\r\n                                if (\"success\".equals(status)) {\r\n                                    Toast.makeText(MainActivity.this, \"Registration successful: \" + message, Toast.LENGTH_LONG).show();\r\n                                } else {\r\n                                    Toast.makeText(MainActivity.this, \"Registration failed: \" + message, Toast.LENGTH_LONG).show();\r\n                                }\r\n                            } catch (JSONException e) {\r\n                                Toast.makeText(MainActivity.this, \"Error parsing response\", Toast.LENGTH_LONG).show();\r\n                            }\r\n                        });\r\n                    } else {\r\n                        runOnUiThread(() -> Toast.makeText(MainActivity.this, \"Registration failed. Server error.\", Toast.LENGTH_LONG).show());\r\n                    }\r\n                } catch (Exception e) {\r\n                    e.printStackTrace();\r\n                    runOnUiThread(() -> {\r\n                        Toast.makeText(MainActivity.this, \"Error: \" + e.getMessage(), Toast.LENGTH_LONG).show();\r\n                    });\r\n                }\r\n            }).start();\r\n        });\r\n\r\n//        lineChart = findViewById(R.id.graph);\r\n//        showLineChart();\r\n//\r\n//        barChart = findViewById(R.id.barChart);\r\n//        showBarChart();\r\n    }\r\n\r\n    private void showBarChart() {\r\n        ArrayList<BarEntry> entries = new ArrayList<>();\r\n        ArrayList<BarEntry> entries1 = new ArrayList<>();\r\n\r\n        // Пример данных\r\n        entries.add(new BarEntry(0, 4f));\r\n        entries.add(new BarEntry(1, 6f));\r\n        entries.add(new BarEntry(2, 2f));\r\n        entries.add(new BarEntry(3, 8f));\r\n        entries.add(new BarEntry(4, 5f));\r\n        entries.add(new BarEntry(5, 2f));\r\n        entries.add(new BarEntry(6, 3f));\r\n        entries.add(new BarEntry(7, 3f));\r\n\r\n        entries1.add(new BarEntry(0, 3f));\r\n        entries1.add(new BarEntry(1, 8f));\r\n        entries1.add(new BarEntry(2, 5f));\r\n        entries1.add(new BarEntry(3, 12f));\r\n        entries1.add(new BarEntry(4, 0f));\r\n        entries1.add(new BarEntry(5, 3f));\r\n        entries1.add(new BarEntry(6, 3f));\r\n        entries1.add(new BarEntry(7, 9f));\r\n\r\n        BarDataSet dataSet = new BarDataSet(entries, \"Label\"); // Название графика\r\n        BarDataSet dataSet1 = new BarDataSet(entries1, \"Label2\"); // Название графика\r\n        dataSet1.setColor(ColorTemplate.rgb(\"FFD700\"));\r\n\r\n        float groupSpace = 0.06f;\r\n        float barSpace = 0.02f; // x2 dataset\r\n        float barWidth = 0.45f; // x2 dataset\r\n\r\n        GraphBuilder.BuildBarGraph(barChart, groupSpace, barSpace, barWidth, dataSet, dataSet1);\r\n    }\r\n\r\n    private void showLineChart() {\r\n        ArrayList<Entry> entries = new ArrayList<>();\r\n        ArrayList<Entry> entries1 = new ArrayList<>();\r\n        // Пример данных\r\n        entries.add(new Entry(0, 1));\r\n        entries.add(new Entry(1, 3));\r\n        entries.add(new Entry(2, 2));\r\n        entries.add(new Entry(3, 5));\r\n        entries.add(new Entry(4, 4));\r\n\r\n        entries1.add(new Entry(0, 2));\r\n        entries1.add(new Entry(1, 8));\r\n        entries1.add(new Entry(2, 1));\r\n        entries1.add(new Entry(3, 2));\r\n        entries1.add(new Entry(4, 12));\r\n\r\n        LineDataSet dataSet = new LineDataSet(entries, \"Label\"); // Название графика\r\n        LineDataSet dataSet1 = new LineDataSet(entries1, \"Label1\"); // Название графика\r\n        dataSet.setColor(ColorTemplate.rgb(\"FFD700\"));\r\n        GraphBuilder.BuildLineGraph(lineChart, dataSet, dataSet1);\r\n    }\r\n\r\n\r\n    private OkHttpClient createHttpClient() {\r\n        try {\r\n            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());\r\n            trustManagerFactory.init((java.security.KeyStore) null);\r\n            X509TrustManager trustManager = (X509TrustManager) trustManagerFactory.getTrustManagers()[0];\r\n\r\n            SSLContext sslContext = SSLContext.getInstance(\"TLS\");\r\n            sslContext.init(null, trustManagerFactory.getTrustManagers(), null);\r\n\r\n            // Логирование запросов\r\n            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();\r\n            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);\r\n\r\n            return new OkHttpClient.Builder()\r\n                    .connectTimeout(10, TimeUnit.SECONDS)\r\n                    .readTimeout(30, TimeUnit.SECONDS)\r\n                    .writeTimeout(30, TimeUnit.SECONDS)\r\n                    .sslSocketFactory(sslContext.getSocketFactory(), trustManager)\r\n                    .hostnameVerifier((hostname, session) -> true)\r\n                    .addInterceptor(loggingInterceptor)\r\n                    .build();\r\n\r\n        } catch (Exception e) {\r\n            throw new RuntimeException(e);\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main/app/src/main/java/com/example/rksihackaton/MainActivity.java b/main/app/src/main/java/com/example/rksihackaton/MainActivity.java
+--- a/main/app/src/main/java/com/example/rksihackaton/MainActivity.java	(revision bd2edfc2028a3b2b0c2a6a587effadec609c8899)
++++ b/main/app/src/main/java/com/example/rksihackaton/MainActivity.java	(date 1733856782715)
+@@ -9,6 +9,7 @@
+ import android.widget.Toast;
+ 
+ import java.util.ArrayList;
++import java.util.List;
+ import java.util.concurrent.TimeUnit;
+ 
+ import okhttp3.MediaType;
+@@ -40,6 +41,9 @@
+ import com.github.mikephil.charting.data.LineData;
+ import com.github.mikephil.charting.data.LineDataSet;
+ import com.github.mikephil.charting.utils.ColorTemplate;
++import com.google.gson.Gson;
++import com.google.gson.JsonArray;
++import com.google.gson.JsonObject;
+ 
+ public class MainActivity extends AppCompatActivity {
+     Button aut;
+@@ -88,7 +92,7 @@
+                 RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
+ 
+                 Request request = new Request.Builder()
+-                        .url("http://10.0.2.2:8080/login")
++                        .url("https://0a0d-94-141-124-197.ngrok-free.app/login")
+                         .post(body)
+                         .build();
+ 
+@@ -138,7 +142,7 @@
+                 RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
+ 
+                 Request request = new Request.Builder()
+-                        .url("http://10.0.2.2:8080/register")
++                        .url("https://0a0d-94-141-124-197.ngrok-free.app/register")
+                         .post(body)
+                         .build();
+ 
+@@ -172,8 +176,10 @@
+             }).start();
+         });
+ 
+-//        lineChart = findViewById(R.id.graph);
+-//        showLineChart();
++        lineChart = findViewById(R.id.lineChart);
++
++
++        showLineChart();
+ //
+ //        barChart = findViewById(R.id.barChart);
+ //        showBarChart();
+@@ -214,25 +220,45 @@
+     }
+ 
+     private void showLineChart() {
+-        ArrayList<Entry> entries = new ArrayList<>();
+-        ArrayList<Entry> entries1 = new ArrayList<>();
+-        // Пример данных
+-        entries.add(new Entry(0, 1));
+-        entries.add(new Entry(1, 3));
+-        entries.add(new Entry(2, 2));
+-        entries.add(new Entry(3, 5));
+-        entries.add(new Entry(4, 4));
++        String jsonString = "{\"metals\":{\"metal\":[{\"date\":\"11.12.2024\",\"gold_price\":\"8593.1299999999992\",\"silver_price\":\"101.73\",\"platinum_price\":\"3058.52\",\"palladium_price\":\"3161.4400000000001\"},{\"date\":\"10.12.2024\",\"gold_price\":\"8426.1900000000005\",\"silver_price\":\"99.400000000000006\",\"platinum_price\":\"2990.5300000000002\",\"palladium_price\":\"3089.5700000000002\"},{\"date\":\"07.12.2024\",\"gold_price\":\"8439.1700000000001\",\"silver_price\":\"100.19\",\"platinum_price\":\"3011.0799999999999\",\"palladium_price\":\"3116.5599999999999\"},{\"date\":\"06.12.2024\",\"gold_price\":\"8803.7399999999998\",\"silver_price\":\"102.48999999999999\",\"platinum_price\":\"3131.0799999999999\",\"palladium_price\":\"3250.7399999999998\"},{\"date\":\"05.12.2024\",\"gold_price\":\"8849.5200000000004\",\"silver_price\":\"103.56999999999999\",\"platinum_price\":\"3200.46\",\"palladium_price\":\"3327.8099999999999\"},{\"date\":\"04.12.2024\",\"gold_price\":\"9020.3400000000001\",\"silver_price\":\"103.97\",\"platinum_price\":\"3216\",\"palladium_price\":\"3369.6300000000001\"},{\"date\":\"03.12.2024\",\"gold_price\":\"9134.9300000000003\",\"silver_price\":\"105.79000000000001\",\"platinum_price\":\"3239.0300000000002\",\"palladium_price\":\"3387.1999999999998\"}]}}";
++
++        // Используем Gson для разбора JSON
++        Gson gson = new Gson();
++        JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
++        JsonObject metals = jsonObject.getAsJsonObject("metals");
++        JsonArray metalArray = metals.getAsJsonArray("metal");
+ 
+-        entries1.add(new Entry(0, 2));
+-        entries1.add(new Entry(1, 8));
+-        entries1.add(new Entry(2, 1));
+-        entries1.add(new Entry(3, 2));
+-        entries1.add(new Entry(4, 12));
++        // Создаем списки для хранения данных графика
++        List<Entry> goldPrices = new ArrayList<>();
++        List<Entry> silverPrices = new ArrayList<>();
++        List<Entry> platinumPrices = new ArrayList<>();
++        List<Entry> palladiumPrices = new ArrayList<>();
+ 
+-        LineDataSet dataSet = new LineDataSet(entries, "Label"); // Название графика
+-        LineDataSet dataSet1 = new LineDataSet(entries1, "Label1"); // Название графика
+-        dataSet.setColor(ColorTemplate.rgb("FFD700"));
+-        GraphBuilder.BuildLineGraph(lineChart, dataSet, dataSet1);
++        // Заполняем списки данными
++        for (int i = 0; i < metalArray.size(); i++) {
++            JsonObject metalData = metalArray.get(i).getAsJsonObject();
++            String date = metalData.get("date").getAsString();
++            float goldPrice = metalData.get("gold_price").getAsFloat();
++            float silverPrice = metalData.get("silver_price").getAsFloat();
++            float platinumPrice = metalData.get("platinum_price").getAsFloat();
++            float palladiumPrice = metalData.get("palladium_price").getAsFloat();
++
++            // Добавляем данные в соответствующий список
++            goldPrices.add(new Entry(i, goldPrice));
++            silverPrices.add(new Entry(i, silverPrice));
++            platinumPrices.add(new Entry(i, platinumPrice));
++            palladiumPrices.add(new Entry(i, palladiumPrice));
++        }
++
++        LineDataSet gold_set = new LineDataSet(goldPrices, "Золото"); // Название графика
++        LineDataSet silver_set = new LineDataSet(silverPrices, "Серебро"); // Название графика
++        LineDataSet platinum_set = new LineDataSet(platinumPrices, "Платина"); // Название графика
++        LineDataSet palladium_set = new LineDataSet(palladiumPrices, "Палладий"); // Название графика
++        gold_set.setColor(ColorTemplate.rgb("FFD700"));
++        silver_set.setColor(ColorTemplate.rgb("C0C0C0"));
++        platinum_set.setColor(ColorTemplate.rgb("e5e4e2"));
++        palladium_set.setColor(ColorTemplate.rgb("b1b1b1"));
++        GraphBuilder.BuildLineGraph(lineChart, gold_set, silver_set, platinum_set, palladium_set);
+     }
+ 
+ 
+Index: main/app/src/main/res/layout/activity_main.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><ScrollView xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:padding=\"16dp\"\r\n    android:background=\"@color/white\"\r\n    android:id=\"@+id/main\">\r\n\r\n    <LinearLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        android:orientation=\"vertical\"\r\n        android:gravity=\"center\"\r\n        android:padding=\"16dp\">\r\n\r\n        <androidx.cardview.widget.CardView\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_marginTop=\"50dp\"\r\n            android:layout_marginBottom=\"50dp\"\r\n            app:cardBackgroundColor=\"@color/white\"\r\n            app:cardCornerRadius=\"16dp\"\r\n            app:cardElevation=\"8dp\"\r\n            android:padding=\"16dp\">\r\n\r\n            <LinearLayout\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:orientation=\"vertical\"\r\n                android:gravity=\"center\">\r\n\r\n                <TextView\r\n                    android:id=\"@+id/tv_header\"\r\n                    android:layout_width=\"wrap_content\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:text=\"Добро пожаловать\"\r\n                    android:textSize=\"24sp\"\r\n                    android:textStyle=\"bold\"\r\n                    android:layout_marginBottom=\"16dp\"\r\n                    android:textColor=\"@color/black\" />\r\n\r\n                <com.google.android.material.textfield.TextInputLayout\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginBottom=\"12dp\"\r\n                    app:boxBackgroundMode=\"outline\"\r\n                    app:boxCornerRadiusTopStart=\"16dp\"\r\n                    app:boxCornerRadiusTopEnd=\"16dp\"\r\n                    app:boxCornerRadiusBottomStart=\"16dp\"\r\n                    app:boxCornerRadiusBottomEnd=\"16dp\">\r\n\r\n                    <com.google.android.material.textfield.TextInputEditText\r\n                        android:id=\"@+id/et_email\"\r\n                        android:layout_width=\"match_parent\"\r\n                        android:layout_height=\"wrap_content\"\r\n                        android:hint=\"Email\"\r\n                        android:inputType=\"textEmailAddress\" />\r\n                </com.google.android.material.textfield.TextInputLayout>\r\n\r\n                <com.google.android.material.textfield.TextInputLayout\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginBottom=\"12dp\"\r\n                    app:boxBackgroundMode=\"outline\"\r\n                    app:boxCornerRadiusTopStart=\"16dp\"\r\n                    app:boxCornerRadiusTopEnd=\"16dp\"\r\n                    app:boxCornerRadiusBottomStart=\"16dp\"\r\n                    app:boxCornerRadiusBottomEnd=\"16dp\">\r\n\r\n                    <com.google.android.material.textfield.TextInputEditText\r\n                        android:id=\"@+id/et_password\"\r\n                        android:layout_width=\"match_parent\"\r\n                        android:layout_height=\"wrap_content\"\r\n                        android:hint=\"Пароль\"\r\n                        android:inputType=\"textPassword\" />\r\n                </com.google.android.material.textfield.TextInputLayout>\r\n\r\n                <com.google.android.material.button.MaterialButton\r\n                    android:id=\"@+id/btn_login\"\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:text=\"Войти\"\r\n                    android:layout_marginBottom=\"12dp\"\r\n                    style=\"@style/Widget.MaterialComponents.Button\"\r\n                    android:backgroundTint=\"@color/btns_color\"\r\n                    app:cornerRadius=\"16dp\"\r\n                    android:textColor=\"@android:color/white\" />\r\n\r\n                <com.google.android.material.button.MaterialButton\r\n                    android:id=\"@+id/btn_register\"\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:text=\"Регистрация\"\r\n                    style=\"@style/Widget.MaterialComponents.Button.OutlinedButton\"\r\n                    android:strokeWidth=\"1\"\r\n                    android:layout_marginBottom=\"16dp\"\r\n                    app:cornerRadius=\"16dp\"\r\n                    android:textColor=\"@color/btns_color\" />\r\n\r\n                <TextView\r\n                    android:id=\"@+id/tv_forgot_password\"\r\n                    android:layout_width=\"wrap_content\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:text=\"Забыли пароль?\"\r\n                    android:textSize=\"14sp\"\r\n                    android:layout_gravity=\"center\"\r\n                    android:textColor=\"@color/btns_color\"\r\n                    android:padding=\"8dp\" />\r\n\r\n                <com.google.android.material.checkbox.MaterialCheckBox\r\n                    android:id=\"@+id/checkbox_auto_login\"\r\n                    android:layout_width=\"wrap_content\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:text=\"Входить автоматически\"\r\n                    android:textColor=\"@color/btns_color\"\r\n                    android:layout_marginTop=\"12dp\" />\r\n\r\n\r\n            </LinearLayout>\r\n\r\n        </androidx.cardview.widget.CardView>\r\n    </LinearLayout>\r\n\r\n</ScrollView>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main/app/src/main/res/layout/activity_main.xml b/main/app/src/main/res/layout/activity_main.xml
+--- a/main/app/src/main/res/layout/activity_main.xml	(revision bd2edfc2028a3b2b0c2a6a587effadec609c8899)
++++ b/main/app/src/main/res/layout/activity_main.xml	(date 1733856549262)
+@@ -116,6 +116,13 @@
+                     android:layout_marginTop="12dp" />
+ 
+ 
++                <com.github.mikephil.charting.charts.LineChart
++                    android:id="@+id/lineChart"
++                    android:layout_width="match_parent"
++                    android:layout_height="300sp">
++
++                </com.github.mikephil.charting.charts.LineChart>
++
+             </LinearLayout>
+ 
+         </androidx.cardview.widget.CardView>
+Index: main/app/src/main/res/values/colors.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<resources>\r\n    <color name=\"black\">#FF000000</color>\r\n    <color name=\"white\">#FFFFFFFF</color>\r\n    <color name=\"btns_color\">#0f6387</color>\r\n    <color name=\"text_color\">#dae0e0d2</color>\r\n    <color name=\"blue\">#362abb</color>\r\n    <color name=\"grey\">#9C9393</color>\r\n</resources>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main/app/src/main/res/values/colors.xml b/main/app/src/main/res/values/colors.xml
+--- a/main/app/src/main/res/values/colors.xml	(revision bd2edfc2028a3b2b0c2a6a587effadec609c8899)
++++ b/main/app/src/main/res/values/colors.xml	(date 1733856402994)
+@@ -2,8 +2,8 @@
+ <resources>
+     <color name="black">#FF000000</color>
+     <color name="white">#FFFFFFFF</color>
+-    <color name="btns_color">#0f6387</color>
+-    <color name="text_color">#dae0e0d2</color>
++    <color name="btns_color">#00695C</color>
++    <color name="gold">#ffd700</color>
+     <color name="blue">#362abb</color>
+     <color name="grey">#9C9393</color>
+ </resources>
+\ No newline at end of file
+Index: main/app/src/main/res/layout/activity_home.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout\r\n    xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    android:id=\"@+id/main\"\r\n    android:background=\"@color/btns_color\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".HomeActivity\">\r\n\r\n    <TextView\r\n        android:id=\"@+id/textView\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"Мобильный инвестор\"\r\n        android:textSize=\"22dp\"\r\n        android:textStyle=\"bold\"\r\n        android:textColor=\"@color/white\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.1\"\r\n        app:layout_constraintVertical_bias=\"0.03\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n    <TableLayout\r\n        android:id=\"@+id/tableLayout\"\r\n        android:layout_width=\"220sp\"\r\n        android:layout_height=\"wrap_content\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.15\"\r\n        app:layout_constraintVertical_bias=\"0.125\">\r\n\r\n        <TableRow>\r\n\r\n            <TextView\r\n                android:id=\"@+id/dollarText\"\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_weight=\"1\"\r\n                android:textColor=\"@color/white\"\r\n                android:textSize=\"20sp\"\r\n                android:text=\"Доллар\" />\r\n\r\n            <TextView\r\n                android:id=\"@+id/dollarRate\"\r\n                android:layout_height=\"match_parent\"\r\n                android:layout_weight=\"1\"\r\n                android:textColor=\"@color/white\"\r\n                android:textSize=\"20sp\"\r\n                android:textAlignment=\"textEnd\"\r\n                android:text=\"100\" />\r\n        </TableRow>\r\n\r\n        <TableRow>\r\n\r\n            <TextView\r\n                android:id=\"@+id/euroText\"\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_weight=\"1\"\r\n                android:textColor=\"@color/white\"\r\n                android:textSize=\"20sp\"\r\n                android:text=\"Евро\" />\r\n\r\n            <TextView\r\n                android:id=\"@+id/euroRate\"\r\n                android:layout_height=\"match_parent\"\r\n                android:layout_weight=\"1\"\r\n                android:textColor=\"@color/white\"\r\n                android:textSize=\"20sp\"\r\n                android:textAlignment=\"textEnd\"\r\n                android:text=\"85\" />\r\n        </TableRow>\r\n\r\n        <TableRow>\r\n\r\n            <TextView\r\n                android:id=\"@+id/rubText\"\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_weight=\"1\"\r\n                android:textColor=\"@color/white\"\r\n                android:textSize=\"20sp\"\r\n                android:text=\"Рубль\" />\r\n\r\n            <TextView\r\n                android:id=\"@+id/rubRate\"\r\n                android:layout_height=\"match_parent\"\r\n                android:layout_weight=\"1\"\r\n                android:textColor=\"@color/white\"\r\n                android:textSize=\"20sp\"\r\n                android:textAlignment=\"textEnd\"\r\n                android:text=\"1\" />\r\n        </TableRow>\r\n\r\n        <TableRow>\r\n\r\n            <TextView\r\n                android:id=\"@+id/uanText\"\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_weight=\"1\"\r\n                android:textColor=\"@color/white\"\r\n                android:textSize=\"20sp\"\r\n                android:text=\"Юань\" />\r\n\r\n            <TextView\r\n                android:id=\"@+id/uanRate\"\r\n                android:layout_height=\"match_parent\"\r\n                android:layout_weight=\"1\"\r\n                android:textColor=\"@color/white\"\r\n                android:textSize=\"20sp\"\r\n                android:textAlignment=\"textEnd\"\r\n                android:text=\"14\" />\r\n        </TableRow>\r\n\r\n    </TableLayout>\r\n\r\n    <ImageButton\r\n        android:id=\"@+id/profile_btn\"\r\n        android:layout_width=\"50sp\"\r\n        android:layout_height=\"50sp\"\r\n        app:srcCompat=\"@drawable/ic_launcher_foreground\"\r\n        app:layout_constraintHorizontal_bias=\"0.95\"\r\n        app:layout_constraintVertical_bias=\"0.02\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"  />\r\n\r\n    <androidx.cardview.widget.CardView\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"500sp\"\r\n        android:layout_marginTop=\"245sp\"\r\n        app:cardBackgroundColor=\"@color/white\"\r\n        app:cardCornerRadius=\"25sp\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\">\r\n\r\n        <TextView\r\n            android:id=\"@+id/textView2\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"5sp\"\r\n            android:background=\"@color/grey\"\r\n            android:layout_gravity=\"center\"\r\n            android:layout_marginBottom=\"40sp\" />\r\n\r\n        <TextView\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:text=\"Акции инвесторов\"\r\n            android:textColor=\"@color/black\"\r\n            android:textStyle=\"bold\"\r\n            android:textSize=\"19sp\"\r\n            android:layout_margin=\"16sp\" />\r\n\r\n        <HorizontalScrollView\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"125sp\"\r\n            android:layout_marginTop=\"60sp\">\r\n\r\n            <LinearLayout\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"match_parent\"\r\n                android:orientation=\"horizontal\"\r\n                android:layout_marginHorizontal=\"4sp\">\r\n\r\n                <ImageButton\r\n                    android:layout_width=\"90sp\"\r\n                    android:layout_height=\"match_parent\"\r\n                    android:backgroundTint=\"@color/btns_color\"\r\n                    android:layout_marginHorizontal=\"5sp\"\r\n                    android:scaleType=\"fitCenter\"\r\n                    android:src=\"@drawable/gazprom_logo\"\r\n                    app:cornerRadius=\"5sp\" />\r\n\r\n                <ImageButton\r\n                    android:layout_width=\"90sp\"\r\n                    android:layout_height=\"match_parent\"\r\n                    android:backgroundTint=\"@color/btns_color\"\r\n                    android:layout_marginHorizontal=\"5sp\"\r\n                    android:scaleType=\"fitCenter\"\r\n                    android:src=\"@drawable/moscow_logo\"\r\n                    app:cornerRadius=\"5sp\" />\r\n\r\n                <ImageButton\r\n                    android:layout_width=\"90sp\"\r\n                    android:layout_height=\"match_parent\"\r\n                    android:backgroundTint=\"@color/btns_color\"\r\n                    android:layout_marginHorizontal=\"5sp\"\r\n                    android:scaleType=\"fitCenter\"\r\n                    android:src=\"@drawable/sber_logo\"\r\n                    app:cornerRadius=\"5sp\" />\r\n\r\n                <ImageButton\r\n                    android:layout_width=\"90sp\"\r\n                    android:layout_height=\"match_parent\"\r\n                    android:backgroundTint=\"@color/btns_color\"\r\n                    android:layout_marginHorizontal=\"5sp\"\r\n                    android:scaleType=\"fitCenter\"\r\n                    android:src=\"@drawable/rosneft_logo\"\r\n                    app:cornerRadius=\"5sp\" />\r\n\r\n            </LinearLayout>\r\n\r\n        </HorizontalScrollView>\r\n\r\n        <LinearLayout\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:orientation=\"vertical\"\r\n            android:layout_marginBottom=\"10sp\"\r\n            android:layout_gravity=\"bottom\"\r\n            android:padding=\"16sp\">\r\n\r\n            <TextView\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:text=\"Стоимость металлов на рынке\"\r\n                android:textColor=\"@color/black\"\r\n                android:textStyle=\"bold\"\r\n                android:textSize=\"19sp\"\r\n                />\r\n\r\n            <!--  app:strokeWidth=\"3px\"\r\n                app:strokeColor=\"@color/black\"-->\r\n            <Button\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_marginTop=\"8sp\"\r\n                android:text=\"Серебро\"\r\n                android:textSize=\"15sp\"\r\n                android:textColor=\"@color/btns_color\"\r\n                style=\"@style/Widget.MaterialComponents.Button.OutlinedButton\"\r\n                app:cornerRadius=\"10sp\"\r\n                app:strokeWidth=\"3px\"\r\n                app:strokeColor=\"@color/black\"\r\n                />\r\n\r\n            <Button\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_marginTop=\"8sp\"\r\n                android:text=\"Золото\"\r\n                android:textSize=\"15sp\"\r\n                android:textColor=\"@color/btns_color\"\r\n                style=\"@style/Widget.MaterialComponents.Button.OutlinedButton\"\r\n                app:cornerRadius=\"10sp\"\r\n                app:strokeWidth=\"3px\"\r\n                app:strokeColor=\"@color/black\"\r\n              />\r\n\r\n            <Button\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_marginTop=\"8sp\"\r\n                android:text=\"Платина\"\r\n                android:textSize=\"15sp\"\r\n                android:textColor=\"@color/btns_color\"\r\n                style=\"@style/Widget.MaterialComponents.Button.OutlinedButton\"\r\n                app:cornerRadius=\"10sp\"\r\n                app:strokeWidth=\"3px\"\r\n                app:strokeColor=\"@color/black\"\r\n               />\r\n\r\n            <Button\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_marginTop=\"8sp\"\r\n                android:text=\"Палладий\"\r\n                android:textSize=\"15sp\"\r\n                android:textColor=\"@color/btns_color\"\r\n                style=\"@style/Widget.MaterialComponents.Button.OutlinedButton\"\r\n                app:cornerRadius=\"10sp\"\r\n                app:strokeWidth=\"3px\"\r\n                app:strokeColor=\"@color/black\"\r\n                />\r\n\r\n        </LinearLayout>\r\n\r\n    </androidx.cardview.widget.CardView>\r\n\r\n\r\n\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main/app/src/main/res/layout/activity_home.xml b/main/app/src/main/res/layout/activity_home.xml
+--- a/main/app/src/main/res/layout/activity_home.xml	(revision bd2edfc2028a3b2b0c2a6a587effadec609c8899)
++++ b/main/app/src/main/res/layout/activity_home.xml	(date 1733856405330)
+@@ -13,26 +13,26 @@
+         android:id="@+id/textView"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+-        android:text="Мобильный инвестор"
++        android:text="Курс валют"
+         android:textSize="22dp"
+         android:textStyle="bold"
+-        android:textColor="@color/white"
++        android:textColor="@color/gold"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintHorizontal_bias="0.1"
+-        app:layout_constraintVertical_bias="0.03"
++        app:layout_constraintHorizontal_bias="0.05"
++        app:layout_constraintVertical_bias="0.02"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent" />
+ 
+     <TableLayout
+         android:id="@+id/tableLayout"
+-        android:layout_width="220sp"
++        android:layout_width="250sp"
+         android:layout_height="wrap_content"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent"
+-        app:layout_constraintHorizontal_bias="0.15"
++        app:layout_constraintHorizontal_bias="0.25"
+         app:layout_constraintVertical_bias="0.125">
+ 
+         <TableRow>
+@@ -119,6 +119,7 @@
+                 android:text="14" />
+         </TableRow>
+ 
++
+     </TableLayout>
+ 
+     <ImageButton
+@@ -136,7 +137,7 @@
+     <androidx.cardview.widget.CardView
+         android:layout_width="match_parent"
+         android:layout_height="500sp"
+-        android:layout_marginTop="245sp"
++        android:layout_marginTop="230sp"
+         app:cardBackgroundColor="@color/white"
+         app:cardCornerRadius="25sp"
+         app:layout_constraintEnd_toEndOf="parent"
+@@ -186,7 +187,7 @@
+                     android:backgroundTint="@color/btns_color"
+                     android:layout_marginHorizontal="5sp"
+                     android:scaleType="fitCenter"
+-                    android:src="@drawable/moscow_logo"
++                    android:src="@drawable/moscow_exchange_logo"
+                     app:cornerRadius="5sp" />
+ 
+                 <ImageButton
+@@ -211,6 +212,8 @@
+ 
+         </HorizontalScrollView>
+ 
++
++
+         <LinearLayout
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+Index: .idea/deploymentTargetSelector.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"deploymentTargetSelector\">\r\n    <selectionStates>\r\n      <SelectionState runConfigName=\"main.RKSIhackaton.app\">\r\n        <option name=\"selectionMode\" value=\"DROPDOWN\" />\r\n      </SelectionState>\r\n      <SelectionState runConfigName=\"RKSI_Hackaton.app.androidTest\">\r\n        <option name=\"selectionMode\" value=\"DROPDOWN\" />\r\n      </SelectionState>\r\n      <SelectionState runConfigName=\"RKSI_Hackaton.app\">\r\n        <option name=\"selectionMode\" value=\"DROPDOWN\" />\r\n      </SelectionState>\r\n      <SelectionState runConfigName=\"RKSI_Hackaton.app.unitTest\">\r\n        <option name=\"selectionMode\" value=\"DROPDOWN\" />\r\n      </SelectionState>\r\n      <SelectionState runConfigName=\"RKSI_Hackaton.app.main\">\r\n        <option name=\"selectionMode\" value=\"DROPDOWN\" />\r\n      </SelectionState>\r\n    </selectionStates>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetSelector.xml b/.idea/deploymentTargetSelector.xml
+--- a/.idea/deploymentTargetSelector.xml	(revision bd2edfc2028a3b2b0c2a6a587effadec609c8899)
++++ b/.idea/deploymentTargetSelector.xml	(date 1733856405365)
+@@ -16,6 +16,14 @@
+       </SelectionState>
+       <SelectionState runConfigName="RKSI_Hackaton.app.main">
+         <option name="selectionMode" value="DROPDOWN" />
++        <DropdownSelection timestamp="2024-12-10T17:33:33.703711100Z">
++          <Target type="DEFAULT_BOOT">
++            <handle>
++              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\pilip\.android\avd\qsdfghjuhki.avd" />
++            </handle>
++          </Target>
++        </DropdownSelection>
++        <DialogSelection />
+       </SelectionState>
+     </selectionStates>
+   </component>
+Index: main/app/src/main/AndroidManifest.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\" >\r\n\r\n    <application\r\n        android:allowBackup=\"true\"\r\n        android:dataExtractionRules=\"@xml/data_extraction_rules\"\r\n        android:fullBackupContent=\"@xml/backup_rules\"\r\n        android:icon=\"@mipmap/ic_launcher\"\r\n        android:label=\"@string/app_name\"\r\n        android:roundIcon=\"@mipmap/ic_launcher_round\"\r\n        android:supportsRtl=\"true\"\r\n        android:theme=\"@style/Theme.RKSIhackaton\"\r\n        tools:targetApi=\"31\" >\r\n        <activity\r\n            android:name=\".HomeActivity\"\r\n            android:exported=\"false\" />\r\n        <activity\r\n            android:name=\".MainActivity\"\r\n            android:exported=\"true\" >\r\n            <intent-filter>\r\n                <action android:name=\"android.intent.action.MAIN\" />\r\n\r\n                <category android:name=\"android.intent.category.LAUNCHER\" />\r\n            </intent-filter>\r\n        </activity>\r\n    </application>\r\n\r\n</manifest>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main/app/src/main/AndroidManifest.xml b/main/app/src/main/AndroidManifest.xml
+--- a/main/app/src/main/AndroidManifest.xml	(revision bd2edfc2028a3b2b0c2a6a587effadec609c8899)
++++ b/main/app/src/main/AndroidManifest.xml	(date 1733856405383)
+@@ -1,7 +1,7 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+     xmlns:tools="http://schemas.android.com/tools" >
+-
++    <uses-permission android:name="android.permission.INTERNET" />
+     <application
+         android:allowBackup="true"
+         android:dataExtractionRules="@xml/data_extraction_rules"
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AndroidLayouts\">\r\n    <shared>\r\n      <config />\r\n    </shared>\r\n    <layouts>\r\n      <layout url=\"file://$PROJECT_DIR$/main/app/src/main/res/layout/activity_graphs.xml\">\r\n        <config>\r\n          <theme>@style/Theme.RKSIhackaton</theme>\r\n        </config>\r\n      </layout>\r\n      <layout url=\"file://$PROJECT_DIR$/main/app/src/main/res/layout/activity_home.xml\">\r\n        <config>\r\n          <theme>@style/Theme.RKSIhackaton</theme>\r\n        </config>\r\n      </layout>\r\n      <layout url=\"file://$PROJECT_DIR$/main/app/src/main/res/layout/activity_main.xml\">\r\n        <config>\r\n          <theme>@style/Theme.RKSIhackaton</theme>\r\n        </config>\r\n      </layout>\r\n    </layouts>\r\n  </component>\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"NONE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"8c455c64-c804-4111-8b4f-7fe317acb692\" name=\"Changes\" comment=\"Добавление страницы с графиками\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/main/app/build.gradle.kts\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/main/app/build.gradle.kts\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/HomeActivity.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/HomeActivity.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/main/app/src/main/res/layout/activity_graphs.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/main/app/src/main/res/layout/activity_graphs.xml\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"ClangdSettings\">\r\n    <option name=\"formatViaClangd\" value=\"false\" />\r\n  </component>\r\n  <component name=\"ExecutionTargetManager\" SELECTED_TARGET=\"device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=/home/solver/.android/avd/Medium_Phone_API_35.avd)]\" />\r\n  <component name=\"ExternalProjectsData\">\r\n    <projectState path=\"$PROJECT_DIR$/main\">\r\n      <ProjectState />\r\n    </projectState>\r\n  </component>\r\n  <component name=\"ExternalProjectsManager\">\r\n    <system id=\"GRADLE\">\r\n      <state>\r\n        <task path=\"$PROJECT_DIR$/main/app\">\r\n          <activation />\r\n        </task>\r\n        <projects_view>\r\n          <tree_state>\r\n            <expand />\r\n            <select />\r\n          </tree_state>\r\n        </projects_view>\r\n      </state>\r\n    </system>\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Class\" />\r\n        <option value=\"layoutResourceFile\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"GitHubPullRequestSearchHistory\">{\r\n  &quot;lastFilter&quot;: {\r\n    &quot;state&quot;: &quot;OPEN&quot;,\r\n    &quot;assignee&quot;: &quot;AbsoluteSolver&quot;\r\n  }\r\n}</component>\r\n  <component name=\"GithubPullRequestsUISettings\"><![CDATA[{\r\n  \"selectedUrlAndAccountId\": {\r\n    \"url\": \"https://github.com/MaxyUMus/RKSIHackaton\",\r\n    \"accountId\": \"af253521-ebf5-45f7-9359-ea0a5072c465\"\r\n  }\r\n}]]></component>\r\n  <component name=\"ProblemsViewState\">\r\n    <option name=\"selectedTabId\" value=\"CurrentFile\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 6\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2q1BNjmQw9otMaEANfpdq0K2vB0\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\">\r\n    <OptionsSetting value=\"false\" id=\"Update\" />\r\n    <ConfirmationsSetting value=\"2\" id=\"Add\" />\r\n  </component>\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;Android App.RKSI_Hackaton.app.main.executor&quot;: &quot;Run&quot;,\r\n    &quot;Android App.main.RKSIhackaton.app.executor&quot;: &quot;Run&quot;,\r\n    &quot;Notification.DisplayName-DoNotAsk-Android Gradle Upgrade Notification&quot;: &quot;Android Gradle Upgrade Notification&quot;,\r\n    &quot;Notification.DoNotAsk-Android Gradle Upgrade Notification&quot;: &quot;true&quot;,\r\n    &quot;ResourceManagerPrefKey.ModuleName&quot;: &quot;RKSIhackaton.app.main&quot;,\r\n    &quot;ResourceManagerPrefKey.ResourceType&quot;: &quot;DRAWABLE&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,\r\n    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,\r\n    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,\r\n    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,\r\n    &quot;git-widget-placeholder&quot;: &quot;main&quot;,\r\n    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;/home/solver/AndroidStudioProjects/RKSIHackaton/main/app/src/main/res/drawable&quot;,\r\n    &quot;project.structure.last.edited&quot;: &quot;Dependencies&quot;,\r\n    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,\r\n    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;\r\n  }\r\n}</component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CopyFile.RECENT_KEYS\">\r\n      <recent name=\"$PROJECT_DIR$/main/app/src/main/res/drawable\" />\r\n    </key>\r\n    <key name=\"android.template.214438224\">\r\n      <recent name=\"com.example.rksihackaton\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\" selected=\"Android App.main.RKSIhackaton.app\">\r\n    <configuration name=\"RKSI_Hackaton.app\" type=\"AndroidRunConfigurationType\" factoryName=\"Android App\" activateToolWindowBeforeRun=\"false\">\r\n      <module name=\"RKSI_Hackaton.app\" />\r\n      <option name=\"DEPLOY\" value=\"true\" />\r\n      <option name=\"DEPLOY_APK_FROM_BUNDLE\" value=\"false\" />\r\n      <option name=\"DEPLOY_AS_INSTANT\" value=\"false\" />\r\n      <option name=\"ARTIFACT_NAME\" value=\"\" />\r\n      <option name=\"PM_INSTALL_OPTIONS\" value=\"\" />\r\n      <option name=\"ALL_USERS\" value=\"false\" />\r\n      <option name=\"ALWAYS_INSTALL_WITH_PM\" value=\"false\" />\r\n      <option name=\"CLEAR_APP_STORAGE\" value=\"false\" />\r\n      <option name=\"DYNAMIC_FEATURES_DISABLED_LIST\" value=\"\" />\r\n      <option name=\"ACTIVITY_EXTRA_FLAGS\" value=\"\" />\r\n      <option name=\"MODE\" value=\"default_activity\" />\r\n      <option name=\"CLEAR_LOGCAT\" value=\"false\" />\r\n      <option name=\"SHOW_LOGCAT_AUTOMATICALLY\" value=\"false\" />\r\n      <option name=\"TARGET_SELECTION_MODE\" value=\"DEVICE_AND_SNAPSHOT_COMBO_BOX\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_CONFIGURATION_ID\" value=\"-1\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_PROJECT_ID\" value=\"\" />\r\n      <option name=\"DEBUGGER_TYPE\" value=\"Auto\" />\r\n      <Auto>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Auto>\r\n      <Hybrid>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Hybrid>\r\n      <Java>\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Java>\r\n      <Native>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Native>\r\n      <Profilers>\r\n        <option name=\"ADVANCED_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_CONFIGURATION_NAME\" value=\"Java/Kotlin Method Sample (legacy)\" />\r\n        <option name=\"STARTUP_NATIVE_MEMORY_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"NATIVE_MEMORY_SAMPLE_RATE_BYTES\" value=\"2048\" />\r\n      </Profilers>\r\n      <option name=\"DEEP_LINK\" value=\"\" />\r\n      <option name=\"ACTIVITY_CLASS\" value=\"\" />\r\n      <option name=\"SEARCH_ACTIVITY_IN_GLOBAL_SCOPE\" value=\"false\" />\r\n      <option name=\"SKIP_ACTIVITY_VALIDATION\" value=\"false\" />\r\n      <method v=\"2\">\r\n        <option name=\"Android.Gradle.BeforeRunTask\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"RKSI_Hackaton.app.androidTest\" type=\"AndroidRunConfigurationType\" factoryName=\"Android App\" activateToolWindowBeforeRun=\"false\">\r\n      <module name=\"RKSI_Hackaton.app.androidTest\" />\r\n      <option name=\"DEPLOY\" value=\"true\" />\r\n      <option name=\"DEPLOY_APK_FROM_BUNDLE\" value=\"false\" />\r\n      <option name=\"DEPLOY_AS_INSTANT\" value=\"false\" />\r\n      <option name=\"ARTIFACT_NAME\" value=\"\" />\r\n      <option name=\"PM_INSTALL_OPTIONS\" value=\"\" />\r\n      <option name=\"ALL_USERS\" value=\"false\" />\r\n      <option name=\"ALWAYS_INSTALL_WITH_PM\" value=\"false\" />\r\n      <option name=\"CLEAR_APP_STORAGE\" value=\"false\" />\r\n      <option name=\"DYNAMIC_FEATURES_DISABLED_LIST\" value=\"\" />\r\n      <option name=\"ACTIVITY_EXTRA_FLAGS\" value=\"\" />\r\n      <option name=\"MODE\" value=\"default_activity\" />\r\n      <option name=\"CLEAR_LOGCAT\" value=\"false\" />\r\n      <option name=\"SHOW_LOGCAT_AUTOMATICALLY\" value=\"false\" />\r\n      <option name=\"TARGET_SELECTION_MODE\" value=\"DEVICE_AND_SNAPSHOT_COMBO_BOX\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_CONFIGURATION_ID\" value=\"-1\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_PROJECT_ID\" value=\"\" />\r\n      <option name=\"DEBUGGER_TYPE\" value=\"Auto\" />\r\n      <Auto>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Auto>\r\n      <Hybrid>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Hybrid>\r\n      <Java>\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Java>\r\n      <Native>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Native>\r\n      <Profilers>\r\n        <option name=\"ADVANCED_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_CONFIGURATION_NAME\" value=\"Java/Kotlin Method Sample (legacy)\" />\r\n        <option name=\"STARTUP_NATIVE_MEMORY_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"NATIVE_MEMORY_SAMPLE_RATE_BYTES\" value=\"2048\" />\r\n      </Profilers>\r\n      <option name=\"DEEP_LINK\" value=\"\" />\r\n      <option name=\"ACTIVITY_CLASS\" value=\"\" />\r\n      <option name=\"SEARCH_ACTIVITY_IN_GLOBAL_SCOPE\" value=\"false\" />\r\n      <option name=\"SKIP_ACTIVITY_VALIDATION\" value=\"false\" />\r\n      <method v=\"2\">\r\n        <option name=\"Android.Gradle.BeforeRunTask\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"RKSI_Hackaton.app.main\" type=\"AndroidRunConfigurationType\" factoryName=\"Android App\" activateToolWindowBeforeRun=\"false\">\r\n      <module name=\"RKSIhackaton.app.main\" />\r\n      <option name=\"DEPLOY\" value=\"true\" />\r\n      <option name=\"DEPLOY_APK_FROM_BUNDLE\" value=\"false\" />\r\n      <option name=\"DEPLOY_AS_INSTANT\" value=\"false\" />\r\n      <option name=\"ARTIFACT_NAME\" value=\"\" />\r\n      <option name=\"PM_INSTALL_OPTIONS\" value=\"\" />\r\n      <option name=\"ALL_USERS\" value=\"false\" />\r\n      <option name=\"ALWAYS_INSTALL_WITH_PM\" value=\"false\" />\r\n      <option name=\"CLEAR_APP_STORAGE\" value=\"false\" />\r\n      <option name=\"DYNAMIC_FEATURES_DISABLED_LIST\" value=\"\" />\r\n      <option name=\"ACTIVITY_EXTRA_FLAGS\" value=\"\" />\r\n      <option name=\"MODE\" value=\"default_activity\" />\r\n      <option name=\"CLEAR_LOGCAT\" value=\"false\" />\r\n      <option name=\"SHOW_LOGCAT_AUTOMATICALLY\" value=\"false\" />\r\n      <option name=\"TARGET_SELECTION_MODE\" value=\"DEVICE_AND_SNAPSHOT_COMBO_BOX\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_CONFIGURATION_ID\" value=\"-1\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_PROJECT_ID\" value=\"\" />\r\n      <option name=\"DEBUGGER_TYPE\" value=\"Auto\" />\r\n      <Auto>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Auto>\r\n      <Hybrid>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Hybrid>\r\n      <Java>\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Java>\r\n      <Native>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Native>\r\n      <Profilers>\r\n        <option name=\"ADVANCED_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_CONFIGURATION_NAME\" value=\"Java/Kotlin Method Sample (legacy)\" />\r\n        <option name=\"STARTUP_NATIVE_MEMORY_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"NATIVE_MEMORY_SAMPLE_RATE_BYTES\" value=\"2048\" />\r\n      </Profilers>\r\n      <option name=\"DEEP_LINK\" value=\"\" />\r\n      <option name=\"ACTIVITY_CLASS\" value=\"\" />\r\n      <option name=\"SEARCH_ACTIVITY_IN_GLOBAL_SCOPE\" value=\"false\" />\r\n      <option name=\"SKIP_ACTIVITY_VALIDATION\" value=\"false\" />\r\n      <method v=\"2\">\r\n        <option name=\"Android.Gradle.BeforeRunTask\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"RKSI_Hackaton.app.unitTest\" type=\"AndroidRunConfigurationType\" factoryName=\"Android App\" activateToolWindowBeforeRun=\"false\">\r\n      <module name=\"RKSI_Hackaton.app.unitTest\" />\r\n      <option name=\"DEPLOY\" value=\"true\" />\r\n      <option name=\"DEPLOY_APK_FROM_BUNDLE\" value=\"false\" />\r\n      <option name=\"DEPLOY_AS_INSTANT\" value=\"false\" />\r\n      <option name=\"ARTIFACT_NAME\" value=\"\" />\r\n      <option name=\"PM_INSTALL_OPTIONS\" value=\"\" />\r\n      <option name=\"ALL_USERS\" value=\"false\" />\r\n      <option name=\"ALWAYS_INSTALL_WITH_PM\" value=\"false\" />\r\n      <option name=\"CLEAR_APP_STORAGE\" value=\"false\" />\r\n      <option name=\"DYNAMIC_FEATURES_DISABLED_LIST\" value=\"\" />\r\n      <option name=\"ACTIVITY_EXTRA_FLAGS\" value=\"\" />\r\n      <option name=\"MODE\" value=\"default_activity\" />\r\n      <option name=\"CLEAR_LOGCAT\" value=\"false\" />\r\n      <option name=\"SHOW_LOGCAT_AUTOMATICALLY\" value=\"false\" />\r\n      <option name=\"TARGET_SELECTION_MODE\" value=\"DEVICE_AND_SNAPSHOT_COMBO_BOX\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_CONFIGURATION_ID\" value=\"-1\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_PROJECT_ID\" value=\"\" />\r\n      <option name=\"DEBUGGER_TYPE\" value=\"Auto\" />\r\n      <Auto>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Auto>\r\n      <Hybrid>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Hybrid>\r\n      <Java>\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Java>\r\n      <Native>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Native>\r\n      <Profilers>\r\n        <option name=\"ADVANCED_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_CONFIGURATION_NAME\" value=\"Java/Kotlin Method Sample (legacy)\" />\r\n        <option name=\"STARTUP_NATIVE_MEMORY_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"NATIVE_MEMORY_SAMPLE_RATE_BYTES\" value=\"2048\" />\r\n      </Profilers>\r\n      <option name=\"DEEP_LINK\" value=\"\" />\r\n      <option name=\"ACTIVITY_CLASS\" value=\"\" />\r\n      <option name=\"SEARCH_ACTIVITY_IN_GLOBAL_SCOPE\" value=\"false\" />\r\n      <option name=\"SKIP_ACTIVITY_VALIDATION\" value=\"false\" />\r\n      <method v=\"2\">\r\n        <option name=\"Android.Gradle.BeforeRunTask\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"app\" type=\"AndroidRunConfigurationType\" factoryName=\"Android App\" activateToolWindowBeforeRun=\"false\">\r\n      <module name=\"RKSIhackaton.app\" />\r\n      <option name=\"DEPLOY\" value=\"true\" />\r\n      <option name=\"DEPLOY_APK_FROM_BUNDLE\" value=\"false\" />\r\n      <option name=\"DEPLOY_AS_INSTANT\" value=\"false\" />\r\n      <option name=\"ARTIFACT_NAME\" value=\"\" />\r\n      <option name=\"PM_INSTALL_OPTIONS\" value=\"\" />\r\n      <option name=\"ALL_USERS\" value=\"false\" />\r\n      <option name=\"ALWAYS_INSTALL_WITH_PM\" value=\"false\" />\r\n      <option name=\"CLEAR_APP_STORAGE\" value=\"false\" />\r\n      <option name=\"DYNAMIC_FEATURES_DISABLED_LIST\" value=\"\" />\r\n      <option name=\"ACTIVITY_EXTRA_FLAGS\" value=\"\" />\r\n      <option name=\"MODE\" value=\"default_activity\" />\r\n      <option name=\"CLEAR_LOGCAT\" value=\"false\" />\r\n      <option name=\"SHOW_LOGCAT_AUTOMATICALLY\" value=\"false\" />\r\n      <option name=\"TARGET_SELECTION_MODE\" value=\"DEVICE_AND_SNAPSHOT_COMBO_BOX\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_CONFIGURATION_ID\" value=\"-1\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_PROJECT_ID\" value=\"\" />\r\n      <option name=\"DEBUGGER_TYPE\" value=\"Auto\" />\r\n      <Auto>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Auto>\r\n      <Hybrid>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Hybrid>\r\n      <Java>\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Java>\r\n      <Native>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Native>\r\n      <Profilers>\r\n        <option name=\"ADVANCED_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_CONFIGURATION_NAME\" value=\"Java/Kotlin Method Sample (legacy)\" />\r\n        <option name=\"STARTUP_NATIVE_MEMORY_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"NATIVE_MEMORY_SAMPLE_RATE_BYTES\" value=\"2048\" />\r\n      </Profilers>\r\n      <option name=\"DEEP_LINK\" value=\"\" />\r\n      <option name=\"ACTIVITY_CLASS\" value=\"\" />\r\n      <option name=\"SEARCH_ACTIVITY_IN_GLOBAL_SCOPE\" value=\"false\" />\r\n      <option name=\"SKIP_ACTIVITY_VALIDATION\" value=\"false\" />\r\n      <method v=\"2\">\r\n        <option name=\"Android.Gradle.BeforeRunTask\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"app.androidTest\" type=\"AndroidRunConfigurationType\" factoryName=\"Android App\" activateToolWindowBeforeRun=\"false\">\r\n      <module name=\"RKSIhackaton.app.androidTest\" />\r\n      <option name=\"DEPLOY\" value=\"true\" />\r\n      <option name=\"DEPLOY_APK_FROM_BUNDLE\" value=\"false\" />\r\n      <option name=\"DEPLOY_AS_INSTANT\" value=\"false\" />\r\n      <option name=\"ARTIFACT_NAME\" value=\"\" />\r\n      <option name=\"PM_INSTALL_OPTIONS\" value=\"\" />\r\n      <option name=\"ALL_USERS\" value=\"false\" />\r\n      <option name=\"ALWAYS_INSTALL_WITH_PM\" value=\"false\" />\r\n      <option name=\"CLEAR_APP_STORAGE\" value=\"false\" />\r\n      <option name=\"DYNAMIC_FEATURES_DISABLED_LIST\" value=\"\" />\r\n      <option name=\"ACTIVITY_EXTRA_FLAGS\" value=\"\" />\r\n      <option name=\"MODE\" value=\"default_activity\" />\r\n      <option name=\"CLEAR_LOGCAT\" value=\"false\" />\r\n      <option name=\"SHOW_LOGCAT_AUTOMATICALLY\" value=\"false\" />\r\n      <option name=\"TARGET_SELECTION_MODE\" value=\"DEVICE_AND_SNAPSHOT_COMBO_BOX\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_CONFIGURATION_ID\" value=\"-1\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_PROJECT_ID\" value=\"\" />\r\n      <option name=\"DEBUGGER_TYPE\" value=\"Auto\" />\r\n      <Auto>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Auto>\r\n      <Hybrid>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Hybrid>\r\n      <Java>\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Java>\r\n      <Native>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Native>\r\n      <Profilers>\r\n        <option name=\"ADVANCED_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_CONFIGURATION_NAME\" value=\"Java/Kotlin Method Sample (legacy)\" />\r\n        <option name=\"STARTUP_NATIVE_MEMORY_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"NATIVE_MEMORY_SAMPLE_RATE_BYTES\" value=\"2048\" />\r\n      </Profilers>\r\n      <option name=\"DEEP_LINK\" value=\"\" />\r\n      <option name=\"ACTIVITY_CLASS\" value=\"\" />\r\n      <option name=\"SEARCH_ACTIVITY_IN_GLOBAL_SCOPE\" value=\"false\" />\r\n      <option name=\"SKIP_ACTIVITY_VALIDATION\" value=\"false\" />\r\n      <method v=\"2\">\r\n        <option name=\"Android.Gradle.BeforeRunTask\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"app.main\" type=\"AndroidRunConfigurationType\" factoryName=\"Android App\" activateToolWindowBeforeRun=\"false\">\r\n      <module name=\"RKSIhackaton.app.main\" />\r\n      <option name=\"DEPLOY\" value=\"true\" />\r\n      <option name=\"DEPLOY_APK_FROM_BUNDLE\" value=\"false\" />\r\n      <option name=\"DEPLOY_AS_INSTANT\" value=\"false\" />\r\n      <option name=\"ARTIFACT_NAME\" value=\"\" />\r\n      <option name=\"PM_INSTALL_OPTIONS\" value=\"\" />\r\n      <option name=\"ALL_USERS\" value=\"false\" />\r\n      <option name=\"ALWAYS_INSTALL_WITH_PM\" value=\"false\" />\r\n      <option name=\"CLEAR_APP_STORAGE\" value=\"false\" />\r\n      <option name=\"DYNAMIC_FEATURES_DISABLED_LIST\" value=\"\" />\r\n      <option name=\"ACTIVITY_EXTRA_FLAGS\" value=\"\" />\r\n      <option name=\"MODE\" value=\"default_activity\" />\r\n      <option name=\"CLEAR_LOGCAT\" value=\"false\" />\r\n      <option name=\"SHOW_LOGCAT_AUTOMATICALLY\" value=\"false\" />\r\n      <option name=\"TARGET_SELECTION_MODE\" value=\"DEVICE_AND_SNAPSHOT_COMBO_BOX\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_CONFIGURATION_ID\" value=\"-1\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_PROJECT_ID\" value=\"\" />\r\n      <option name=\"DEBUGGER_TYPE\" value=\"Auto\" />\r\n      <Auto>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Auto>\r\n      <Hybrid>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Hybrid>\r\n      <Java>\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Java>\r\n      <Native>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Native>\r\n      <Profilers>\r\n        <option name=\"ADVANCED_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_CONFIGURATION_NAME\" value=\"Java/Kotlin Method Sample (legacy)\" />\r\n        <option name=\"STARTUP_NATIVE_MEMORY_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"NATIVE_MEMORY_SAMPLE_RATE_BYTES\" value=\"2048\" />\r\n      </Profilers>\r\n      <option name=\"DEEP_LINK\" value=\"\" />\r\n      <option name=\"ACTIVITY_CLASS\" value=\"\" />\r\n      <option name=\"SEARCH_ACTIVITY_IN_GLOBAL_SCOPE\" value=\"false\" />\r\n      <option name=\"SKIP_ACTIVITY_VALIDATION\" value=\"false\" />\r\n      <method v=\"2\">\r\n        <option name=\"Android.Gradle.BeforeRunTask\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"app.unitTest\" type=\"AndroidRunConfigurationType\" factoryName=\"Android App\" activateToolWindowBeforeRun=\"false\">\r\n      <module name=\"RKSIhackaton.app.unitTest\" />\r\n      <option name=\"DEPLOY\" value=\"true\" />\r\n      <option name=\"DEPLOY_APK_FROM_BUNDLE\" value=\"false\" />\r\n      <option name=\"DEPLOY_AS_INSTANT\" value=\"false\" />\r\n      <option name=\"ARTIFACT_NAME\" value=\"\" />\r\n      <option name=\"PM_INSTALL_OPTIONS\" value=\"\" />\r\n      <option name=\"ALL_USERS\" value=\"false\" />\r\n      <option name=\"ALWAYS_INSTALL_WITH_PM\" value=\"false\" />\r\n      <option name=\"CLEAR_APP_STORAGE\" value=\"false\" />\r\n      <option name=\"DYNAMIC_FEATURES_DISABLED_LIST\" value=\"\" />\r\n      <option name=\"ACTIVITY_EXTRA_FLAGS\" value=\"\" />\r\n      <option name=\"MODE\" value=\"default_activity\" />\r\n      <option name=\"CLEAR_LOGCAT\" value=\"false\" />\r\n      <option name=\"SHOW_LOGCAT_AUTOMATICALLY\" value=\"false\" />\r\n      <option name=\"TARGET_SELECTION_MODE\" value=\"DEVICE_AND_SNAPSHOT_COMBO_BOX\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_CONFIGURATION_ID\" value=\"-1\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_PROJECT_ID\" value=\"\" />\r\n      <option name=\"DEBUGGER_TYPE\" value=\"Auto\" />\r\n      <Auto>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Auto>\r\n      <Hybrid>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Hybrid>\r\n      <Java>\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Java>\r\n      <Native>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Native>\r\n      <Profilers>\r\n        <option name=\"ADVANCED_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_CONFIGURATION_NAME\" value=\"Java/Kotlin Method Sample (legacy)\" />\r\n        <option name=\"STARTUP_NATIVE_MEMORY_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"NATIVE_MEMORY_SAMPLE_RATE_BYTES\" value=\"2048\" />\r\n      </Profilers>\r\n      <option name=\"DEEP_LINK\" value=\"\" />\r\n      <option name=\"ACTIVITY_CLASS\" value=\"\" />\r\n      <option name=\"SEARCH_ACTIVITY_IN_GLOBAL_SCOPE\" value=\"false\" />\r\n      <option name=\"SKIP_ACTIVITY_VALIDATION\" value=\"false\" />\r\n      <method v=\"2\">\r\n        <option name=\"Android.Gradle.BeforeRunTask\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"main.RKSIhackaton.app\" type=\"AndroidRunConfigurationType\" factoryName=\"Android App\">\r\n      <module name=\"main.RKSIhackaton.app.main~1\" />\r\n      <option name=\"DEPLOY\" value=\"true\" />\r\n      <option name=\"DEPLOY_APK_FROM_BUNDLE\" value=\"false\" />\r\n      <option name=\"DEPLOY_AS_INSTANT\" value=\"false\" />\r\n      <option name=\"ARTIFACT_NAME\" value=\"\" />\r\n      <option name=\"PM_INSTALL_OPTIONS\" value=\"\" />\r\n      <option name=\"ALL_USERS\" value=\"false\" />\r\n      <option name=\"ALWAYS_INSTALL_WITH_PM\" value=\"false\" />\r\n      <option name=\"CLEAR_APP_STORAGE\" value=\"false\" />\r\n      <option name=\"DYNAMIC_FEATURES_DISABLED_LIST\" value=\"\" />\r\n      <option name=\"ACTIVITY_EXTRA_FLAGS\" value=\"\" />\r\n      <option name=\"MODE\" value=\"default_activity\" />\r\n      <option name=\"CLEAR_LOGCAT\" value=\"false\" />\r\n      <option name=\"SHOW_LOGCAT_AUTOMATICALLY\" value=\"false\" />\r\n      <option name=\"TARGET_SELECTION_MODE\" value=\"DEVICE_AND_SNAPSHOT_COMBO_BOX\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_CONFIGURATION_ID\" value=\"-1\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_PROJECT_ID\" value=\"\" />\r\n      <option name=\"DEBUGGER_TYPE\" value=\"Auto\" />\r\n      <Auto>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Auto>\r\n      <Hybrid>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Hybrid>\r\n      <Java>\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Java>\r\n      <Native>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Native>\r\n      <Profilers>\r\n        <option name=\"ADVANCED_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_CONFIGURATION_NAME\" value=\"Java/Kotlin Method Sample (legacy)\" />\r\n        <option name=\"STARTUP_NATIVE_MEMORY_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"NATIVE_MEMORY_SAMPLE_RATE_BYTES\" value=\"2048\" />\r\n      </Profilers>\r\n      <option name=\"DEEP_LINK\" value=\"\" />\r\n      <option name=\"ACTIVITY_CLASS\" value=\"\" />\r\n      <option name=\"SEARCH_ACTIVITY_IN_GLOBAL_SCOPE\" value=\"false\" />\r\n      <option name=\"SKIP_ACTIVITY_VALIDATION\" value=\"false\" />\r\n      <method v=\"2\">\r\n        <option name=\"Android.Gradle.BeforeRunTask\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"8c455c64-c804-4111-8b4f-7fe317acb692\" name=\"Changes\" comment=\"\" />\r\n      <created>1733820166165</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1733820166165</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"Удаление лишнего\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1733820341715</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1733820341715</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"Добавление графиков\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1733833816515</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1733833816515</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"Доработка и тестирование графиков 0.1\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1733834442054</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1733834442054</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00004\" summary=\"Добавление главной страницы\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1733848705195</created>\r\n      <option name=\"number\" value=\"00004\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1733848705195</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00005\" summary=\"Добавление главной страницы\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1733854657322</created>\r\n      <option name=\"number\" value=\"00005\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00005\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1733854657322</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00006\" summary=\"Добавление страницы с графиками\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1733855683472</created>\r\n      <option name=\"number\" value=\"00006\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00006\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1733855683472</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00007\" summary=\"Добавление страницы с графиками\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1733855694356</created>\r\n      <option name=\"number\" value=\"00007\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00007\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1733855694356</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"8\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"Удаление лишнего\" />\r\n    <MESSAGE value=\"Тестовый комит\" />\r\n    <MESSAGE value=\"Добавление графиков\" />\r\n    <MESSAGE value=\"Доработка и тестирование графиков 0.1\" />\r\n    <MESSAGE value=\"Добавление главной страницы\" />\r\n    <MESSAGE value=\"Добавление страницы с графиками\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Добавление страницы с графиками\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision bd2edfc2028a3b2b0c2a6a587effadec609c8899)
++++ b/.idea/workspace.xml	(date 1733856907939)
+@@ -26,11 +26,21 @@
+     <option name="autoReloadType" value="NONE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="8c455c64-c804-4111-8b4f-7fe317acb692" name="Changes" comment="Добавление страницы с графиками">
++    <list default="true" id="8c455c64-c804-4111-8b4f-7fe317acb692" name="Changes" comment="Доработка и тестирование графиков 0.1">
++      <change afterPath="$PROJECT_DIR$/main/app/src/main/res/drawable/gprom.png" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/main/app/src/main/res/drawable/mel.png" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/main/app/src/main/res/drawable/rneft.png" afterDir="false" />
++      <change afterPath="$PROJECT_DIR$/main/app/src/main/res/drawable/sber.png" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/main/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/build.gradle.kts" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/HomeActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/HomeActivity.java" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_graphs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_graphs.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/main/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/AndroidManifest.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/MainActivity.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/drawable/gazprom_logo.png" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/drawable/rosneft_logo.png" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/drawable/sber_logo.png" beforeDir="false" />
++      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_home.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_home.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_main.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/values/colors.xml" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -40,7 +50,7 @@
+   <component name="ClangdSettings">
+     <option name="formatViaClangd" value="false" />
+   </component>
+-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=LocalEmulator, isTemplate=false, identifier=path=/home/solver/.android/avd/Medium_Phone_API_35.avd)]" />
++  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=11163553CC001966)]" />
+   <component name="ExternalProjectsData">
+     <projectState path="$PROJECT_DIR$/main">
+       <ProjectState />
+@@ -54,7 +64,30 @@
+         </task>
+         <projects_view>
+           <tree_state>
+-            <expand />
++            <expand>
++              <path>
++                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
++                <item name="RKSIhackaton" type="f1a62948:ProjectNode" />
++              </path>
++              <path>
++                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
++                <item name="RKSIhackaton" type="f1a62948:ProjectNode" />
++                <item name="app" type="2d1252cf:ModuleNode" />
++              </path>
++              <path>
++                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
++                <item name="RKSIhackaton" type="f1a62948:ProjectNode" />
++                <item name="app" type="2d1252cf:ModuleNode" />
++                <item name="Tasks" type="e4a08cd1:TasksNode" />
++              </path>
++              <path>
++                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
++                <item name="RKSIhackaton" type="f1a62948:ProjectNode" />
++                <item name="app" type="2d1252cf:ModuleNode" />
++                <item name="Tasks" type="e4a08cd1:TasksNode" />
++                <item name="other" type="c8890929:TasksNode$1" />
++              </path>
++            </expand>
+             <select />
+           </tree_state>
+         </projects_view>
+@@ -65,7 +98,6 @@
+     <option name="RECENT_TEMPLATES">
+       <list>
+         <option value="Class" />
+-        <option value="layoutResourceFile" />
+       </list>
+     </option>
+   </component>
+@@ -78,12 +110,12 @@
+     &quot;assignee&quot;: &quot;AbsoluteSolver&quot;
+   }
+ }</component>
+-  <component name="GithubPullRequestsUISettings"><![CDATA[{
+-  "selectedUrlAndAccountId": {
+-    "url": "https://github.com/MaxyUMus/RKSIHackaton",
+-    "accountId": "af253521-ebf5-45f7-9359-ea0a5072c465"
+-  }
+-}]]></component>
++  <component name="GithubPullRequestsUISettings">{
++  &quot;selectedUrlAndAccountId&quot;: {
++    &quot;url&quot;: &quot;https://github.com/MaxyUMus/RKSIHackaton&quot;,
++    &quot;accountId&quot;: &quot;e0904356-ed64-41d2-9d3c-a8eee62c3621&quot;
++  }
++}</component>
+   <component name="ProblemsViewState">
+     <option name="selectedTabId" value="CurrentFile" />
+   </component>
+@@ -115,21 +147,18 @@
+     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+-    &quot;last_opened_file_path&quot;: &quot;/home/solver/AndroidStudioProjects/RKSIHackaton/main/app/src/main/res/drawable&quot;,
++    &quot;last_opened_file_path&quot;: &quot;C:/Users/pilip/AndroidStudioProjects/RKSIHackaton&quot;,
+     &quot;project.structure.last.edited&quot;: &quot;Dependencies&quot;,
+     &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
+     &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;
+   }
+ }</component>
+   <component name="RecentsManager">
+-    <key name="CopyFile.RECENT_KEYS">
+-      <recent name="$PROJECT_DIR$/main/app/src/main/res/drawable" />
+-    </key>
+     <key name="android.template.214438224">
+       <recent name="com.example.rksihackaton" />
+     </key>
+   </component>
+-  <component name="RunManager" selected="Android App.main.RKSIhackaton.app">
++  <component name="RunManager" selected="Android App.RKSI_Hackaton.app.main">
+     <configuration name="RKSI_Hackaton.app" type="AndroidRunConfigurationType" factoryName="Android App" activateToolWindowBeforeRun="false">
+       <module name="RKSI_Hackaton.app" />
+       <option name="DEPLOY" value="true" />
+@@ -143,6 +172,8 @@
+       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+       <option name="MODE" value="default_activity" />
++      <option name="RESTORE_ENABLED" value="false" />
++      <option name="RESTORE_FILE" value="" />
+       <option name="CLEAR_LOGCAT" value="false" />
+       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+@@ -209,6 +240,8 @@
+       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+       <option name="MODE" value="default_activity" />
++      <option name="RESTORE_ENABLED" value="false" />
++      <option name="RESTORE_FILE" value="" />
+       <option name="CLEAR_LOGCAT" value="false" />
+       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+@@ -275,6 +308,8 @@
+       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+       <option name="MODE" value="default_activity" />
++      <option name="RESTORE_ENABLED" value="false" />
++      <option name="RESTORE_FILE" value="" />
+       <option name="CLEAR_LOGCAT" value="false" />
+       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+@@ -341,6 +376,8 @@
+       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+       <option name="MODE" value="default_activity" />
++      <option name="RESTORE_ENABLED" value="false" />
++      <option name="RESTORE_FILE" value="" />
+       <option name="CLEAR_LOGCAT" value="false" />
+       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+@@ -407,6 +444,8 @@
+       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+       <option name="MODE" value="default_activity" />
++      <option name="RESTORE_ENABLED" value="false" />
++      <option name="RESTORE_FILE" value="" />
+       <option name="CLEAR_LOGCAT" value="false" />
+       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+@@ -473,6 +512,8 @@
+       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+       <option name="MODE" value="default_activity" />
++      <option name="RESTORE_ENABLED" value="false" />
++      <option name="RESTORE_FILE" value="" />
+       <option name="CLEAR_LOGCAT" value="false" />
+       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+@@ -539,6 +580,8 @@
+       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+       <option name="MODE" value="default_activity" />
++      <option name="RESTORE_ENABLED" value="false" />
++      <option name="RESTORE_FILE" value="" />
+       <option name="CLEAR_LOGCAT" value="false" />
+       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+@@ -605,6 +648,8 @@
+       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+       <option name="MODE" value="default_activity" />
++      <option name="RESTORE_ENABLED" value="false" />
++      <option name="RESTORE_FILE" value="" />
+       <option name="CLEAR_LOGCAT" value="false" />
+       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+@@ -671,6 +716,8 @@
+       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+       <option name="MODE" value="default_activity" />
++      <option name="RESTORE_ENABLED" value="false" />
++      <option name="RESTORE_FILE" value="" />
+       <option name="CLEAR_LOGCAT" value="false" />
+       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+@@ -758,39 +805,7 @@
+       <option name="project" value="LOCAL" />
+       <updated>1733834442054</updated>
+     </task>
+-    <task id="LOCAL-00004" summary="Добавление главной страницы">
+-      <option name="closed" value="true" />
+-      <created>1733848705195</created>
+-      <option name="number" value="00004" />
+-      <option name="presentableId" value="LOCAL-00004" />
+-      <option name="project" value="LOCAL" />
+-      <updated>1733848705195</updated>
+-    </task>
+-    <task id="LOCAL-00005" summary="Добавление главной страницы">
+-      <option name="closed" value="true" />
+-      <created>1733854657322</created>
+-      <option name="number" value="00005" />
+-      <option name="presentableId" value="LOCAL-00005" />
+-      <option name="project" value="LOCAL" />
+-      <updated>1733854657322</updated>
+-    </task>
+-    <task id="LOCAL-00006" summary="Добавление страницы с графиками">
+-      <option name="closed" value="true" />
+-      <created>1733855683472</created>
+-      <option name="number" value="00006" />
+-      <option name="presentableId" value="LOCAL-00006" />
+-      <option name="project" value="LOCAL" />
+-      <updated>1733855683472</updated>
+-    </task>
+-    <task id="LOCAL-00007" summary="Добавление страницы с графиками">
+-      <option name="closed" value="true" />
+-      <created>1733855694356</created>
+-      <option name="number" value="00007" />
+-      <option name="presentableId" value="LOCAL-00007" />
+-      <option name="project" value="LOCAL" />
+-      <updated>1733855694356</updated>
+-    </task>
+-    <option name="localTasksCounter" value="8" />
++    <option name="localTasksCounter" value="4" />
+     <servers />
+   </component>
+   <component name="Vcs.Log.Tabs.Properties">
+@@ -809,8 +824,6 @@
+     <MESSAGE value="Тестовый комит" />
+     <MESSAGE value="Добавление графиков" />
+     <MESSAGE value="Доработка и тестирование графиков 0.1" />
+-    <MESSAGE value="Добавление главной страницы" />
+-    <MESSAGE value="Добавление страницы с графиками" />
+-    <option name="LAST_COMMIT_MESSAGE" value="Добавление страницы с графиками" />
++    <option name="LAST_COMMIT_MESSAGE" value="Доработка и тестирование графиков 0.1" />
+   </component>
+ </project>
+\ No newline at end of file

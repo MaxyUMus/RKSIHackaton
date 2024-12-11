@@ -1,0 +1,1528 @@
+Index: main/app/src/main/java/com/example/rksihackaton/MainActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.rksihackaton;\r\n\r\nimport static android.content.ContentValues.TAG;\r\n\r\nimport android.content.Intent;\r\nimport android.graphics.Color;\r\nimport android.os.Bundle;\r\nimport android.widget.Button;\r\nimport android.widget.EditText;\r\nimport android.widget.Toast;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.HashMap;\r\nimport java.util.List;\r\nimport java.util.Map;\r\nimport java.util.concurrent.TimeUnit;\r\n\r\nimport okhttp3.MediaType;\r\nimport okhttp3.OkHttpClient;\r\nimport okhttp3.Request;\r\nimport okhttp3.RequestBody;\r\nimport okhttp3.Response;\r\nimport okhttp3.logging.HttpLoggingInterceptor;\r\n\r\nimport org.json.JSONException;\r\nimport org.json.JSONObject;\r\n\r\nimport javax.net.ssl.SSLContext;\r\nimport javax.net.ssl.TrustManagerFactory;\r\nimport javax.net.ssl.X509TrustManager;\r\n\r\nimport androidx.activity.EdgeToEdge;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.core.graphics.Insets;\r\nimport androidx.core.view.ViewCompat;\r\nimport androidx.core.view.WindowInsetsCompat;\r\n\r\nimport com.github.mikephil.charting.charts.BarChart;\r\nimport com.github.mikephil.charting.charts.LineChart;\r\nimport com.github.mikephil.charting.data.BarData;\r\nimport com.github.mikephil.charting.data.BarDataSet;\r\nimport com.github.mikephil.charting.data.BarEntry;\r\nimport com.github.mikephil.charting.data.Entry;\r\nimport com.github.mikephil.charting.data.LineData;\r\nimport com.github.mikephil.charting.data.LineDataSet;\r\nimport com.github.mikephil.charting.interfaces.datasets.IBarDataSet;\r\nimport com.github.mikephil.charting.utils.ColorTemplate;\r\nimport com.google.gson.Gson;\r\nimport com.google.gson.JsonArray;\r\nimport com.google.gson.JsonElement;\r\nimport com.google.gson.JsonObject;\r\nimport com.google.gson.JsonParser;\r\n\r\npublic class MainActivity extends AppCompatActivity {\r\n    Button aut;\r\n    Button reg;\r\n    OkHttpClient client;\r\n    EditText email;\r\n    EditText password;\r\n\r\n\r\n    private LineChart lineChart;\r\n    private BarChart barChart;\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        EdgeToEdge.enable(this);\r\n        setContentView(R.layout.activity_main);\r\n        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {\r\n            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());\r\n            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);\r\n            return insets;\r\n        });\r\n\r\n        email = findViewById(R.id.et_email);\r\n        password = findViewById(R.id.et_password);\r\n\r\n        client = createHttpClient();\r\n\r\n        aut = findViewById(R.id.btn_login);\r\n        reg = findViewById(R.id.btn_register);\r\n\r\n        aut.setOnClickListener(view -> {\r\n\r\n            Intent intent = new Intent(MainActivity.this, HomeActivity.class);\r\n            startActivity(intent);\r\n\r\n//            String emailText = email.getText().toString().trim();\r\n//            String passwordText = password.getText().toString().trim();\r\n//\r\n//            if (emailText.isEmpty() || passwordText.isEmpty()) {\r\n//                Toast.makeText(MainActivity.this, \"Email and password cannot be empty\", Toast.LENGTH_LONG).show();\r\n//                return;\r\n//            }\r\n//\r\n//            String json = \"{\\\"email\\\":\\\"\" + emailText + \"\\\", \\\"password\\\":\\\"\" + passwordText + \"\\\", \\\"action\\\":\\\"login\\\"}\";\r\n//\r\n//            new Thread(() -> {\r\n//                RequestBody body = RequestBody.create(json, MediaType.get(\"application/json; charset=utf-8\"));\r\n//\r\n//                Request request = new Request.Builder()\r\n//                        .url(\"https://0a0d-94-141-124-197.ngrok-free.app/login\")\r\n//                        .post(body)\r\n//                        .build();\r\n//\r\n//                try (Response response = client.newCall(request).execute()) {\r\n//                    if (response.isSuccessful() && response.body() != null) {\r\n//                        String responseBody = response.body().string();\r\n//                        runOnUiThread(() -> {\r\n//                            try {\r\n//                                JSONObject jsonResponse = new JSONObject(responseBody);\r\n//                                String status = jsonResponse.getString(\"status\");\r\n//                                String message = jsonResponse.getString(\"message\");\r\n//\r\n//\r\n//                                if (\"success\".equals(status)) {\r\n//                                    Toast.makeText(MainActivity.this, \"Login successful: \" + message, Toast.LENGTH_LONG).show();\r\n//                                    // Переход на вторую активность\r\n//                                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);\r\n//                                    startActivity(intent);\r\n//                                } else {\r\n//                                    Toast.makeText(MainActivity.this, \"Login failed: \" + message, Toast.LENGTH_LONG).show();\r\n//                                }\r\n//                            } catch (JSONException e) {\r\n//                                Toast.makeText(MainActivity.this, \"Error parsing response\", Toast.LENGTH_LONG).show();\r\n//                            }\r\n//                        });\r\n//                    } else {\r\n//                        runOnUiThread(() -> Toast.makeText(MainActivity.this, \"Authorization failed. Server error.\", Toast.LENGTH_LONG).show());\r\n//                    }\r\n//                } catch (Exception e) {\r\n//                    e.printStackTrace();\r\n//                    runOnUiThread(() -> {\r\n//                        Toast.makeText(MainActivity.this, \"Error: \" + e.getMessage(), Toast.LENGTH_LONG).show();\r\n//                    });\r\n//                }\r\n//            }).start();\r\n        });\r\n\r\n\r\n\r\n        reg.setOnClickListener(view -> {\r\n\r\n            String emailText = email.getText().toString().trim();\r\n            String passwordText = password.getText().toString().trim();\r\n            String json = \"{\\\"email\\\":\\\"\" + emailText + \"\\\", \\\"password\\\":\\\"\" + passwordText + \"\\\", \\\"action\\\":\\\"register\\\"}\";\r\n\r\n            new Thread(() -> {\r\n                RequestBody body = RequestBody.create(json, MediaType.get(\"application/json; charset=utf-8\"));\r\n\r\n                Request request = new Request.Builder()\r\n                        .url(\"https://0a0d-94-141-124-197.ngrok-free.app/register\")\r\n                        .post(body)\r\n                        .build();\r\n\r\n                try (Response response = client.newCall(request).execute()) {\r\n                    if (response.isSuccessful() && response.body() != null) {\r\n                        String responseBody = response.body().string();\r\n                        runOnUiThread(() -> {\r\n                            try {\r\n                                JSONObject jsonResponse = new JSONObject(responseBody);\r\n                                String status = jsonResponse.getString(\"status\");\r\n                                String message = jsonResponse.getString(\"message\");\r\n\r\n                                if (\"success\".equals(status)) {\r\n                                    Toast.makeText(MainActivity.this, \"Registration successful: \" + message, Toast.LENGTH_LONG).show();\r\n                                } else {\r\n                                    Toast.makeText(MainActivity.this, \"Registration failed: \" + message, Toast.LENGTH_LONG).show();\r\n                                }\r\n                            } catch (JSONException e) {\r\n                                Toast.makeText(MainActivity.this, \"Error parsing response\", Toast.LENGTH_LONG).show();\r\n                            }\r\n                        });\r\n                    } else {\r\n                        runOnUiThread(() -> Toast.makeText(MainActivity.this, \"Registration failed. Server error.\", Toast.LENGTH_LONG).show());\r\n                    }\r\n                } catch (Exception e) {\r\n                    e.printStackTrace();\r\n                    runOnUiThread(() -> {\r\n                        Toast.makeText(MainActivity.this, \"Error: \" + e.getMessage(), Toast.LENGTH_LONG).show();\r\n                    });\r\n                }\r\n            }).start();\r\n        });\r\n\r\n        lineChart = findViewById(R.id.lineChart);\r\n        showLineChart();\r\n\r\n        barChart = findViewById(R.id.barChart);\r\n        showBarChart();\r\n    }\r\n\r\n    private void showBarChart() {\r\n        // Пример JSON-строки\r\n        String jsonString = \"{\\\"currencies\\\":[{\\\"name\\\":\\\"AUD\\\",\\\"value\\\":\\\"63\\\"},{\\\"name\\\":\\\"AZN\\\",\\\"value\\\":\\\"58\\\"},{\\\"name\\\":\\\"AMD\\\",\\\"value\\\":\\\"25\\\"},{\\\"name\\\":\\\"BYN\\\",\\\"value\\\":\\\"29\\\"},{\\\"name\\\":\\\"BGN\\\",\\\"value\\\":\\\"54\\\"},{\\\"name\\\":\\\"BRL\\\",\\\"value\\\":\\\"16\\\"},{\\\"name\\\":\\\"HUF\\\",\\\"value\\\":\\\"25\\\"},{\\\"name\\\":\\\"KRW\\\",\\\"value\\\":\\\"69\\\"},{\\\"name\\\":\\\"VND\\\",\\\"value\\\":\\\"41\\\"},{\\\"name\\\":\\\"HKD\\\",\\\"value\\\":\\\"12\\\"},{\\\"name\\\":\\\"GEL\\\",\\\"value\\\":\\\"35\\\"},{\\\"name\\\":\\\"DKK\\\",\\\"value\\\":\\\"14\\\"},{\\\"name\\\":\\\"AED\\\",\\\"value\\\":\\\"27\\\"},{\\\"name\\\":\\\"USD\\\",\\\"value\\\":\\\"100\\\"},{\\\"name\\\":\\\"EUR\\\",\\\"value\\\":\\\"106\\\"},{\\\"name\\\":\\\"EGP\\\",\\\"value\\\":\\\"19\\\"},{\\\"name\\\":\\\"INR\\\",\\\"value\\\":\\\"11\\\"},{\\\"name\\\":\\\"IDR\\\",\\\"value\\\":\\\"63\\\"},{\\\"name\\\":\\\"KZT\\\",\\\"value\\\":\\\"19\\\"},{\\\"name\\\":\\\"CAD\\\",\\\"value\\\":\\\"70\\\"},{\\\"name\\\":\\\"QAR\\\",\\\"value\\\":\\\"27\\\"},{\\\"name\\\":\\\"KGS\\\",\\\"value\\\":\\\"11\\\"},{\\\"name\\\":\\\"CNY\\\",\\\"value\\\":\\\"13\\\"},{\\\"name\\\":\\\"MDL\\\",\\\"value\\\":\\\"54\\\"},{\\\"name\\\":\\\"NZD\\\",\\\"value\\\":\\\"58\\\"},{\\\"name\\\":\\\"TMT\\\",\\\"value\\\":\\\"28\\\"},{\\\"name\\\":\\\"NOK\\\",\\\"value\\\":\\\"90\\\"},{\\\"name\\\":\\\"PLN\\\",\\\"value\\\":\\\"24\\\"},{\\\"name\\\":\\\"RON\\\",\\\"value\\\":\\\"21\\\"},{\\\"name\\\":\\\"XDR\\\",\\\"value\\\":\\\"131\\\"},{\\\"name\\\":\\\"RSD\\\",\\\"value\\\":\\\"90\\\"},{\\\"name\\\":\\\"SGD\\\",\\\"value\\\":\\\"74\\\"},{\\\"name\\\":\\\"TJS\\\",\\\"value\\\":\\\"91\\\"},{\\\"name\\\":\\\"THB\\\",\\\"value\\\":\\\"29\\\"},{\\\"name\\\":\\\"TRY\\\",\\\"value\\\":\\\"28\\\"},{\\\"name\\\":\\\"UZS\\\",\\\"value\\\":\\\"77\\\"},{\\\"name\\\":\\\"UAH\\\",\\\"value\\\":\\\"24\\\"},{\\\"name\\\":\\\"GBP\\\",\\\"value\\\":\\\"128\\\"},{\\\"name\\\":\\\"CZK\\\",\\\"value\\\":\\\"42\\\"},{\\\"name\\\":\\\"SEK\\\",\\\"value\\\":\\\"91\\\"},{\\\"name\\\":\\\"CHF\\\",\\\"value\\\":\\\"113\\\"},{\\\"name\\\":\\\"ZAR\\\",\\\"value\\\":\\\"56\\\"},{\\\"name\\\":\\\"JPY\\\",\\\"value\\\":\\\"66\\\"}]}\";\r\n\r\n        Gson gson = new Gson();\r\n        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();\r\n        JsonArray currenciesArray = jsonObject.getAsJsonArray(\"currencies\");\r\n\r\n        Map<String, List<BarEntry>> groupedEntries = new HashMap<>();\r\n\r\n        for (int i = 0; i < currenciesArray.size(); i++) {\r\n            JsonObject currency = currenciesArray.get(i).getAsJsonObject();\r\n            String name = currency.get(\"name\").getAsString();\r\n            float value = Float.parseFloat(currency.get(\"value\").getAsString());\r\n\r\n            if (!groupedEntries.containsKey(name)) {\r\n                groupedEntries.put(name, new ArrayList<>());\r\n            }\r\n\r\n            groupedEntries.get(name).add(new BarEntry(i, value));\r\n        }\r\n\r\n        List<BarDataSet> dataSets = new ArrayList<>();\r\n\r\n        for (String name : groupedEntries.keySet()) {\r\n            List<BarEntry> entries = groupedEntries.get(name);\r\n            BarDataSet dataSet = new BarDataSet(entries, name);\r\n            int color = Color.rgb((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255));\r\n            dataSet.setColor(color);\r\n            dataSets.add(dataSet);\r\n        }\r\n\r\n        IBarDataSet[] dataSetArray = dataSets.toArray(new IBarDataSet[0]);\r\n        barChart.animateY(1000);\r\n        GraphBuilder.BuildBarGraph(barChart, 1.0f, 0.0f, 0.0f, dataSetArray);\r\n        barChart.invalidate();\r\n\r\n    }\r\n\r\n    private void showLineChart() {\r\n        String jsonString = \"{\\\"metals\\\":{\\\"metal\\\":[{\\\"date\\\":\\\"11.12.2024\\\",\\\"gold_price\\\":\\\"8593.1299999999992\\\",\\\"silver_price\\\":\\\"101.73\\\",\\\"platinum_price\\\":\\\"3058.52\\\",\\\"palladium_price\\\":\\\"3161.4400000000001\\\"},{\\\"date\\\":\\\"10.12.2024\\\",\\\"gold_price\\\":\\\"8426.1900000000005\\\",\\\"silver_price\\\":\\\"99.400000000000006\\\",\\\"platinum_price\\\":\\\"2990.5300000000002\\\",\\\"palladium_price\\\":\\\"3089.5700000000002\\\"},{\\\"date\\\":\\\"07.12.2024\\\",\\\"gold_price\\\":\\\"8439.1700000000001\\\",\\\"silver_price\\\":\\\"100.19\\\",\\\"platinum_price\\\":\\\"3011.0799999999999\\\",\\\"palladium_price\\\":\\\"3116.5599999999999\\\"},{\\\"date\\\":\\\"06.12.2024\\\",\\\"gold_price\\\":\\\"8803.7399999999998\\\",\\\"silver_price\\\":\\\"102.48999999999999\\\",\\\"platinum_price\\\":\\\"3131.0799999999999\\\",\\\"palladium_price\\\":\\\"3250.7399999999998\\\"},{\\\"date\\\":\\\"05.12.2024\\\",\\\"gold_price\\\":\\\"8849.5200000000004\\\",\\\"silver_price\\\":\\\"103.56999999999999\\\",\\\"platinum_price\\\":\\\"3200.46\\\",\\\"palladium_price\\\":\\\"3327.8099999999999\\\"},{\\\"date\\\":\\\"04.12.2024\\\",\\\"gold_price\\\":\\\"9020.3400000000001\\\",\\\"silver_price\\\":\\\"103.97\\\",\\\"platinum_price\\\":\\\"3216\\\",\\\"palladium_price\\\":\\\"3369.6300000000001\\\"},{\\\"date\\\":\\\"03.12.2024\\\",\\\"gold_price\\\":\\\"9134.9300000000003\\\",\\\"silver_price\\\":\\\"105.79000000000001\\\",\\\"platinum_price\\\":\\\"3239.0300000000002\\\",\\\"palladium_price\\\":\\\"3387.1999999999998\\\"}]}}\";\r\n\r\n        // Используем Gson для разбора JSON\r\n        Gson gson = new Gson();\r\n        JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);\r\n        JsonObject metals = jsonObject.getAsJsonObject(\"metals\");\r\n        JsonArray metalArray = metals.getAsJsonArray(\"metal\");\r\n\r\n        // Создаем списки для хранения данных графика\r\n        List<Entry> goldPrices = new ArrayList<>();\r\n        List<Entry> silverPrices = new ArrayList<>();\r\n        List<Entry> platinumPrices = new ArrayList<>();\r\n        List<Entry> palladiumPrices = new ArrayList<>();\r\n\r\n        // Заполняем списки данными\r\n        for (int i = 0; i < metalArray.size(); i++) {\r\n            JsonObject metalData = metalArray.get(i).getAsJsonObject();\r\n            String date = metalData.get(\"date\").getAsString();\r\n            float goldPrice = metalData.get(\"gold_price\").getAsFloat();\r\n            float silverPrice = metalData.get(\"silver_price\").getAsFloat();\r\n            float platinumPrice = metalData.get(\"platinum_price\").getAsFloat();\r\n            float palladiumPrice = metalData.get(\"palladium_price\").getAsFloat();\r\n\r\n            // Добавляем данные в соответствующий список\r\n            goldPrices.add(new Entry(i, goldPrice));\r\n            silverPrices.add(new Entry(i, silverPrice));\r\n            platinumPrices.add(new Entry(i, platinumPrice));\r\n            palladiumPrices.add(new Entry(i, palladiumPrice));\r\n        }\r\n\r\n        LineDataSet gold_set = new LineDataSet(goldPrices, \"Золото\"); // Название графика\r\n        LineDataSet silver_set = new LineDataSet(silverPrices, \"Серебро\"); // Название графика\r\n        LineDataSet platinum_set = new LineDataSet(platinumPrices, \"Платина\"); // Название графика\r\n        LineDataSet palladium_set = new LineDataSet(palladiumPrices, \"Палладий\"); // Название графика\r\n        gold_set.setColor(ColorTemplate.rgb(\"FFD700\"));\r\n        silver_set.setColor(ColorTemplate.rgb(\"C0C0C0\"));\r\n        platinum_set.setColor(ColorTemplate.rgb(\"e5e4e2\"));\r\n        palladium_set.setColor(ColorTemplate.rgb(\"b1b1b1\"));\r\n        GraphBuilder.BuildLineGraph(lineChart, gold_set, silver_set, platinum_set, palladium_set);\r\n    }\r\n\r\n    private OkHttpClient createHttpClient() {\r\n        try {\r\n            TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());\r\n            trustManagerFactory.init((java.security.KeyStore) null);\r\n            X509TrustManager trustManager = (X509TrustManager) trustManagerFactory.getTrustManagers()[0];\r\n\r\n            SSLContext sslContext = SSLContext.getInstance(\"TLS\");\r\n            sslContext.init(null, trustManagerFactory.getTrustManagers(), null);\r\n\r\n            // Логирование запросов\r\n            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();\r\n            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);\r\n\r\n            return new OkHttpClient.Builder()\r\n                    .connectTimeout(10, TimeUnit.SECONDS)\r\n                    .readTimeout(30, TimeUnit.SECONDS)\r\n                    .writeTimeout(30, TimeUnit.SECONDS)\r\n                    .sslSocketFactory(sslContext.getSocketFactory(), trustManager)\r\n                    .hostnameVerifier((hostname, session) -> true)\r\n                    .addInterceptor(loggingInterceptor)\r\n                    .build();\r\n\r\n        } catch (Exception e) {\r\n            throw new RuntimeException(e);\r\n        }\r\n    }\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main/app/src/main/java/com/example/rksihackaton/MainActivity.java b/main/app/src/main/java/com/example/rksihackaton/MainActivity.java
+--- a/main/app/src/main/java/com/example/rksihackaton/MainActivity.java	(revision 83c46298b8dd0d9e68ae7c171ad31229ea4173e3)
++++ b/main/app/src/main/java/com/example/rksihackaton/MainActivity.java	(date 1733905277227)
+@@ -1,18 +1,11 @@
+ package com.example.rksihackaton;
+ 
+-import static android.content.ContentValues.TAG;
+-
+ import android.content.Intent;
+-import android.graphics.Color;
+ import android.os.Bundle;
+ import android.widget.Button;
+ import android.widget.EditText;
+ import android.widget.Toast;
+ 
+-import java.util.ArrayList;
+-import java.util.HashMap;
+-import java.util.List;
+-import java.util.Map;
+ import java.util.concurrent.TimeUnit;
+ 
+ import okhttp3.MediaType;
+@@ -35,22 +28,6 @@
+ import androidx.core.view.ViewCompat;
+ import androidx.core.view.WindowInsetsCompat;
+ 
+-import com.github.mikephil.charting.charts.BarChart;
+-import com.github.mikephil.charting.charts.LineChart;
+-import com.github.mikephil.charting.data.BarData;
+-import com.github.mikephil.charting.data.BarDataSet;
+-import com.github.mikephil.charting.data.BarEntry;
+-import com.github.mikephil.charting.data.Entry;
+-import com.github.mikephil.charting.data.LineData;
+-import com.github.mikephil.charting.data.LineDataSet;
+-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
+-import com.github.mikephil.charting.utils.ColorTemplate;
+-import com.google.gson.Gson;
+-import com.google.gson.JsonArray;
+-import com.google.gson.JsonElement;
+-import com.google.gson.JsonObject;
+-import com.google.gson.JsonParser;
+-
+ public class MainActivity extends AppCompatActivity {
+     Button aut;
+     Button reg;
+@@ -58,10 +35,6 @@
+     EditText email;
+     EditText password;
+ 
+-
+-    private LineChart lineChart;
+-    private BarChart barChart;
+-
+     @Override
+     protected void onCreate(Bundle savedInstanceState) {
+         super.onCreate(savedInstanceState);
+@@ -183,93 +156,6 @@
+                 }
+             }).start();
+         });
+-
+-        lineChart = findViewById(R.id.lineChart);
+-        showLineChart();
+-
+-        barChart = findViewById(R.id.barChart);
+-        showBarChart();
+-    }
+-
+-    private void showBarChart() {
+-        // Пример JSON-строки
+-        String jsonString = "{\"currencies\":[{\"name\":\"AUD\",\"value\":\"63\"},{\"name\":\"AZN\",\"value\":\"58\"},{\"name\":\"AMD\",\"value\":\"25\"},{\"name\":\"BYN\",\"value\":\"29\"},{\"name\":\"BGN\",\"value\":\"54\"},{\"name\":\"BRL\",\"value\":\"16\"},{\"name\":\"HUF\",\"value\":\"25\"},{\"name\":\"KRW\",\"value\":\"69\"},{\"name\":\"VND\",\"value\":\"41\"},{\"name\":\"HKD\",\"value\":\"12\"},{\"name\":\"GEL\",\"value\":\"35\"},{\"name\":\"DKK\",\"value\":\"14\"},{\"name\":\"AED\",\"value\":\"27\"},{\"name\":\"USD\",\"value\":\"100\"},{\"name\":\"EUR\",\"value\":\"106\"},{\"name\":\"EGP\",\"value\":\"19\"},{\"name\":\"INR\",\"value\":\"11\"},{\"name\":\"IDR\",\"value\":\"63\"},{\"name\":\"KZT\",\"value\":\"19\"},{\"name\":\"CAD\",\"value\":\"70\"},{\"name\":\"QAR\",\"value\":\"27\"},{\"name\":\"KGS\",\"value\":\"11\"},{\"name\":\"CNY\",\"value\":\"13\"},{\"name\":\"MDL\",\"value\":\"54\"},{\"name\":\"NZD\",\"value\":\"58\"},{\"name\":\"TMT\",\"value\":\"28\"},{\"name\":\"NOK\",\"value\":\"90\"},{\"name\":\"PLN\",\"value\":\"24\"},{\"name\":\"RON\",\"value\":\"21\"},{\"name\":\"XDR\",\"value\":\"131\"},{\"name\":\"RSD\",\"value\":\"90\"},{\"name\":\"SGD\",\"value\":\"74\"},{\"name\":\"TJS\",\"value\":\"91\"},{\"name\":\"THB\",\"value\":\"29\"},{\"name\":\"TRY\",\"value\":\"28\"},{\"name\":\"UZS\",\"value\":\"77\"},{\"name\":\"UAH\",\"value\":\"24\"},{\"name\":\"GBP\",\"value\":\"128\"},{\"name\":\"CZK\",\"value\":\"42\"},{\"name\":\"SEK\",\"value\":\"91\"},{\"name\":\"CHF\",\"value\":\"113\"},{\"name\":\"ZAR\",\"value\":\"56\"},{\"name\":\"JPY\",\"value\":\"66\"}]}";
+-
+-        Gson gson = new Gson();
+-        JsonObject jsonObject = JsonParser.parseString(jsonString).getAsJsonObject();
+-        JsonArray currenciesArray = jsonObject.getAsJsonArray("currencies");
+-
+-        Map<String, List<BarEntry>> groupedEntries = new HashMap<>();
+-
+-        for (int i = 0; i < currenciesArray.size(); i++) {
+-            JsonObject currency = currenciesArray.get(i).getAsJsonObject();
+-            String name = currency.get("name").getAsString();
+-            float value = Float.parseFloat(currency.get("value").getAsString());
+-
+-            if (!groupedEntries.containsKey(name)) {
+-                groupedEntries.put(name, new ArrayList<>());
+-            }
+-
+-            groupedEntries.get(name).add(new BarEntry(i, value));
+-        }
+-
+-        List<BarDataSet> dataSets = new ArrayList<>();
+-
+-        for (String name : groupedEntries.keySet()) {
+-            List<BarEntry> entries = groupedEntries.get(name);
+-            BarDataSet dataSet = new BarDataSet(entries, name);
+-            int color = Color.rgb((int) (Math.random() * 255), (int) (Math.random() * 255), (int) (Math.random() * 255));
+-            dataSet.setColor(color);
+-            dataSets.add(dataSet);
+-        }
+-
+-        IBarDataSet[] dataSetArray = dataSets.toArray(new IBarDataSet[0]);
+-        barChart.animateY(1000);
+-        GraphBuilder.BuildBarGraph(barChart, 1.0f, 0.0f, 0.0f, dataSetArray);
+-        barChart.invalidate();
+-
+-    }
+-
+-    private void showLineChart() {
+-        String jsonString = "{\"metals\":{\"metal\":[{\"date\":\"11.12.2024\",\"gold_price\":\"8593.1299999999992\",\"silver_price\":\"101.73\",\"platinum_price\":\"3058.52\",\"palladium_price\":\"3161.4400000000001\"},{\"date\":\"10.12.2024\",\"gold_price\":\"8426.1900000000005\",\"silver_price\":\"99.400000000000006\",\"platinum_price\":\"2990.5300000000002\",\"palladium_price\":\"3089.5700000000002\"},{\"date\":\"07.12.2024\",\"gold_price\":\"8439.1700000000001\",\"silver_price\":\"100.19\",\"platinum_price\":\"3011.0799999999999\",\"palladium_price\":\"3116.5599999999999\"},{\"date\":\"06.12.2024\",\"gold_price\":\"8803.7399999999998\",\"silver_price\":\"102.48999999999999\",\"platinum_price\":\"3131.0799999999999\",\"palladium_price\":\"3250.7399999999998\"},{\"date\":\"05.12.2024\",\"gold_price\":\"8849.5200000000004\",\"silver_price\":\"103.56999999999999\",\"platinum_price\":\"3200.46\",\"palladium_price\":\"3327.8099999999999\"},{\"date\":\"04.12.2024\",\"gold_price\":\"9020.3400000000001\",\"silver_price\":\"103.97\",\"platinum_price\":\"3216\",\"palladium_price\":\"3369.6300000000001\"},{\"date\":\"03.12.2024\",\"gold_price\":\"9134.9300000000003\",\"silver_price\":\"105.79000000000001\",\"platinum_price\":\"3239.0300000000002\",\"palladium_price\":\"3387.1999999999998\"}]}}";
+-
+-        // Используем Gson для разбора JSON
+-        Gson gson = new Gson();
+-        JsonObject jsonObject = gson.fromJson(jsonString, JsonObject.class);
+-        JsonObject metals = jsonObject.getAsJsonObject("metals");
+-        JsonArray metalArray = metals.getAsJsonArray("metal");
+-
+-        // Создаем списки для хранения данных графика
+-        List<Entry> goldPrices = new ArrayList<>();
+-        List<Entry> silverPrices = new ArrayList<>();
+-        List<Entry> platinumPrices = new ArrayList<>();
+-        List<Entry> palladiumPrices = new ArrayList<>();
+-
+-        // Заполняем списки данными
+-        for (int i = 0; i < metalArray.size(); i++) {
+-            JsonObject metalData = metalArray.get(i).getAsJsonObject();
+-            String date = metalData.get("date").getAsString();
+-            float goldPrice = metalData.get("gold_price").getAsFloat();
+-            float silverPrice = metalData.get("silver_price").getAsFloat();
+-            float platinumPrice = metalData.get("platinum_price").getAsFloat();
+-            float palladiumPrice = metalData.get("palladium_price").getAsFloat();
+-
+-            // Добавляем данные в соответствующий список
+-            goldPrices.add(new Entry(i, goldPrice));
+-            silverPrices.add(new Entry(i, silverPrice));
+-            platinumPrices.add(new Entry(i, platinumPrice));
+-            palladiumPrices.add(new Entry(i, palladiumPrice));
+-        }
+-
+-        LineDataSet gold_set = new LineDataSet(goldPrices, "Золото"); // Название графика
+-        LineDataSet silver_set = new LineDataSet(silverPrices, "Серебро"); // Название графика
+-        LineDataSet platinum_set = new LineDataSet(platinumPrices, "Платина"); // Название графика
+-        LineDataSet palladium_set = new LineDataSet(palladiumPrices, "Палладий"); // Название графика
+-        gold_set.setColor(ColorTemplate.rgb("FFD700"));
+-        silver_set.setColor(ColorTemplate.rgb("C0C0C0"));
+-        platinum_set.setColor(ColorTemplate.rgb("e5e4e2"));
+-        palladium_set.setColor(ColorTemplate.rgb("b1b1b1"));
+-        GraphBuilder.BuildLineGraph(lineChart, gold_set, silver_set, platinum_set, palladium_set);
+     }
+ 
+     private OkHttpClient createHttpClient() {
+Index: main/app/src/main/res/layout/activity_main.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><ScrollView xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    android:padding=\"16dp\"\r\n    android:background=\"@color/white\"\r\n    android:id=\"@+id/main\">\r\n\r\n    <LinearLayout\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        android:orientation=\"vertical\"\r\n        android:gravity=\"center\"\r\n        android:padding=\"16dp\">\r\n\r\n        <androidx.cardview.widget.CardView\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_marginTop=\"50dp\"\r\n            android:layout_marginBottom=\"50dp\"\r\n            app:cardBackgroundColor=\"@color/white\"\r\n            app:cardCornerRadius=\"16dp\"\r\n            app:cardElevation=\"8dp\"\r\n            android:padding=\"16dp\">\r\n\r\n            <LinearLayout\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:orientation=\"vertical\"\r\n                android:gravity=\"center\">\r\n\r\n                <TextView\r\n                    android:id=\"@+id/tv_header\"\r\n                    android:layout_width=\"wrap_content\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:text=\"Добро пожаловать\"\r\n                    android:textSize=\"24sp\"\r\n                    android:textStyle=\"bold\"\r\n                    android:layout_marginBottom=\"16dp\"\r\n                    android:textColor=\"@color/black\" />\r\n\r\n                <com.google.android.material.textfield.TextInputLayout\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginBottom=\"12dp\"\r\n                    app:boxBackgroundMode=\"outline\"\r\n                    app:boxCornerRadiusTopStart=\"16dp\"\r\n                    app:boxCornerRadiusTopEnd=\"16dp\"\r\n                    app:boxCornerRadiusBottomStart=\"16dp\"\r\n                    app:boxCornerRadiusBottomEnd=\"16dp\">\r\n\r\n                    <com.google.android.material.textfield.TextInputEditText\r\n                        android:id=\"@+id/et_email\"\r\n                        android:layout_width=\"match_parent\"\r\n                        android:layout_height=\"wrap_content\"\r\n                        android:hint=\"Email\"\r\n                        android:inputType=\"textEmailAddress\" />\r\n                </com.google.android.material.textfield.TextInputLayout>\r\n\r\n                <com.google.android.material.textfield.TextInputLayout\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:layout_marginBottom=\"12dp\"\r\n                    app:boxBackgroundMode=\"outline\"\r\n                    app:boxCornerRadiusTopStart=\"16dp\"\r\n                    app:boxCornerRadiusTopEnd=\"16dp\"\r\n                    app:boxCornerRadiusBottomStart=\"16dp\"\r\n                    app:boxCornerRadiusBottomEnd=\"16dp\">\r\n\r\n                    <com.google.android.material.textfield.TextInputEditText\r\n                        android:id=\"@+id/et_password\"\r\n                        android:layout_width=\"match_parent\"\r\n                        android:layout_height=\"wrap_content\"\r\n                        android:hint=\"Пароль\"\r\n                        android:inputType=\"textPassword\" />\r\n                </com.google.android.material.textfield.TextInputLayout>\r\n\r\n                <com.google.android.material.button.MaterialButton\r\n                    android:id=\"@+id/btn_login\"\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:text=\"Войти\"\r\n                    android:layout_marginBottom=\"12dp\"\r\n                    style=\"@style/Widget.MaterialComponents.Button\"\r\n                    android:backgroundTint=\"@color/btns_color\"\r\n                    app:cornerRadius=\"16dp\"\r\n                    android:textColor=\"@android:color/white\" />\r\n\r\n                <com.google.android.material.button.MaterialButton\r\n                    android:id=\"@+id/btn_register\"\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:text=\"Регистрация\"\r\n                    style=\"@style/Widget.MaterialComponents.Button.OutlinedButton\"\r\n                    android:strokeWidth=\"1\"\r\n                    android:layout_marginBottom=\"16dp\"\r\n                    app:cornerRadius=\"16dp\"\r\n                    android:textColor=\"@color/btns_color\" />\r\n\r\n                <TextView\r\n                    android:id=\"@+id/tv_forgot_password\"\r\n                    android:layout_width=\"wrap_content\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:text=\"Забыли пароль?\"\r\n                    android:textSize=\"14sp\"\r\n                    android:layout_gravity=\"center\"\r\n                    android:textColor=\"@color/btns_color\"\r\n                    android:padding=\"8dp\" />\r\n\r\n                <com.google.android.material.checkbox.MaterialCheckBox\r\n                    android:id=\"@+id/checkbox_auto_login\"\r\n                    android:layout_width=\"wrap_content\"\r\n                    android:layout_height=\"wrap_content\"\r\n                    android:text=\"Входить автоматически\"\r\n                    android:textColor=\"@color/btns_color\"\r\n                    android:layout_marginTop=\"12dp\" />\r\n\r\n\r\n                <com.github.mikephil.charting.charts.LineChart\r\n                    android:id=\"@+id/lineChart\"\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"300sp\"/>\r\n\r\n                <com.github.mikephil.charting.charts.BarChart\r\n                    android:id=\"@+id/barChart\"\r\n                    android:layout_width=\"match_parent\"\r\n                    android:layout_height=\"300sp\"/>\r\n\r\n            </LinearLayout>\r\n\r\n        </androidx.cardview.widget.CardView>\r\n    </LinearLayout>\r\n\r\n</ScrollView>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main/app/src/main/res/layout/activity_main.xml b/main/app/src/main/res/layout/activity_main.xml
+--- a/main/app/src/main/res/layout/activity_main.xml	(revision 83c46298b8dd0d9e68ae7c171ad31229ea4173e3)
++++ b/main/app/src/main/res/layout/activity_main.xml	(date 1733905277236)
+@@ -115,17 +115,6 @@
+                     android:textColor="@color/btns_color"
+                     android:layout_marginTop="12dp" />
+ 
+-
+-                <com.github.mikephil.charting.charts.LineChart
+-                    android:id="@+id/lineChart"
+-                    android:layout_width="match_parent"
+-                    android:layout_height="300sp"/>
+-
+-                <com.github.mikephil.charting.charts.BarChart
+-                    android:id="@+id/barChart"
+-                    android:layout_width="match_parent"
+-                    android:layout_height="300sp"/>
+-
+             </LinearLayout>
+ 
+         </androidx.cardview.widget.CardView>
+Index: main/app/src/main/res/layout/activity_home.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n<androidx.constraintlayout.widget.ConstraintLayout\r\n    xmlns:android=\"http://schemas.android.com/apk/res/android\"\r\n    xmlns:tools=\"http://schemas.android.com/tools\"\r\n    xmlns:app=\"http://schemas.android.com/apk/res-auto\"\r\n    android:id=\"@+id/main\"\r\n    android:background=\"@color/btns_color\"\r\n    android:layout_width=\"match_parent\"\r\n    android:layout_height=\"match_parent\"\r\n    tools:context=\".HomeActivity\">\r\n\r\n    <androidx.constraintlayout.widget.ConstraintLayout\r\n        android:id=\"@+id/majorContent\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        android:visibility=\"visible\">\r\n\r\n    <Button\r\n        android:id=\"@+id/more_currencies_btn\"\r\n        android:layout_width=\"120dp\"\r\n        android:layout_height=\"42dp\"\r\n        android:backgroundTint=\"@color/white\"\r\n        android:padding=\"0dp\"\r\n        android:text=\"Больше валют\"\r\n        android:textColor=\"@color/btns_color\"\r\n        android:textSize=\"15sp\"\r\n        app:cornerRadius=\"6sp\"\r\n        app:layout_constraintBottom_toBottomOf=\"@+id/cardView\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.955\"\r\n        app:layout_constraintVertical_bias=\"0.238\" />\r\n\r\n    <TextView\r\n        android:id=\"@+id/mobileInvestor\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"Мобильный инвестор\"\r\n        android:textSize=\"22dp\"\r\n        android:textStyle=\"bold\"\r\n        android:textColor=\"@color/white\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.05\"\r\n        app:layout_constraintVertical_bias=\"0.02\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\" />\r\n\r\n\r\n    <TextView\r\n        android:id=\"@+id/mostPopular\"\r\n        android:layout_width=\"wrap_content\"\r\n        android:layout_height=\"wrap_content\"\r\n        android:text=\"Основные валюты мира\"\r\n        android:textColor=\"@color/white\"\r\n        android:textSize=\"18dp\"\r\n        android:textStyle=\"bold\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.1\"\r\n        app:layout_constraintVertical_bias=\"0.095\" />\r\n\r\n    <TableLayout\r\n        android:id=\"@+id/tableLayout\"\r\n        android:layout_width=\"200sp\"\r\n        android:layout_height=\"wrap_content\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"\r\n        app:layout_constraintHorizontal_bias=\"0.1\"\r\n        app:layout_constraintVertical_bias=\"0.155\">\r\n\r\n        <TableRow>\r\n            <TextView\r\n                android:id=\"@+id/dollarText\"\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_weight=\"1\"\r\n                android:textColor=\"@color/white\"\r\n                android:textSize=\"20sp\"\r\n                android:text=\"Доллар\" />\r\n\r\n            <TextView\r\n                android:id=\"@+id/dollarRate\"\r\n                android:layout_height=\"match_parent\"\r\n                android:layout_weight=\"1\"\r\n                android:textColor=\"@color/white\"\r\n                android:textSize=\"20sp\"\r\n                android:textAlignment=\"textEnd\"\r\n                android:text=\"100\" />\r\n        </TableRow>\r\n\r\n        <TableRow>\r\n\r\n            <TextView\r\n                android:id=\"@+id/euroText\"\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_weight=\"1\"\r\n                android:textColor=\"@color/white\"\r\n                android:textSize=\"20sp\"\r\n                android:text=\"Евро\" />\r\n\r\n            <TextView\r\n                android:id=\"@+id/euroRate\"\r\n                android:layout_height=\"match_parent\"\r\n                android:layout_weight=\"1\"\r\n                android:textColor=\"@color/white\"\r\n                android:textSize=\"20sp\"\r\n                android:textAlignment=\"textEnd\"\r\n                android:text=\"85\" />\r\n        </TableRow>\r\n\r\n        <TableRow>\r\n\r\n            <TextView\r\n                android:id=\"@+id/rubText\"\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_weight=\"1\"\r\n                android:textColor=\"@color/white\"\r\n                android:textSize=\"20sp\"\r\n                android:text=\"Рубль\" />\r\n\r\n            <TextView\r\n                android:id=\"@+id/rubRate\"\r\n                android:layout_height=\"match_parent\"\r\n                android:layout_weight=\"1\"\r\n                android:textColor=\"@color/white\"\r\n                android:textSize=\"20sp\"\r\n                android:textAlignment=\"textEnd\"\r\n                android:text=\"1\" />\r\n        </TableRow>\r\n\r\n        <TableRow>\r\n\r\n            <TextView\r\n                android:id=\"@+id/uanText\"\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_weight=\"1\"\r\n                android:textColor=\"@color/white\"\r\n                android:textSize=\"20sp\"\r\n                android:text=\"Юань\" />\r\n\r\n            <TextView\r\n                android:id=\"@+id/uanRate\"\r\n                android:layout_height=\"match_parent\"\r\n                android:layout_weight=\"1\"\r\n                android:textColor=\"@color/white\"\r\n                android:textSize=\"20sp\"\r\n                android:textAlignment=\"textEnd\"\r\n                android:text=\"14\" />\r\n        </TableRow>\r\n\r\n\r\n    </TableLayout>\r\n\r\n    <ImageButton\r\n        android:id=\"@+id/profile_btn\"\r\n        android:layout_width=\"50sp\"\r\n        android:layout_height=\"50sp\"\r\n        app:srcCompat=\"@drawable/ic_launcher_foreground\"\r\n        app:layout_constraintHorizontal_bias=\"0.95\"\r\n        app:layout_constraintVertical_bias=\"0.02\"\r\n        app:layout_constraintBottom_toBottomOf=\"parent\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\"  />\r\n\r\n    <androidx.cardview.widget.CardView\r\n        android:id=\"@+id/cardView\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"500sp\"\r\n        android:layout_marginTop=\"230sp\"\r\n        app:cardBackgroundColor=\"@color/white\"\r\n        app:cardCornerRadius=\"25sp\"\r\n        app:layout_constraintEnd_toEndOf=\"parent\"\r\n        app:layout_constraintStart_toStartOf=\"parent\"\r\n        app:layout_constraintTop_toTopOf=\"parent\">\r\n\r\n        <TextView\r\n            android:id=\"@+id/textView2\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"5sp\"\r\n            android:layout_gravity=\"center\"\r\n            android:layout_marginBottom=\"40sp\"\r\n            android:background=\"@color/grey\" />\r\n\r\n        <TextView\r\n            android:layout_width=\"wrap_content\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_margin=\"16sp\"\r\n            android:text=\"Акции инвесторов\"\r\n            android:textColor=\"@color/black\"\r\n            android:textSize=\"19sp\"\r\n            android:textStyle=\"bold\" />\r\n\r\n        <HorizontalScrollView\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"125sp\"\r\n            android:layout_marginTop=\"60sp\">\r\n\r\n            <LinearLayout\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"match_parent\"\r\n                android:layout_marginHorizontal=\"4sp\"\r\n                android:orientation=\"horizontal\">\r\n\r\n                <ImageButton\r\n                    android:layout_width=\"90sp\"\r\n                    android:layout_height=\"match_parent\"\r\n                    android:layout_marginHorizontal=\"5sp\"\r\n                    android:backgroundTint=\"@color/btns_color\"\r\n                    android:scaleType=\"fitCenter\"\r\n                    android:src=\"@drawable/gprom\"\r\n                    app:cornerRadius=\"5sp\" />\r\n\r\n                <ImageButton\r\n                    android:layout_width=\"90sp\"\r\n                    android:layout_height=\"match_parent\"\r\n                    android:layout_marginHorizontal=\"5sp\"\r\n                    android:backgroundTint=\"@color/btns_color\"\r\n                    android:scaleType=\"fitCenter\"\r\n                    android:src=\"@drawable/mel\"\r\n                    app:cornerRadius=\"5sp\" />\r\n\r\n                <ImageButton\r\n                    android:layout_width=\"90sp\"\r\n                    android:layout_height=\"match_parent\"\r\n                    android:layout_marginHorizontal=\"5sp\"\r\n                    android:backgroundTint=\"@color/btns_color\"\r\n                    android:scaleType=\"fitCenter\"\r\n                    android:src=\"@drawable/sber\"\r\n                    app:cornerRadius=\"5sp\" />\r\n\r\n                <ImageButton\r\n                    android:layout_width=\"90sp\"\r\n                    android:layout_height=\"match_parent\"\r\n                    android:layout_marginHorizontal=\"5sp\"\r\n                    android:backgroundTint=\"@color/btns_color\"\r\n                    android:scaleType=\"fitCenter\"\r\n                    android:src=\"@drawable/rneft\"\r\n                    app:cornerRadius=\"5sp\" />\r\n\r\n            </LinearLayout>\r\n\r\n        </HorizontalScrollView>\r\n\r\n\r\n        <LinearLayout\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_gravity=\"bottom\"\r\n            android:layout_marginBottom=\"10sp\"\r\n            android:orientation=\"vertical\"\r\n            android:padding=\"16sp\">\r\n\r\n            <TextView\r\n                android:layout_width=\"wrap_content\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:text=\"Стоимость металлов на рынке\"\r\n                android:textColor=\"@color/black\"\r\n                android:textSize=\"19sp\"\r\n                android:textStyle=\"bold\" />\r\n\r\n            <Button\r\n                android:id=\"@+id/ag_btn\"\r\n                style=\"@style/Widget.MaterialComponents.Button.OutlinedButton\"\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_marginTop=\"8sp\"\r\n                android:text=\"Серебро\"\r\n                android:textColor=\"@color/btns_color\"\r\n                android:textSize=\"15sp\"\r\n                app:cornerRadius=\"10sp\"\r\n                app:strokeColor=\"@color/black\"\r\n                app:strokeWidth=\"3px\" />\r\n\r\n            <Button\r\n                android:id=\"@+id/au_btn\"\r\n                style=\"@style/Widget.MaterialComponents.Button.OutlinedButton\"\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_marginTop=\"8sp\"\r\n                android:text=\"Золото\"\r\n                android:textColor=\"@color/btns_color\"\r\n                android:textSize=\"15sp\"\r\n                app:cornerRadius=\"10sp\"\r\n                app:strokeColor=\"@color/black\"\r\n                app:strokeWidth=\"3px\" />\r\n\r\n            <Button\r\n                android:id=\"@+id/pt_btn\"\r\n                style=\"@style/Widget.MaterialComponents.Button.OutlinedButton\"\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_marginTop=\"8sp\"\r\n                android:text=\"Платина\"\r\n                android:textColor=\"@color/btns_color\"\r\n                android:textSize=\"15sp\"\r\n                app:cornerRadius=\"10sp\"\r\n                app:strokeColor=\"@color/black\"\r\n                app:strokeWidth=\"3px\" />\r\n\r\n            <Button\r\n                android:id=\"@+id/pd_btn\"\r\n                style=\"@style/Widget.MaterialComponents.Button.OutlinedButton\"\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"wrap_content\"\r\n                android:layout_marginTop=\"8sp\"\r\n                android:text=\"Палладий\"\r\n                android:textColor=\"@color/btns_color\"\r\n                android:textSize=\"15sp\"\r\n                app:cornerRadius=\"10sp\"\r\n                app:strokeColor=\"@color/black\"\r\n                app:strokeWidth=\"3px\" />\r\n\r\n        </LinearLayout>\r\n\r\n    </androidx.cardview.widget.CardView>\r\n    </androidx.constraintlayout.widget.ConstraintLayout>\r\n\r\n    <androidx.constraintlayout.widget.ConstraintLayout\r\n        android:id=\"@+id/currenciesNgraphs\"\r\n        android:layout_width=\"match_parent\"\r\n        android:layout_height=\"match_parent\"\r\n        android:visibility=\"gone\">\r\n\r\n        <com.github.mikephil.charting.charts.LineChart\r\n            android:id=\"@+id/metalsChart\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"450sp\"\r\n            android:visibility=\"gone\"\r\n            app:layout_constraintBottom_toBottomOf=\"parent\"\r\n            app:layout_constraintTop_toTopOf=\"parent\"\r\n            app:layout_constraintVertical_bias=\"0.3\"\r\n            tools:layout_editor_absoluteX=\"0dp\">\r\n\r\n        </com.github.mikephil.charting.charts.LineChart>\r\n\r\n        <ScrollView\r\n            android:id=\"@+id/currenciesScroll\"\r\n            android:layout_width=\"match_parent\"\r\n            android:layout_height=\"580sp\"\r\n            android:visibility=\"visible\"\r\n            app:layout_constraintBottom_toBottomOf=\"parent\"\r\n            app:layout_constraintTop_toTopOf=\"parent\"\r\n            app:layout_constraintVertical_bias=\"0.3\"\r\n            tools:layout_editor_absoluteX=\"0dp\">\r\n\r\n            <LinearLayout\r\n                android:id=\"@+id/currenciesLayout\"\r\n                android:layout_width=\"match_parent\"\r\n                android:layout_height=\"550sp\"\r\n                android:orientation=\"vertical\">\r\n\r\n            </LinearLayout>\r\n        </ScrollView>\r\n\r\n        <Button\r\n            android:id=\"@+id/back_btn\"\r\n            android:layout_width=\"320sp\"\r\n            android:layout_height=\"wrap_content\"\r\n            android:layout_gravity=\"center_horizontal\"\r\n            android:layout_marginTop=\"50sp\"\r\n            android:text=\"Назад\"\r\n            android:textColor=\"@color/btns_color\"\r\n            android:textSize=\"15sp\"\r\n            app:cornerRadius=\"10sp\"\r\n            android:backgroundTint=\"@color/white\"\r\n            app:layout_constraintBottom_toBottomOf=\"parent\"\r\n            app:layout_constraintEnd_toEndOf=\"parent\"\r\n            app:layout_constraintHorizontal_bias=\"0.494\"\r\n            app:layout_constraintStart_toStartOf=\"parent\"\r\n            app:layout_constraintTop_toTopOf=\"parent\"\r\n            app:layout_constraintVertical_bias=\"0.921\"\r\n            app:strokeColor=\"@color/black\"\r\n            app:strokeWidth=\"3px\" />\r\n\r\n    </androidx.constraintlayout.widget.ConstraintLayout>\r\n\r\n</androidx.constraintlayout.widget.ConstraintLayout>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main/app/src/main/res/layout/activity_home.xml b/main/app/src/main/res/layout/activity_home.xml
+--- a/main/app/src/main/res/layout/activity_home.xml	(revision 83c46298b8dd0d9e68ae7c171ad31229ea4173e3)
++++ b/main/app/src/main/res/layout/activity_home.xml	(date 1733911193891)
+@@ -13,316 +13,316 @@
+         android:id="@+id/majorContent"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+-        android:visibility="visible">
++        android:visibility="gone">
+ 
+-    <Button
+-        android:id="@+id/more_currencies_btn"
+-        android:layout_width="120dp"
+-        android:layout_height="42dp"
+-        android:backgroundTint="@color/white"
+-        android:padding="0dp"
+-        android:text="Больше валют"
+-        android:textColor="@color/btns_color"
+-        android:textSize="15sp"
+-        app:cornerRadius="6sp"
+-        app:layout_constraintBottom_toBottomOf="@+id/cardView"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toTopOf="parent"
+-        app:layout_constraintHorizontal_bias="0.955"
+-        app:layout_constraintVertical_bias="0.238" />
++        <Button
++            android:id="@+id/more_currencies_btn"
++            android:layout_width="120dp"
++            android:layout_height="42dp"
++            android:backgroundTint="@color/white"
++            android:padding="0dp"
++            android:text="Больше валют"
++            android:textColor="@color/btns_color"
++            android:textSize="15sp"
++            app:cornerRadius="6sp"
++            app:layout_constraintBottom_toBottomOf="@+id/cardView"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintTop_toTopOf="parent"
++            app:layout_constraintHorizontal_bias="0.955"
++            app:layout_constraintVertical_bias="0.238"/>
+ 
+-    <TextView
+-        android:id="@+id/mobileInvestor"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:text="Мобильный инвестор"
+-        android:textSize="22dp"
+-        android:textStyle="bold"
+-        android:textColor="@color/white"
+-        app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintHorizontal_bias="0.05"
+-        app:layout_constraintVertical_bias="0.02"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toTopOf="parent" />
++        <TextView
++            android:id="@+id/mobileInvestor"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:text="Мобильный инвестор"
++            android:textSize="22dp"
++            android:textStyle="bold"
++            android:textColor="@color/white"
++            app:layout_constraintBottom_toBottomOf="parent"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintHorizontal_bias="0.05"
++            app:layout_constraintVertical_bias="0.02"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintTop_toTopOf="parent" />
+ 
+ 
+-    <TextView
+-        android:id="@+id/mostPopular"
+-        android:layout_width="wrap_content"
+-        android:layout_height="wrap_content"
+-        android:text="Основные валюты мира"
+-        android:textColor="@color/white"
+-        android:textSize="18dp"
+-        android:textStyle="bold"
+-        app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toTopOf="parent"
+-        app:layout_constraintHorizontal_bias="0.1"
+-        app:layout_constraintVertical_bias="0.095" />
++        <TextView
++            android:id="@+id/mostPopular"
++            android:layout_width="wrap_content"
++            android:layout_height="wrap_content"
++            android:text="Основные валюты мира"
++            android:textColor="@color/white"
++            android:textSize="18dp"
++            android:textStyle="bold"
++            app:layout_constraintBottom_toBottomOf="parent"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintTop_toTopOf="parent"
++            app:layout_constraintHorizontal_bias="0.1"
++            app:layout_constraintVertical_bias="0.095" />
+ 
+-    <TableLayout
+-        android:id="@+id/tableLayout"
+-        android:layout_width="200sp"
+-        android:layout_height="wrap_content"
+-        app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toTopOf="parent"
+-        app:layout_constraintHorizontal_bias="0.1"
+-        app:layout_constraintVertical_bias="0.155">
++        <TableLayout
++            android:id="@+id/tableLayout"
++            android:layout_width="200sp"
++            android:layout_height="wrap_content"
++            app:layout_constraintBottom_toBottomOf="parent"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintTop_toTopOf="parent"
++            app:layout_constraintHorizontal_bias="0.1"
++            app:layout_constraintVertical_bias="0.155">
+ 
+-        <TableRow>
+-            <TextView
+-                android:id="@+id/dollarText"
+-                android:layout_width="wrap_content"
+-                android:layout_height="wrap_content"
+-                android:layout_weight="1"
+-                android:textColor="@color/white"
+-                android:textSize="20sp"
+-                android:text="Доллар" />
++            <TableRow>
++                <TextView
++                    android:id="@+id/dollarText"
++                    android:layout_width="wrap_content"
++                    android:layout_height="wrap_content"
++                    android:layout_weight="1"
++                    android:textColor="@color/white"
++                    android:textSize="20sp"
++                    android:text="Доллар" />
+ 
+-            <TextView
+-                android:id="@+id/dollarRate"
+-                android:layout_height="match_parent"
+-                android:layout_weight="1"
+-                android:textColor="@color/white"
+-                android:textSize="20sp"
+-                android:textAlignment="textEnd"
+-                android:text="100" />
+-        </TableRow>
++                <TextView
++                    android:id="@+id/dollarRate"
++                    android:layout_height="match_parent"
++                    android:layout_weight="1"
++                    android:textColor="@color/white"
++                    android:textSize="20sp"
++                    android:textAlignment="textEnd"
++                    android:text="100" />
++            </TableRow>
+ 
+-        <TableRow>
++            <TableRow>
+ 
+-            <TextView
+-                android:id="@+id/euroText"
+-                android:layout_width="wrap_content"
+-                android:layout_height="wrap_content"
+-                android:layout_weight="1"
+-                android:textColor="@color/white"
+-                android:textSize="20sp"
+-                android:text="Евро" />
++                <TextView
++                    android:id="@+id/euroText"
++                    android:layout_width="wrap_content"
++                    android:layout_height="wrap_content"
++                    android:layout_weight="1"
++                    android:textColor="@color/white"
++                    android:textSize="20sp"
++                    android:text="Евро" />
+ 
+-            <TextView
+-                android:id="@+id/euroRate"
+-                android:layout_height="match_parent"
+-                android:layout_weight="1"
+-                android:textColor="@color/white"
+-                android:textSize="20sp"
+-                android:textAlignment="textEnd"
+-                android:text="85" />
+-        </TableRow>
++                <TextView
++                    android:id="@+id/euroRate"
++                    android:layout_height="match_parent"
++                    android:layout_weight="1"
++                    android:textColor="@color/white"
++                    android:textSize="20sp"
++                    android:textAlignment="textEnd"
++                    android:text="85" />
++            </TableRow>
+ 
+-        <TableRow>
++            <TableRow>
+ 
+-            <TextView
+-                android:id="@+id/rubText"
+-                android:layout_width="wrap_content"
+-                android:layout_height="wrap_content"
+-                android:layout_weight="1"
+-                android:textColor="@color/white"
+-                android:textSize="20sp"
+-                android:text="Рубль" />
++                <TextView
++                    android:id="@+id/rubText"
++                    android:layout_width="wrap_content"
++                    android:layout_height="wrap_content"
++                    android:layout_weight="1"
++                    android:textColor="@color/white"
++                    android:textSize="20sp"
++                    android:text="Рубль" />
+ 
+-            <TextView
+-                android:id="@+id/rubRate"
+-                android:layout_height="match_parent"
+-                android:layout_weight="1"
+-                android:textColor="@color/white"
+-                android:textSize="20sp"
+-                android:textAlignment="textEnd"
+-                android:text="1" />
+-        </TableRow>
++                <TextView
++                    android:id="@+id/rubRate"
++                    android:layout_height="match_parent"
++                    android:layout_weight="1"
++                    android:textColor="@color/white"
++                    android:textSize="20sp"
++                    android:textAlignment="textEnd"
++                    android:text="1" />
++            </TableRow>
+ 
+-        <TableRow>
++            <TableRow>
+ 
+-            <TextView
+-                android:id="@+id/uanText"
+-                android:layout_width="wrap_content"
+-                android:layout_height="wrap_content"
+-                android:layout_weight="1"
+-                android:textColor="@color/white"
+-                android:textSize="20sp"
+-                android:text="Юань" />
++                <TextView
++                    android:id="@+id/uanText"
++                    android:layout_width="wrap_content"
++                    android:layout_height="wrap_content"
++                    android:layout_weight="1"
++                    android:textColor="@color/white"
++                    android:textSize="20sp"
++                    android:text="Юань" />
+ 
+-            <TextView
+-                android:id="@+id/uanRate"
+-                android:layout_height="match_parent"
+-                android:layout_weight="1"
+-                android:textColor="@color/white"
+-                android:textSize="20sp"
+-                android:textAlignment="textEnd"
+-                android:text="14" />
+-        </TableRow>
++                <TextView
++                    android:id="@+id/uanRate"
++                    android:layout_height="match_parent"
++                    android:layout_weight="1"
++                    android:textColor="@color/white"
++                    android:textSize="20sp"
++                    android:textAlignment="textEnd"
++                    android:text="14" />
++            </TableRow>
+ 
+ 
+-    </TableLayout>
++        </TableLayout>
+ 
+-    <ImageButton
+-        android:id="@+id/profile_btn"
+-        android:layout_width="50sp"
+-        android:layout_height="50sp"
+-        app:srcCompat="@drawable/ic_launcher_foreground"
+-        app:layout_constraintHorizontal_bias="0.95"
+-        app:layout_constraintVertical_bias="0.02"
+-        app:layout_constraintBottom_toBottomOf="parent"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toTopOf="parent"  />
++        <ImageButton
++            android:id="@+id/profile_btn"
++            android:layout_width="50sp"
++            android:layout_height="50sp"
++            app:srcCompat="@drawable/ic_launcher_foreground"
++            app:layout_constraintHorizontal_bias="0.95"
++            app:layout_constraintVertical_bias="0.02"
++            app:layout_constraintBottom_toBottomOf="parent"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintTop_toTopOf="parent"  />
+ 
+-    <androidx.cardview.widget.CardView
+-        android:id="@+id/cardView"
+-        android:layout_width="match_parent"
+-        android:layout_height="500sp"
+-        android:layout_marginTop="230sp"
+-        app:cardBackgroundColor="@color/white"
+-        app:cardCornerRadius="25sp"
+-        app:layout_constraintEnd_toEndOf="parent"
+-        app:layout_constraintStart_toStartOf="parent"
+-        app:layout_constraintTop_toTopOf="parent">
++        <androidx.cardview.widget.CardView
++            android:id="@+id/cardView"
++            android:layout_width="match_parent"
++            android:layout_height="500sp"
++            android:layout_marginTop="230sp"
++            app:cardBackgroundColor="@color/white"
++            app:cardCornerRadius="25sp"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintTop_toTopOf="parent">
+ 
+-        <TextView
+-            android:id="@+id/textView2"
+-            android:layout_width="match_parent"
+-            android:layout_height="5sp"
+-            android:layout_gravity="center"
+-            android:layout_marginBottom="40sp"
+-            android:background="@color/grey" />
++            <TextView
++                android:id="@+id/textView2"
++                android:layout_width="match_parent"
++                android:layout_height="5sp"
++                android:layout_gravity="center"
++                android:layout_marginBottom="40sp"
++                android:background="@color/grey" />
+ 
+-        <TextView
+-            android:layout_width="wrap_content"
+-            android:layout_height="wrap_content"
+-            android:layout_margin="16sp"
+-            android:text="Акции инвесторов"
+-            android:textColor="@color/black"
+-            android:textSize="19sp"
+-            android:textStyle="bold" />
++            <TextView
++                android:layout_width="wrap_content"
++                android:layout_height="wrap_content"
++                android:layout_margin="16sp"
++                android:text="Акции инвесторов"
++                android:textColor="@color/black"
++                android:textSize="19sp"
++                android:textStyle="bold" />
+ 
+-        <HorizontalScrollView
+-            android:layout_width="match_parent"
+-            android:layout_height="125sp"
+-            android:layout_marginTop="60sp">
++            <HorizontalScrollView
++                android:layout_width="match_parent"
++                android:layout_height="125sp"
++                android:layout_marginTop="60sp">
+ 
+-            <LinearLayout
+-                android:layout_width="match_parent"
+-                android:layout_height="match_parent"
+-                android:layout_marginHorizontal="4sp"
+-                android:orientation="horizontal">
++                <LinearLayout
++                    android:layout_width="match_parent"
++                    android:layout_height="match_parent"
++                    android:layout_marginHorizontal="4sp"
++                    android:orientation="horizontal">
+ 
+-                <ImageButton
+-                    android:layout_width="90sp"
+-                    android:layout_height="match_parent"
+-                    android:layout_marginHorizontal="5sp"
+-                    android:backgroundTint="@color/btns_color"
+-                    android:scaleType="fitCenter"
+-                    android:src="@drawable/gprom"
+-                    app:cornerRadius="5sp" />
++                    <ImageButton
++                        android:layout_width="90sp"
++                        android:layout_height="match_parent"
++                        android:layout_marginHorizontal="5sp"
++                        android:backgroundTint="@color/btns_color"
++                        android:scaleType="fitCenter"
++                        android:src="@drawable/gprom"
++                        app:cornerRadius="5sp" />
+ 
+-                <ImageButton
+-                    android:layout_width="90sp"
+-                    android:layout_height="match_parent"
+-                    android:layout_marginHorizontal="5sp"
+-                    android:backgroundTint="@color/btns_color"
+-                    android:scaleType="fitCenter"
+-                    android:src="@drawable/mel"
+-                    app:cornerRadius="5sp" />
++                    <ImageButton
++                        android:layout_width="90sp"
++                        android:layout_height="match_parent"
++                        android:layout_marginHorizontal="5sp"
++                        android:backgroundTint="@color/btns_color"
++                        android:scaleType="fitCenter"
++                        android:src="@drawable/mel"
++                        app:cornerRadius="5sp" />
+ 
+-                <ImageButton
+-                    android:layout_width="90sp"
+-                    android:layout_height="match_parent"
+-                    android:layout_marginHorizontal="5sp"
+-                    android:backgroundTint="@color/btns_color"
+-                    android:scaleType="fitCenter"
+-                    android:src="@drawable/sber"
+-                    app:cornerRadius="5sp" />
++                    <ImageButton
++                        android:layout_width="90sp"
++                        android:layout_height="match_parent"
++                        android:layout_marginHorizontal="5sp"
++                        android:backgroundTint="@color/btns_color"
++                        android:scaleType="fitCenter"
++                        android:src="@drawable/sber"
++                        app:cornerRadius="5sp" />
+ 
+-                <ImageButton
+-                    android:layout_width="90sp"
+-                    android:layout_height="match_parent"
+-                    android:layout_marginHorizontal="5sp"
+-                    android:backgroundTint="@color/btns_color"
+-                    android:scaleType="fitCenter"
+-                    android:src="@drawable/rneft"
+-                    app:cornerRadius="5sp" />
++                    <ImageButton
++                        android:layout_width="90sp"
++                        android:layout_height="match_parent"
++                        android:layout_marginHorizontal="5sp"
++                        android:backgroundTint="@color/btns_color"
++                        android:scaleType="fitCenter"
++                        android:src="@drawable/rneft"
++                        app:cornerRadius="5sp" />
+ 
+-            </LinearLayout>
++                </LinearLayout>
+ 
+-        </HorizontalScrollView>
++            </HorizontalScrollView>
+ 
+ 
+-        <LinearLayout
+-            android:layout_width="match_parent"
+-            android:layout_height="wrap_content"
+-            android:layout_gravity="bottom"
+-            android:layout_marginBottom="10sp"
+-            android:orientation="vertical"
+-            android:padding="16sp">
++            <LinearLayout
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
++                android:layout_gravity="bottom"
++                android:layout_marginBottom="10sp"
++                android:orientation="vertical"
++                android:padding="16sp">
+ 
+-            <TextView
+-                android:layout_width="wrap_content"
+-                android:layout_height="wrap_content"
+-                android:text="Стоимость металлов на рынке"
+-                android:textColor="@color/black"
+-                android:textSize="19sp"
+-                android:textStyle="bold" />
++                <TextView
++                    android:layout_width="wrap_content"
++                    android:layout_height="wrap_content"
++                    android:text="Стоимость металлов на рынке"
++                    android:textColor="@color/black"
++                    android:textSize="19sp"
++                    android:textStyle="bold" />
+ 
+-            <Button
+-                android:id="@+id/ag_btn"
+-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+-                android:layout_width="match_parent"
+-                android:layout_height="wrap_content"
+-                android:layout_marginTop="8sp"
+-                android:text="Серебро"
+-                android:textColor="@color/btns_color"
+-                android:textSize="15sp"
+-                app:cornerRadius="10sp"
+-                app:strokeColor="@color/black"
+-                app:strokeWidth="3px" />
++                <Button
++                    android:id="@+id/ag_btn"
++                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:layout_marginTop="8sp"
++                    android:text="Серебро"
++                    android:textColor="@color/btns_color"
++                    android:textSize="15sp"
++                    app:cornerRadius="10sp"
++                    app:strokeColor="@color/black"
++                    app:strokeWidth="3px" />
+ 
+-            <Button
+-                android:id="@+id/au_btn"
+-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+-                android:layout_width="match_parent"
+-                android:layout_height="wrap_content"
+-                android:layout_marginTop="8sp"
+-                android:text="Золото"
+-                android:textColor="@color/btns_color"
+-                android:textSize="15sp"
+-                app:cornerRadius="10sp"
+-                app:strokeColor="@color/black"
+-                app:strokeWidth="3px" />
++                <Button
++                    android:id="@+id/au_btn"
++                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:layout_marginTop="8sp"
++                    android:text="Золото"
++                    android:textColor="@color/btns_color"
++                    android:textSize="15sp"
++                    app:cornerRadius="10sp"
++                    app:strokeColor="@color/black"
++                    app:strokeWidth="3px" />
+ 
+-            <Button
+-                android:id="@+id/pt_btn"
+-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+-                android:layout_width="match_parent"
+-                android:layout_height="wrap_content"
+-                android:layout_marginTop="8sp"
+-                android:text="Платина"
+-                android:textColor="@color/btns_color"
+-                android:textSize="15sp"
+-                app:cornerRadius="10sp"
+-                app:strokeColor="@color/black"
+-                app:strokeWidth="3px" />
++                <Button
++                    android:id="@+id/pt_btn"
++                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:layout_marginTop="8sp"
++                    android:text="Платина"
++                    android:textColor="@color/btns_color"
++                    android:textSize="15sp"
++                    app:cornerRadius="10sp"
++                    app:strokeColor="@color/black"
++                    app:strokeWidth="3px" />
+ 
+-            <Button
+-                android:id="@+id/pd_btn"
+-                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+-                android:layout_width="match_parent"
+-                android:layout_height="wrap_content"
+-                android:layout_marginTop="8sp"
+-                android:text="Палладий"
+-                android:textColor="@color/btns_color"
+-                android:textSize="15sp"
+-                app:cornerRadius="10sp"
+-                app:strokeColor="@color/black"
+-                app:strokeWidth="3px" />
++                <Button
++                    android:id="@+id/pd_btn"
++                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:layout_marginTop="8sp"
++                    android:text="Палладий"
++                    android:textColor="@color/btns_color"
++                    android:textSize="15sp"
++                    app:cornerRadius="10sp"
++                    app:strokeColor="@color/black"
++                    app:strokeWidth="3px" />
+ 
+-        </LinearLayout>
++            </LinearLayout>
+ 
+-    </androidx.cardview.widget.CardView>
++        </androidx.cardview.widget.CardView>
+     </androidx.constraintlayout.widget.ConstraintLayout>
+ 
+     <androidx.constraintlayout.widget.ConstraintLayout
+@@ -384,4 +384,155 @@
+ 
+     </androidx.constraintlayout.widget.ConstraintLayout>
+ 
++    <androidx.constraintlayout.widget.ConstraintLayout
++        android:id="@+id/profile"
++        android:layout_width="match_parent"
++        android:layout_height="match_parent"
++        android:visibility="visible">
++        <ImageView
++            android:id="@+id/user_avatar"
++            android:layout_width="150sp"
++            android:layout_height="150sp"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintTop_toTopOf="parent"
++            android:layout_marginTop="40sp"
++            android:contentDescription="User avatar"
++            android:src="@drawable/app_icon" />
++
++        <Button
++            android:id="@+id/upload_avatar_button"
++            android:layout_width="300sp"
++            android:layout_height="50sp"
++            android:text="Загрузить изображение"
++            app:layout_constraintStart_toStartOf="parent"
++            app:layout_constraintEnd_toEndOf="parent"
++            app:layout_constraintTop_toBottomOf="@id/user_avatar"
++            android:layout_marginTop="20sp"
++            android:backgroundTint="@color/white"
++            android:padding="0dp"
++            android:textColor="@color/btns_color"
++            android:textSize="15sp"
++            app:cornerRadius="6sp"/>
++
++        <androidx.cardview.widget.CardView
++            android:layout_width="match_parent"
++            android:layout_height="0sp"
++            android:padding="16sp"
++            app:layout_constraintTop_toBottomOf="@id/upload_avatar_button"
++            app:layout_constraintBottom_toBottomOf="parent"
++            android:backgroundTint="@color/white"
++            app:cardCornerRadius="25sp"
++            android:layout_marginTop="10sp">
++            <LinearLayout
++                android:layout_width="match_parent"
++                android:layout_height="wrap_content"
++                android:layout_gravity="top|center_horizontal"
++                android:layout_marginBottom="10sp"
++                android:orientation="vertical">
++                <com.google.android.material.textfield.TextInputLayout
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:layout_margin="10dp"
++                    app:boxBackgroundMode="outline"
++                    app:boxCornerRadiusTopStart="16dp"
++                    app:boxCornerRadiusTopEnd="16dp"
++                    app:boxCornerRadiusBottomStart="16dp"
++                    app:boxCornerRadiusBottomEnd="16dp">
++
++                    <com.google.android.material.textfield.TextInputEditText
++                        android:id="@+id/surname_edit"
++                        android:layout_width="match_parent"
++                        android:layout_height="wrap_content"
++                        android:hint="Фамилия"
++                        android:textColor="@color/black"
++                        android:inputType="text" />
++                </com.google.android.material.textfield.TextInputLayout>
++                <com.google.android.material.textfield.TextInputLayout
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:layout_margin="10dp"
++                    app:boxBackgroundMode="outline"
++                    app:boxCornerRadiusTopStart="16dp"
++                    app:boxCornerRadiusTopEnd="16dp"
++                    app:boxCornerRadiusBottomStart="16dp"
++                    app:boxCornerRadiusBottomEnd="16dp">
++
++                    <com.google.android.material.textfield.TextInputEditText
++                        android:id="@+id/name_edit"
++                        android:layout_width="match_parent"
++                        android:layout_height="wrap_content"
++                        android:hint="Имя"
++                        android:textColor="@color/black"
++                        android:inputType="text" />
++                </com.google.android.material.textfield.TextInputLayout>
++                <com.google.android.material.textfield.TextInputLayout
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:layout_margin="10dp"
++                    app:boxBackgroundMode="outline"
++                    app:boxCornerRadiusTopStart="16dp"
++                    app:boxCornerRadiusTopEnd="16dp"
++                    app:boxCornerRadiusBottomStart="16dp"
++                    app:boxCornerRadiusBottomEnd="16dp">
++
++                    <com.google.android.material.textfield.TextInputEditText
++                        android:id="@+id/patronymic_edit"
++                        android:layout_width="match_parent"
++                        android:layout_height="wrap_content"
++                        android:hint="Отчество"
++                        android:textColor="@color/black"
++                        android:inputType="textEmailAddress" />
++                </com.google.android.material.textfield.TextInputLayout>
++                <com.google.android.material.textfield.TextInputLayout
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:layout_margin="10dp"
++                    app:boxBackgroundMode="outline"
++                    app:boxCornerRadiusTopStart="16dp"
++                    app:boxCornerRadiusTopEnd="16dp"
++                    app:boxCornerRadiusBottomStart="16dp"
++                    app:boxCornerRadiusBottomEnd="16dp">
++
++                    <com.google.android.material.textfield.TextInputEditText
++                        android:id="@+id/email_edit"
++                        android:layout_width="match_parent"
++                        android:layout_height="wrap_content"
++                        android:hint="Email"
++                        android:textColor="@color/black"
++                        android:inputType="textEmailAddress" />
++                </com.google.android.material.textfield.TextInputLayout>
++                <com.google.android.material.textfield.TextInputLayout
++                    android:layout_width="match_parent"
++                    android:layout_height="wrap_content"
++                    android:layout_margin="10dp"
++                    app:boxBackgroundMode="outline"
++                    app:boxCornerRadiusTopStart="16dp"
++                    app:boxCornerRadiusTopEnd="16dp"
++                    app:boxCornerRadiusBottomStart="16dp"
++                    app:boxCornerRadiusBottomEnd="16dp">
++
++                    <com.google.android.material.textfield.TextInputEditText
++                        android:id="@+id/password_edit"
++                        android:layout_width="match_parent"
++                        android:layout_height="wrap_content"
++                        android:hint="Пароль"
++                        android:textColor="@color/black"
++                        android:inputType="textPassword"/>
++                </com.google.android.material.textfield.TextInputLayout>
++
++                <Button
++                    android:id="@+id/save_profile_button"
++                    android:layout_width="300sp"
++                    android:layout_height="50sp"
++                    android:text="Сохранить изменения"
++                    android:layout_gravity="center_horizontal"
++                    android:backgroundTint="@color/btns_color"
++                    android:padding="0dp"
++                    android:textColor="@color/white"
++                    android:textSize="15sp"
++                    app:cornerRadius="6sp"/>
++            </LinearLayout>
++        </androidx.cardview.widget.CardView>
++    </androidx.constraintlayout.widget.ConstraintLayout>
+ </androidx.constraintlayout.widget.ConstraintLayout>
+\ No newline at end of file
+Index: main/app/src/main/java/com/example/rksihackaton/HomeActivity.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.example.rksihackaton;\r\n\r\nimport android.graphics.Color;\r\nimport android.os.Bundle;\r\nimport android.view.View;\r\nimport android.widget.Button;\r\nimport android.widget.LinearLayout;\r\nimport android.widget.ScrollView;\r\nimport android.widget.TableRow;\r\nimport android.widget.TextView;\r\n\r\nimport androidx.activity.EdgeToEdge;\r\nimport androidx.appcompat.app.AppCompatActivity;\r\nimport androidx.constraintlayout.widget.ConstraintLayout;\r\nimport androidx.core.graphics.Insets;\r\nimport androidx.core.view.ViewCompat;\r\nimport androidx.core.view.WindowInsetsCompat;\r\n\r\nimport com.github.mikephil.charting.charts.LineChart;\r\nimport com.github.mikephil.charting.data.Entry;\r\nimport com.github.mikephil.charting.data.LineDataSet;\r\nimport com.github.mikephil.charting.utils.ColorTemplate;\r\nimport com.google.gson.Gson;\r\nimport com.google.gson.JsonArray;\r\nimport com.google.gson.JsonObject;\r\n\r\nimport org.json.JSONArray;\r\nimport org.json.JSONException;\r\nimport org.json.JSONObject;\r\n\r\nimport java.util.ArrayList;\r\nimport java.util.HashMap;\r\nimport java.util.LinkedHashMap;\r\nimport java.util.LinkedHashSet;\r\nimport java.util.List;\r\nimport java.util.Map;\r\n\r\npublic class HomeActivity extends AppCompatActivity {\r\n    private Button more_currencies_btn, back_btn, ag_btn, au_btn, pt_btn, pd_btn;\r\n    private LinearLayout currenciesLayout;\r\n    private ScrollView currenciesScroll;\r\n    private LineChart metalsChart;\r\n    private ConstraintLayout currenciesNgraphs, majorContent;\r\n\r\n\r\n    @Override\r\n    protected void onCreate(Bundle savedInstanceState) {\r\n        super.onCreate(savedInstanceState);\r\n        EdgeToEdge.enable(this);\r\n        setContentView(R.layout.activity_home);\r\n        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {\r\n            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());\r\n            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);\r\n            return insets;\r\n        });\r\n        more_currencies_btn = findViewById(R.id.more_currencies_btn);\r\n        back_btn = findViewById(R.id.back_btn);\r\n        currenciesLayout = findViewById(R.id.currenciesLayout);\r\n        currenciesScroll = findViewById(R.id.currenciesScroll);\r\n\r\n        metalsChart = findViewById(R.id.metalsChart);\r\n        ag_btn = findViewById(R.id.ag_btn);\r\n        au_btn = findViewById(R.id.au_btn);\r\n        pt_btn = findViewById(R.id.pt_btn);\r\n        pd_btn = findViewById(R.id.pd_btn);\r\n\r\n        currenciesNgraphs = findViewById(R.id.currenciesNgraphs);\r\n        majorContent = findViewById(R.id.majorContent);\r\n\r\n        String currenciesJson = \"{ \\\"currencies\\\": [ {\\\"currency\\\": \\\"AUD\\\", \\\"value\\\": \\\"63\\\"}, {\\\"currency\\\": \\\"AZN\\\", \\\"value\\\": \\\"58\\\"}, {\\\"currency\\\": \\\"AMD\\\", \\\"value\\\": \\\"25\\\"}, {\\\"currency\\\": \\\"BYN\\\", \\\"value\\\": \\\"29\\\"}, {\\\"currency\\\": \\\"BGN\\\", \\\"value\\\": \\\"54\\\"}, {\\\"currency\\\": \\\"BRL\\\", \\\"value\\\": \\\"16\\\"}, {\\\"currency\\\": \\\"HUF\\\", \\\"value\\\": \\\"25\\\"}, {\\\"currency\\\": \\\"KRW\\\", \\\"value\\\": \\\"69\\\"}, {\\\"currency\\\": \\\"VND\\\", \\\"value\\\": \\\"41\\\"}, {\\\"currency\\\": \\\"HKD\\\", \\\"value\\\": \\\"12\\\"}, {\\\"currency\\\": \\\"GEL\\\", \\\"value\\\": \\\"35\\\"}, {\\\"currency\\\": \\\"DKK\\\", \\\"value\\\": \\\"14\\\"}, {\\\"currency\\\": \\\"AED\\\", \\\"value\\\": \\\"27\\\"}, {\\\"currency\\\": \\\"USD\\\", \\\"value\\\": \\\"100\\\"}, {\\\"currency\\\": \\\"EUR\\\", \\\"value\\\": \\\"106\\\"}, {\\\"currency\\\": \\\"EGP\\\", \\\"value\\\": \\\"19\\\"}, {\\\"currency\\\": \\\"INR\\\", \\\"value\\\": \\\"11\\\"}, {\\\"currency\\\": \\\"IDR\\\", \\\"value\\\": \\\"63\\\"}, {\\\"currency\\\": \\\"KZT\\\", \\\"value\\\": \\\"19\\\"}, {\\\"currency\\\": \\\"CAD\\\", \\\"value\\\": \\\"70\\\"}, {\\\"currency\\\": \\\"QAR\\\", \\\"value\\\": \\\"27\\\"}, {\\\"currency\\\": \\\"KGS\\\", \\\"value\\\": \\\"11\\\"}, {\\\"currency\\\": \\\"CNY\\\", \\\"value\\\": \\\"13\\\"}, {\\\"currency\\\": \\\"MDL\\\", \\\"value\\\": \\\"54\\\"}, {\\\"currency\\\": \\\"NZD\\\", \\\"value\\\": \\\"58\\\"}, {\\\"currency\\\": \\\"TMT\\\", \\\"value\\\": \\\"28\\\"}, {\\\"currency\\\": \\\"NOK\\\", \\\"value\\\": \\\"90\\\"}, {\\\"currency\\\": \\\"PLN\\\", \\\"value\\\": \\\"24\\\"}, {\\\"currency\\\": \\\"RON\\\", \\\"value\\\": \\\"21\\\"}, {\\\"currency\\\": \\\"XDR\\\", \\\"value\\\": \\\"131\\\"}, {\\\"currency\\\": \\\"RSD\\\", \\\"value\\\": \\\"90\\\"}, {\\\"currency\\\": \\\"SGD\\\", \\\"value\\\": \\\"74\\\"}, {\\\"currency\\\": \\\"TJS\\\", \\\"value\\\": \\\"91\\\"}, {\\\"currency\\\": \\\"THB\\\", \\\"value\\\": \\\"29\\\"}, {\\\"currency\\\": \\\"TRY\\\", \\\"value\\\": \\\"28\\\"}, {\\\"currency\\\": \\\"UZS\\\", \\\"value\\\": \\\"77\\\"}, {\\\"currency\\\": \\\"UAH\\\", \\\"value\\\": \\\"24\\\"},\\n {\\\"currency\\\": \\\"GBP\\\", \\\"value\\\": \\\"128\\\"},\\n {\\\"currency\\\": \\\"CZK\\\", \\\"value\\\": \\\"42\\\"},\\n {\\\"currency\\\": \\\"SEK\\\", \\\"value\\\": \\\"91\\\"}, {\\\"currency\\\": \\\"CHF\\\", \\\"value\\\": \\\"113\\\"}, {\\\"currency\\\": \\\"ZAR\\\", \\\"value\\\": \\\"56\\\"}, {\\\"currency\\\": \\\"JPY\\\", \\\"value\\\": \\\"66\\\"} ] }\";\r\n\r\n        Map<String, String> flagMap = new HashMap<>();\r\n\r\n          flagMap.put(\"AUD\",\t\"Австралия \uD83C\uDDE6\uD83C\uDDFA\");\r\n          flagMap.put(\"AZN\",\t\"Азербайджан\t\uD83C\uDDE6\uD83C\uDDFF\");\r\n          flagMap.put(\"AMD\",\t\"Армения\t\uD83C\uDDE6\uD83C\uDDF2\");\r\n          flagMap.put(\"BYN\",\t\"Беларусь \uD83C\uDDE7\uD83C\uDDFE\");\r\n          flagMap.put(\"BGN\",\t\"Болгария \uD83C\uDDE7\uD83C\uDDEC\");\r\n          flagMap.put(\"BRL\",\t\"Бразилия \uD83C\uDDE7\uD83C\uDDF7\");\r\n          flagMap.put(\"HUF\",\t\"Венгрия\t\uD83C\uDDED\uD83C\uDDFA\");\r\n          flagMap.put(\"KRW\",\t\"Южная Корея\t\uD83C\uDDF0\uD83C\uDDF7\");\r\n          flagMap.put(\"VND\",\t\"Вьетнам\t\uD83C\uDDFB\uD83C\uDDF3\");\r\n          flagMap.put(\"HKD\",\t\"Гонконг\t\uD83C\uDDED\uD83C\uDDF0\");\r\n          flagMap.put(\"GEL\",\t\"Грузия\t\uD83C\uDDEC\uD83C\uDDEA\");\r\n          flagMap.put(\"DKK\",\t\"Дания \uD83C\uDDE9\uD83C\uDDF0\");\r\n          flagMap.put(\"AED\",\t\"ОАЭ\t\uD83C\uDDE6\uD83C\uDDEA\");\r\n          flagMap.put(\"USD\",\t\"США\t\uD83C\uDDFA\uD83C\uDDF8\");\r\n          flagMap.put(\"EUR\",\t\"Еврозона \uD83C\uDDEA\uD83C\uDDFA\");\r\n          flagMap.put(\"EGP\",\t\"Египет \uD83C\uDDEA\uD83C\uDDEC\");\r\n          flagMap.put(\"INR\",\t\"Индия \uD83C\uDDEE\uD83C\uDDF3\");\r\n          flagMap.put(\"IDR\",\t\"Индонезия \uD83C\uDDEE\uD83C\uDDE9\");\r\n          flagMap.put(\"KZT\",\t\"Казахстан \uD83C\uDDF0\uD83C\uDDFF\");\r\n          flagMap.put(\"CAD\",\t\"Канада \uD83C\uDDE8\uD83C\uDDE6\");\r\n          flagMap.put(\"QAR\",\t\"Катар \uD83C\uDDF6\uD83C\uDDE6\");\r\n          flagMap.put(\"KGS\",\t\"Кыргызстан \uD83C\uDDF0\uD83C\uDDEC\");\r\n          flagMap.put(\"CNY\",\t\"Китай \uD83C\uDDE8\uD83C\uDDF3\");\r\n          flagMap.put(\"MDL\",\t\"Молдова\t\uD83C\uDDF2\uD83C\uDDE9\");\r\n          flagMap.put(\"NZD\",\t\"Новая Зеландия \uD83C\uDDF3\uD83C\uDDFF\");\r\n          flagMap.put(\"TMT\",\t\"Туркменистан \uD83C\uDDF9\uD83C\uDDF2\");\r\n          flagMap.put(\"NOK\",\t\"Норвегия \uD83C\uDDF3\uD83C\uDDF4\");\r\n          flagMap.put(\"PLN\",\t\"Польша\t\uD83C\uDDF5\uD83C\uDDF1\");\r\n          flagMap.put(\"RON\",\t\"Румыния\t\uD83C\uDDF7\uD83C\uDDF4\");\r\n          flagMap.put(\"XDR\",\t\"МВФ\");\r\n          flagMap.put(\"RSD\",\t\"Сербия \uD83C\uDDF7\uD83C\uDDF8\");\r\n          flagMap.put(\"SGD\",\t\"Сингапур \uD83C\uDDF8\uD83C\uDDEC\");\r\n          flagMap.put(\"TJS\",\t\"Таджикистан\t\uD83C\uDDF9\uD83C\uDDEF\");\r\n          flagMap.put(\"THB\",\t\"Таиланд\t\uD83C\uDDF9\uD83C\uDDED\");\r\n          flagMap.put(\"TRY\",\t\"Турция \uD83C\uDDF9\uD83C\uDDF7\");\r\n          flagMap.put(\"UZS\",\t\"Узбекистан \uD83C\uDDFA\uD83C\uDDFF\");\r\n          flagMap.put(\"UAH\",\t\"Украина\t\uD83C\uDDFA\uD83C\uDDE6\");\r\n          flagMap.put(\"GBP\",\t\"Великобритания \uD83C\uDDEC\uD83C\uDDE7\");\r\n          flagMap.put(\"CZK\",\t\"Чехия \uD83C\uDDE8\uD83C\uDDFF\");\r\n          flagMap.put(\"SEK\",\t\"Швеция \uD83C\uDDF8\uD83C\uDDEA\");\r\n          flagMap.put(\"CHF\",\t\"Швейцария \uD83C\uDDE8\uD83C\uDDED\");\r\n          flagMap.put(\"ZAR\",\t\"Южноафриканская Республика\t\uD83C\uDDFF\uD83C\uDDE6\");\r\n          flagMap.put(\"JPY\",\t\"Япония \uD83C\uDDEF\uD83C\uDDF5\");\r\n\r\n\r\n        try {\r\n            JSONObject currenciesJsonObject = new JSONObject(currenciesJson);\r\n            JSONArray currencies = currenciesJsonObject.getJSONArray(\"currencies\");\r\n\r\n\r\n            TableRow.LayoutParams row_p = new TableRow.LayoutParams(\r\n                    TableRow.LayoutParams.MATCH_PARENT,\r\n                    100);\r\n\r\n            TableRow row = new TableRow(HomeActivity.this);\r\n            row.setLayoutParams(row_p);\r\n\r\n            CreateTextView(\"Валюты\", row, 1.5f);\r\n            CreateTextView(\"Стоимость в рублях\", row, 1);\r\n\r\n            currenciesLayout.addView(row);\r\n\r\n            for (int i = 0; i < currencies.length(); i++) {\r\n                JSONObject currencyObject = currencies.getJSONObject(i);\r\n                String currency = currencyObject.getString(\"currency\");\r\n                String value = currencyObject.getString(\"value\");\r\n\r\n                TableRow.LayoutParams row_params = new TableRow.LayoutParams(\r\n                        TableRow.LayoutParams.MATCH_PARENT,\r\n                        100);\r\n\r\n                TableRow tableRow = new TableRow(HomeActivity.this);\r\n                tableRow.setLayoutParams(row_params);\r\n\r\n                CreateTextView(currency + \" (\" +flagMap.get(currency) + \")\", tableRow, 1.5f);\r\n                CreateTextView(value, tableRow, 1);\r\n\r\n                currenciesLayout.addView(tableRow);\r\n            }\r\n        } catch (JSONException e) {\r\n            throw new RuntimeException(e);\r\n        }\r\n\r\n\r\n        String metalsJson = \"{\\\"metals\\\":{\\\"metal\\\":[{\\\"date\\\":\\\"11.12.2024\\\",\\\"gold_price\\\":\\\"8593.1299999999992\\\",\\\"silver_price\\\":\\\"101.73\\\",\\\"platinum_price\\\":\\\"3058.52\\\",\\\"palladium_price\\\":\\\"3161.4400000000001\\\"},{\\\"date\\\":\\\"10.12.2024\\\",\\\"gold_price\\\":\\\"8426.1900000000005\\\",\\\"silver_price\\\":\\\"99.400000000000006\\\",\\\"platinum_price\\\":\\\"2990.5300000000002\\\",\\\"palladium_price\\\":\\\"3089.5700000000002\\\"},{\\\"date\\\":\\\"07.12.2024\\\",\\\"gold_price\\\":\\\"8439.1700000000001\\\",\\\"silver_price\\\":\\\"100.19\\\",\\\"platinum_price\\\":\\\"3011.0799999999999\\\",\\\"palladium_price\\\":\\\"3116.5599999999999\\\"},{\\\"date\\\":\\\"06.12.2024\\\",\\\"gold_price\\\":\\\"8803.7399999999998\\\",\\\"silver_price\\\":\\\"102.48999999999999\\\",\\\"platinum_price\\\":\\\"3131.0799999999999\\\",\\\"palladium_price\\\":\\\"3250.7399999999998\\\"},{\\\"date\\\":\\\"05.12.2024\\\",\\\"gold_price\\\":\\\"8849.5200000000004\\\",\\\"silver_price\\\":\\\"103.56999999999999\\\",\\\"platinum_price\\\":\\\"3200.46\\\",\\\"palladium_price\\\":\\\"3327.8099999999999\\\"},{\\\"date\\\":\\\"04.12.2024\\\",\\\"gold_price\\\":\\\"9020.3400000000001\\\",\\\"silver_price\\\":\\\"103.97\\\",\\\"platinum_price\\\":\\\"3216\\\",\\\"palladium_price\\\":\\\"3369.6300000000001\\\"},{\\\"date\\\":\\\"03.12.2024\\\",\\\"gold_price\\\":\\\"9134.9300000000003\\\",\\\"silver_price\\\":\\\"105.79000000000001\\\",\\\"platinum_price\\\":\\\"3239.0300000000002\\\",\\\"palladium_price\\\":\\\"3387.1999999999998\\\"}]}}\";\r\n\r\n        // Используем Gson для разбора JSON\r\n        Gson gson = new Gson();\r\n        JsonObject metalsJsonObject = gson.fromJson(metalsJson, JsonObject.class);\r\n        JsonObject metals = metalsJsonObject.getAsJsonObject(\"metals\");\r\n        JsonArray metalArray = metals.getAsJsonArray(\"metal\");\r\n\r\n        List<Entry> goldPrices = new ArrayList<>();\r\n        List<Entry> silverPrices = new ArrayList<>();\r\n        List<Entry> platinumPrices = new ArrayList<>();\r\n        List<Entry> palladiumPrices = new ArrayList<>();\r\n\r\n        for (int i = 0; i < metalArray.size(); i++) {\r\n            JsonObject metalData = metalArray.get(i).getAsJsonObject();\r\n            String date = metalData.get(\"date\").getAsString();\r\n            float goldPrice = metalData.get(\"gold_price\").getAsFloat();\r\n            float silverPrice = metalData.get(\"silver_price\").getAsFloat();\r\n            float platinumPrice = metalData.get(\"platinum_price\").getAsFloat();\r\n            float palladiumPrice = metalData.get(\"palladium_price\").getAsFloat();\r\n\r\n            goldPrices.add(new Entry(i, goldPrice));\r\n            silverPrices.add(new Entry(i, silverPrice));\r\n            platinumPrices.add(new Entry(i, platinumPrice));\r\n            palladiumPrices.add(new Entry(i, palladiumPrice));\r\n        }\r\n\r\n        LineDataSet gold_set = new LineDataSet(goldPrices, \"Золото\");\r\n        LineDataSet silver_set = new LineDataSet(silverPrices, \"Серебро\");\r\n        LineDataSet platinum_set = new LineDataSet(platinumPrices, \"Платина\");\r\n        LineDataSet palladium_set = new LineDataSet(palladiumPrices, \"Палладий\");\r\n        gold_set.setColor(ColorTemplate.rgb(\"FFD700\"));\r\n        silver_set.setColor(ColorTemplate.rgb(\"C0C0C0\"));\r\n        platinum_set.setColor(ColorTemplate.rgb(\"e5e4e2\"));\r\n        palladium_set.setColor(ColorTemplate.rgb(\"b1b1b1\"));\r\n\r\n        more_currencies_btn.setOnClickListener(view -> {\r\n            majorContent.setVisibility(View.GONE);\r\n            currenciesNgraphs.setVisibility(View.VISIBLE);\r\n            currenciesScroll.setVisibility(View.VISIBLE);\r\n            metalsChart.setVisibility(View.GONE);\r\n        });\r\n\r\n        back_btn.setOnClickListener(view -> {\r\n            majorContent.setVisibility(View.VISIBLE);\r\n            currenciesNgraphs.setVisibility(View.GONE);\r\n        });\r\n\r\n        ag_btn.setOnClickListener(view -> {\r\n            majorContent.setVisibility(View.GONE);\r\n            currenciesNgraphs.setVisibility(View.VISIBLE);\r\n            currenciesScroll.setVisibility(View.GONE);\r\n            metalsChart.setVisibility(View.VISIBLE);\r\n            GraphBuilder.BuildLineGraph(metalsChart, silver_set);\r\n\r\n        });\r\n\r\n        au_btn.setOnClickListener(view -> {\r\n            majorContent.setVisibility(View.GONE);\r\n            currenciesNgraphs.setVisibility(View.VISIBLE);\r\n            currenciesScroll.setVisibility(View.GONE);\r\n            metalsChart.setVisibility(View.VISIBLE);\r\n            GraphBuilder.BuildLineGraph(metalsChart, gold_set);\r\n\r\n        });\r\n\r\n        pt_btn.setOnClickListener(view -> {\r\n            majorContent.setVisibility(View.GONE);\r\n            currenciesNgraphs.setVisibility(View.VISIBLE);\r\n            currenciesScroll.setVisibility(View.GONE);\r\n            metalsChart.setVisibility(View.VISIBLE);\r\n            GraphBuilder.BuildLineGraph(metalsChart, platinum_set);\r\n\r\n        });\r\n\r\n        pd_btn.setOnClickListener(view -> {\r\n            majorContent.setVisibility(View.GONE);\r\n            currenciesNgraphs.setVisibility(View.VISIBLE);\r\n            currenciesScroll.setVisibility(View.GONE);\r\n            metalsChart.setVisibility(View.VISIBLE);\r\n            GraphBuilder.BuildLineGraph(metalsChart, palladium_set);\r\n\r\n        });\r\n\r\n    }\r\n\r\n    void CreateTextView(String text, TableRow TR, float weight){\r\n        TableRow.LayoutParams params = new TableRow.LayoutParams(\r\n                TableRow.LayoutParams.WRAP_CONTENT,\r\n                TableRow.LayoutParams.WRAP_CONTENT);\r\n        params.weight = weight;\r\n\r\n        TextView textView = new TextView(HomeActivity.this);\r\n        textView.setLayoutParams(params);\r\n        textView.setPadding(10, 10, 10, 10);\r\n        textView.setText(text);\r\n        textView.setTextColor(Color.WHITE);\r\n        textView.setMaxEms(2);\r\n        textView.setTextSize(15);\r\n        textView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);\r\n        TR.addView(textView);\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main/app/src/main/java/com/example/rksihackaton/HomeActivity.java b/main/app/src/main/java/com/example/rksihackaton/HomeActivity.java
+--- a/main/app/src/main/java/com/example/rksihackaton/HomeActivity.java	(revision 83c46298b8dd0d9e68ae7c171ad31229ea4173e3)
++++ b/main/app/src/main/java/com/example/rksihackaton/HomeActivity.java	(date 1733905595892)
+@@ -10,6 +10,7 @@
+ import android.widget.TextView;
+ 
+ import androidx.activity.EdgeToEdge;
++import androidx.annotation.NonNull;
+ import androidx.appcompat.app.AppCompatActivity;
+ import androidx.constraintlayout.widget.ConstraintLayout;
+ import androidx.core.graphics.Insets;
+@@ -17,8 +18,10 @@
+ import androidx.core.view.WindowInsetsCompat;
+ 
+ import com.github.mikephil.charting.charts.LineChart;
++import com.github.mikephil.charting.components.XAxis;
+ import com.github.mikephil.charting.data.Entry;
+ import com.github.mikephil.charting.data.LineDataSet;
++import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+ import com.github.mikephil.charting.utils.ColorTemplate;
+ import com.google.gson.Gson;
+ import com.google.gson.JsonArray;
+@@ -69,92 +72,145 @@
+ 
+         String currenciesJson = "{ \"currencies\": [ {\"currency\": \"AUD\", \"value\": \"63\"}, {\"currency\": \"AZN\", \"value\": \"58\"}, {\"currency\": \"AMD\", \"value\": \"25\"}, {\"currency\": \"BYN\", \"value\": \"29\"}, {\"currency\": \"BGN\", \"value\": \"54\"}, {\"currency\": \"BRL\", \"value\": \"16\"}, {\"currency\": \"HUF\", \"value\": \"25\"}, {\"currency\": \"KRW\", \"value\": \"69\"}, {\"currency\": \"VND\", \"value\": \"41\"}, {\"currency\": \"HKD\", \"value\": \"12\"}, {\"currency\": \"GEL\", \"value\": \"35\"}, {\"currency\": \"DKK\", \"value\": \"14\"}, {\"currency\": \"AED\", \"value\": \"27\"}, {\"currency\": \"USD\", \"value\": \"100\"}, {\"currency\": \"EUR\", \"value\": \"106\"}, {\"currency\": \"EGP\", \"value\": \"19\"}, {\"currency\": \"INR\", \"value\": \"11\"}, {\"currency\": \"IDR\", \"value\": \"63\"}, {\"currency\": \"KZT\", \"value\": \"19\"}, {\"currency\": \"CAD\", \"value\": \"70\"}, {\"currency\": \"QAR\", \"value\": \"27\"}, {\"currency\": \"KGS\", \"value\": \"11\"}, {\"currency\": \"CNY\", \"value\": \"13\"}, {\"currency\": \"MDL\", \"value\": \"54\"}, {\"currency\": \"NZD\", \"value\": \"58\"}, {\"currency\": \"TMT\", \"value\": \"28\"}, {\"currency\": \"NOK\", \"value\": \"90\"}, {\"currency\": \"PLN\", \"value\": \"24\"}, {\"currency\": \"RON\", \"value\": \"21\"}, {\"currency\": \"XDR\", \"value\": \"131\"}, {\"currency\": \"RSD\", \"value\": \"90\"}, {\"currency\": \"SGD\", \"value\": \"74\"}, {\"currency\": \"TJS\", \"value\": \"91\"}, {\"currency\": \"THB\", \"value\": \"29\"}, {\"currency\": \"TRY\", \"value\": \"28\"}, {\"currency\": \"UZS\", \"value\": \"77\"}, {\"currency\": \"UAH\", \"value\": \"24\"},\n {\"currency\": \"GBP\", \"value\": \"128\"},\n {\"currency\": \"CZK\", \"value\": \"42\"},\n {\"currency\": \"SEK\", \"value\": \"91\"}, {\"currency\": \"CHF\", \"value\": \"113\"}, {\"currency\": \"ZAR\", \"value\": \"56\"}, {\"currency\": \"JPY\", \"value\": \"66\"} ] }";
+ 
++        Map<String, String> flagMap = getStringStringMap();
++
++
++        try {
++            JSONObject currenciesJsonObject = new JSONObject(currenciesJson);
++            JSONArray currencies = currenciesJsonObject.getJSONArray("currencies");
++
++
++            TableRow.LayoutParams row_p = new TableRow.LayoutParams(
++                    TableRow.LayoutParams.MATCH_PARENT,
++                    100);
++
++            TableRow row = new TableRow(HomeActivity.this);
++            row.setLayoutParams(row_p);
++
++            CreateTextView("Валюты", row, 1.5f);
++            CreateTextView("Стоимость в рублях", row, 1);
++
++            currenciesLayout.addView(row);
++
++            for (int i = 0; i < currencies.length(); i++) {
++                JSONObject currencyObject = currencies.getJSONObject(i);
++                String currency = currencyObject.getString("currency");
++                String value = currencyObject.getString("value");
++
++                TableRow.LayoutParams row_params = new TableRow.LayoutParams(
++                        TableRow.LayoutParams.MATCH_PARENT,
++                        100);
++
++                TableRow tableRow = new TableRow(HomeActivity.this);
++                tableRow.setLayoutParams(row_params);
++
++                CreateTextView(currency + " (" +flagMap.get(currency) + ")", tableRow, 1.5f);
++                CreateTextView(value, tableRow, 1);
++
++                currenciesLayout.addView(tableRow);
++            }
++        } catch (JSONException e) {
++            throw new RuntimeException(e);
++        }
++
++        more_currencies_btn.setOnClickListener(view -> {
++            majorContent.setVisibility(View.GONE);
++            currenciesNgraphs.setVisibility(View.VISIBLE);
++            currenciesScroll.setVisibility(View.VISIBLE);
++            metalsChart.setVisibility(View.GONE);
++        });
++
++        back_btn.setOnClickListener(view -> {
++            majorContent.setVisibility(View.VISIBLE);
++            currenciesNgraphs.setVisibility(View.GONE);
++        });
++
++        ag_btn.setOnClickListener(view -> {
++            majorContent.setVisibility(View.GONE);
++            currenciesNgraphs.setVisibility(View.VISIBLE);
++            currenciesScroll.setVisibility(View.GONE);
++            metalsChart.setVisibility(View.VISIBLE);
++            GraphBuilder.BuildLineGraph(metalsChart, LoadMetals(metalsChart)[0]);
++
++        });
++
++        au_btn.setOnClickListener(view -> {
++            majorContent.setVisibility(View.GONE);
++            currenciesNgraphs.setVisibility(View.VISIBLE);
++            currenciesScroll.setVisibility(View.GONE);
++            metalsChart.setVisibility(View.VISIBLE);
++            GraphBuilder.BuildLineGraph(metalsChart, LoadMetals(metalsChart)[1]);
++
++        });
++
++        pt_btn.setOnClickListener(view -> {
++            majorContent.setVisibility(View.GONE);
++            currenciesNgraphs.setVisibility(View.VISIBLE);
++            currenciesScroll.setVisibility(View.GONE);
++            metalsChart.setVisibility(View.VISIBLE);
++            GraphBuilder.BuildLineGraph(metalsChart, LoadMetals(metalsChart)[2]);
++        });
++
++
++        pd_btn.setOnClickListener(view -> {
++            majorContent.setVisibility(View.GONE);
++            currenciesNgraphs.setVisibility(View.VISIBLE);
++            currenciesScroll.setVisibility(View.GONE);
++            metalsChart.setVisibility(View.VISIBLE);
++            GraphBuilder.BuildLineGraph(metalsChart, LoadMetals(metalsChart)[3]);
++        });
++    }
++
++    @NonNull
++    private static Map<String, String> getStringStringMap() {
+         Map<String, String> flagMap = new HashMap<>();
+-
+-          flagMap.put("AUD",	"Австралия 🇦🇺");
+-          flagMap.put("AZN",	"Азербайджан	🇦🇿");
+-          flagMap.put("AMD",	"Армения	🇦🇲");
+-          flagMap.put("BYN",	"Беларусь 🇧🇾");
+-          flagMap.put("BGN",	"Болгария 🇧🇬");
+-          flagMap.put("BRL",	"Бразилия 🇧🇷");
+-          flagMap.put("HUF",	"Венгрия	🇭🇺");
+-          flagMap.put("KRW",	"Южная Корея	🇰🇷");
+-          flagMap.put("VND",	"Вьетнам	🇻🇳");
+-          flagMap.put("HKD",	"Гонконг	🇭🇰");
+-          flagMap.put("GEL",	"Грузия	🇬🇪");
+-          flagMap.put("DKK",	"Дания 🇩🇰");
+-          flagMap.put("AED",	"ОАЭ	🇦🇪");
+-          flagMap.put("USD",	"США	🇺🇸");
+-          flagMap.put("EUR",	"Еврозона 🇪🇺");
+-          flagMap.put("EGP",	"Египет 🇪🇬");
+-          flagMap.put("INR",	"Индия 🇮🇳");
+-          flagMap.put("IDR",	"Индонезия 🇮🇩");
+-          flagMap.put("KZT",	"Казахстан 🇰🇿");
+-          flagMap.put("CAD",	"Канада 🇨🇦");
+-          flagMap.put("QAR",	"Катар 🇶🇦");
+-          flagMap.put("KGS",	"Кыргызстан 🇰🇬");
+-          flagMap.put("CNY",	"Китай 🇨🇳");
+-          flagMap.put("MDL",	"Молдова	🇲🇩");
+-          flagMap.put("NZD",	"Новая Зеландия 🇳🇿");
+-          flagMap.put("TMT",	"Туркменистан 🇹🇲");
+-          flagMap.put("NOK",	"Норвегия 🇳🇴");
+-          flagMap.put("PLN",	"Польша	🇵🇱");
+-          flagMap.put("RON",	"Румыния	🇷🇴");
+-          flagMap.put("XDR",	"МВФ");
+-          flagMap.put("RSD",	"Сербия 🇷🇸");
+-          flagMap.put("SGD",	"Сингапур 🇸🇬");
+-          flagMap.put("TJS",	"Таджикистан	🇹🇯");
+-          flagMap.put("THB",	"Таиланд	🇹🇭");
+-          flagMap.put("TRY",	"Турция 🇹🇷");
+-          flagMap.put("UZS",	"Узбекистан 🇺🇿");
+-          flagMap.put("UAH",	"Украина	🇺🇦");
+-          flagMap.put("GBP",	"Великобритания 🇬🇧");
+-          flagMap.put("CZK",	"Чехия 🇨🇿");
+-          flagMap.put("SEK",	"Швеция 🇸🇪");
+-          flagMap.put("CHF",	"Швейцария 🇨🇭");
+-          flagMap.put("ZAR",	"Южноафриканская Республика	🇿🇦");
+-          flagMap.put("JPY",	"Япония 🇯🇵");
+-
+-
+-        try {
+-            JSONObject currenciesJsonObject = new JSONObject(currenciesJson);
+-            JSONArray currencies = currenciesJsonObject.getJSONArray("currencies");
+-
+-
+-            TableRow.LayoutParams row_p = new TableRow.LayoutParams(
+-                    TableRow.LayoutParams.MATCH_PARENT,
+-                    100);
+-
+-            TableRow row = new TableRow(HomeActivity.this);
+-            row.setLayoutParams(row_p);
+-
+-            CreateTextView("Валюты", row, 1.5f);
+-            CreateTextView("Стоимость в рублях", row, 1);
+-
+-            currenciesLayout.addView(row);
+-
+-            for (int i = 0; i < currencies.length(); i++) {
+-                JSONObject currencyObject = currencies.getJSONObject(i);
+-                String currency = currencyObject.getString("currency");
+-                String value = currencyObject.getString("value");
+-
+-                TableRow.LayoutParams row_params = new TableRow.LayoutParams(
+-                        TableRow.LayoutParams.MATCH_PARENT,
+-                        100);
+-
+-                TableRow tableRow = new TableRow(HomeActivity.this);
+-                tableRow.setLayoutParams(row_params);
+-
+-                CreateTextView(currency + " (" +flagMap.get(currency) + ")", tableRow, 1.5f);
+-                CreateTextView(value, tableRow, 1);
+-
+-                currenciesLayout.addView(tableRow);
+-            }
+-        } catch (JSONException e) {
+-            throw new RuntimeException(e);
+-        }
++        flagMap.put("AUD",	"Австралия 🇦🇺");
++        flagMap.put("AZN",	"Азербайджан	🇦🇿");
++        flagMap.put("AMD",	"Армения	🇦🇲");
++        flagMap.put("BYN",	"Беларусь 🇧🇾");
++        flagMap.put("BGN",	"Болгария 🇧🇬");
++        flagMap.put("BRL",	"Бразилия 🇧🇷");
++        flagMap.put("HUF",	"Венгрия	🇭🇺");
++        flagMap.put("KRW",	"Южная Корея	🇰🇷");
++        flagMap.put("VND",	"Вьетнам	🇻🇳");
++        flagMap.put("HKD",	"Гонконг	🇭🇰");
++        flagMap.put("GEL",	"Грузия	🇬🇪");
++        flagMap.put("DKK",	"Дания 🇩🇰");
++        flagMap.put("AED",	"ОАЭ	🇦🇪");
++        flagMap.put("USD",	"США	🇺🇸");
++        flagMap.put("EUR",	"Еврозона 🇪🇺");
++        flagMap.put("EGP",	"Египет 🇪🇬");
++        flagMap.put("INR",	"Индия 🇮🇳");
++        flagMap.put("IDR",	"Индонезия 🇮🇩");
++        flagMap.put("KZT",	"Казахстан 🇰🇿");
++        flagMap.put("CAD",	"Канада 🇨🇦");
++        flagMap.put("QAR",	"Катар 🇶🇦");
++        flagMap.put("KGS",	"Кыргызстан 🇰🇬");
++        flagMap.put("CNY",	"Китай 🇨🇳");
++        flagMap.put("MDL",	"Молдова	🇲🇩");
++        flagMap.put("NZD",	"Новая Зеландия 🇳🇿");
++        flagMap.put("TMT",	"Туркменистан 🇹🇲");
++        flagMap.put("NOK",	"Норвегия 🇳🇴");
++        flagMap.put("PLN",	"Польша	🇵🇱");
++        flagMap.put("RON",	"Румыния	🇷🇴");
++        flagMap.put("XDR",	"МВФ");
++        flagMap.put("RSD",	"Сербия 🇷🇸");
++        flagMap.put("SGD",	"Сингапур 🇸🇬");
++        flagMap.put("TJS",	"Таджикистан	🇹🇯");
++        flagMap.put("THB",	"Таиланд	🇹🇭");
++        flagMap.put("TRY",	"Турция 🇹🇷");
++        flagMap.put("UZS",	"Узбекистан 🇺🇿");
++        flagMap.put("UAH",	"Украина	🇺🇦");
++        flagMap.put("GBP",	"Великобритания 🇬🇧");
++        flagMap.put("CZK",	"Чехия 🇨🇿");
++        flagMap.put("SEK",	"Швеция 🇸🇪");
++        flagMap.put("CHF",	"Швейцария 🇨🇭");
++        flagMap.put("ZAR",	"Южноафриканская Республика	🇿🇦");
++        flagMap.put("JPY",	"Япония 🇯🇵");
++        return flagMap;
++    }
+ 
+-
++    LineDataSet[] LoadMetals(LineChart lineChart){
+         String metalsJson = "{\"metals\":{\"metal\":[{\"date\":\"11.12.2024\",\"gold_price\":\"8593.1299999999992\",\"silver_price\":\"101.73\",\"platinum_price\":\"3058.52\",\"palladium_price\":\"3161.4400000000001\"},{\"date\":\"10.12.2024\",\"gold_price\":\"8426.1900000000005\",\"silver_price\":\"99.400000000000006\",\"platinum_price\":\"2990.5300000000002\",\"palladium_price\":\"3089.5700000000002\"},{\"date\":\"07.12.2024\",\"gold_price\":\"8439.1700000000001\",\"silver_price\":\"100.19\",\"platinum_price\":\"3011.0799999999999\",\"palladium_price\":\"3116.5599999999999\"},{\"date\":\"06.12.2024\",\"gold_price\":\"8803.7399999999998\",\"silver_price\":\"102.48999999999999\",\"platinum_price\":\"3131.0799999999999\",\"palladium_price\":\"3250.7399999999998\"},{\"date\":\"05.12.2024\",\"gold_price\":\"8849.5200000000004\",\"silver_price\":\"103.56999999999999\",\"platinum_price\":\"3200.46\",\"palladium_price\":\"3327.8099999999999\"},{\"date\":\"04.12.2024\",\"gold_price\":\"9020.3400000000001\",\"silver_price\":\"103.97\",\"platinum_price\":\"3216\",\"palladium_price\":\"3369.6300000000001\"},{\"date\":\"03.12.2024\",\"gold_price\":\"9134.9300000000003\",\"silver_price\":\"105.79000000000001\",\"platinum_price\":\"3239.0300000000002\",\"palladium_price\":\"3387.1999999999998\"}]}}";
+ 
+         // Используем Gson для разбора JSON
+@@ -168,9 +224,11 @@
+         List<Entry> platinumPrices = new ArrayList<>();
+         List<Entry> palladiumPrices = new ArrayList<>();
+ 
++        List<String> dateValues = new ArrayList<>();
++
+         for (int i = 0; i < metalArray.size(); i++) {
+             JsonObject metalData = metalArray.get(i).getAsJsonObject();
+-            String date = metalData.get("date").getAsString();
++            dateValues.add(metalData.get("date").getAsString());
+             float goldPrice = metalData.get("gold_price").getAsFloat();
+             float silverPrice = metalData.get("silver_price").getAsFloat();
+             float platinumPrice = metalData.get("platinum_price").getAsFloat();
+@@ -182,63 +240,26 @@
+             palladiumPrices.add(new Entry(i, palladiumPrice));
+         }
+ 
+-        LineDataSet gold_set = new LineDataSet(goldPrices, "Золото");
+-        LineDataSet silver_set = new LineDataSet(silverPrices, "Серебро");
+-        LineDataSet platinum_set = new LineDataSet(platinumPrices, "Платина");
+-        LineDataSet palladium_set = new LineDataSet(palladiumPrices, "Палладий");
+-        gold_set.setColor(ColorTemplate.rgb("FFD700"));
+-        silver_set.setColor(ColorTemplate.rgb("C0C0C0"));
+-        platinum_set.setColor(ColorTemplate.rgb("e5e4e2"));
+-        palladium_set.setColor(ColorTemplate.rgb("b1b1b1"));
+-
+-        more_currencies_btn.setOnClickListener(view -> {
+-            majorContent.setVisibility(View.GONE);
+-            currenciesNgraphs.setVisibility(View.VISIBLE);
+-            currenciesScroll.setVisibility(View.VISIBLE);
+-            metalsChart.setVisibility(View.GONE);
+-        });
+-
+-        back_btn.setOnClickListener(view -> {
+-            majorContent.setVisibility(View.VISIBLE);
+-            currenciesNgraphs.setVisibility(View.GONE);
+-        });
+-
+-        ag_btn.setOnClickListener(view -> {
+-            majorContent.setVisibility(View.GONE);
+-            currenciesNgraphs.setVisibility(View.VISIBLE);
+-            currenciesScroll.setVisibility(View.GONE);
+-            metalsChart.setVisibility(View.VISIBLE);
+-            GraphBuilder.BuildLineGraph(metalsChart, silver_set);
++        XAxis xAxis = lineChart.getXAxis();
++        xAxis.setValueFormatter(new IndexAxisValueFormatter(dateValues)); // dateValues - ваш список дат
++        xAxis.setGranularity(1f); // шаг генерации меток
++        xAxis.setPosition(XAxis.XAxisPosition.TOP); // позиция меток оси X
++        xAxis.setLabelRotationAngle(45); // угол поворота меток для улучшения читаемости
++        xAxis.setTextSize(12); // размер шрифта меток
+ 
+-        });
++        LineDataSet[] sets = new LineDataSet[4];
+ 
+-        au_btn.setOnClickListener(view -> {
+-            majorContent.setVisibility(View.GONE);
+-            currenciesNgraphs.setVisibility(View.VISIBLE);
+-            currenciesScroll.setVisibility(View.GONE);
+-            metalsChart.setVisibility(View.VISIBLE);
+-            GraphBuilder.BuildLineGraph(metalsChart, gold_set);
++        sets[1] = new LineDataSet(goldPrices, "Золото");
++        sets[0] = new LineDataSet(silverPrices, "Серебро");
++        sets[2] = new LineDataSet(platinumPrices, "Платина");
++        sets[3] = new LineDataSet(palladiumPrices, "Палладий");
+ 
+-        });
++        sets[1].setColor(ColorTemplate.rgb("FFD700"));
++        sets[0].setColor(ColorTemplate.rgb("C0C0C0"));
++        sets[2].setColor(ColorTemplate.rgb("e5e4e2"));
++        sets[3].setColor(ColorTemplate.rgb("b1b1b1"));
+ 
+-        pt_btn.setOnClickListener(view -> {
+-            majorContent.setVisibility(View.GONE);
+-            currenciesNgraphs.setVisibility(View.VISIBLE);
+-            currenciesScroll.setVisibility(View.GONE);
+-            metalsChart.setVisibility(View.VISIBLE);
+-            GraphBuilder.BuildLineGraph(metalsChart, platinum_set);
+-
+-        });
+-
+-        pd_btn.setOnClickListener(view -> {
+-            majorContent.setVisibility(View.GONE);
+-            currenciesNgraphs.setVisibility(View.VISIBLE);
+-            currenciesScroll.setVisibility(View.GONE);
+-            metalsChart.setVisibility(View.VISIBLE);
+-            GraphBuilder.BuildLineGraph(metalsChart, palladium_set);
+-
+-        });
+-
++        return sets;
+     }
+ 
+     void CreateTextView(String text, TableRow TR, float weight){
+Index: .idea/compiler.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"CompilerConfiguration\">\r\n    <bytecodeTargetLevel target=\"17\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/compiler.xml b/.idea/compiler.xml
+--- a/.idea/compiler.xml	(revision 83c46298b8dd0d9e68ae7c171ad31229ea4173e3)
++++ b/.idea/compiler.xml	(date 1733905277259)
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="CompilerConfiguration">
+-    <bytecodeTargetLevel target="17" />
++    <bytecodeTargetLevel target="21" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: .idea/deploymentTargetSelector.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"deploymentTargetSelector\">\r\n    <selectionStates>\r\n      <SelectionState runConfigName=\"main.RKSIhackaton.app\">\r\n        <option name=\"selectionMode\" value=\"DROPDOWN\" />\r\n        <DropdownSelection timestamp=\"2024-12-10T19:25:59.563761100Z\">\r\n          <Target type=\"DEFAULT_BOOT\">\r\n            <handle>\r\n              <DeviceId pluginId=\"PhysicalDevice\" identifier=\"serial=11163553CC001966\" />\r\n            </handle>\r\n          </Target>\r\n        </DropdownSelection>\r\n        <DialogSelection />\r\n      </SelectionState>\r\n      <SelectionState runConfigName=\"RKSI_Hackaton.app.androidTest\">\r\n        <option name=\"selectionMode\" value=\"DROPDOWN\" />\r\n      </SelectionState>\r\n      <SelectionState runConfigName=\"RKSI_Hackaton.app\">\r\n        <option name=\"selectionMode\" value=\"DROPDOWN\" />\r\n      </SelectionState>\r\n      <SelectionState runConfigName=\"RKSI_Hackaton.app.unitTest\">\r\n        <option name=\"selectionMode\" value=\"DROPDOWN\" />\r\n      </SelectionState>\r\n      <SelectionState runConfigName=\"RKSI_Hackaton.app.main\">\r\n        <option name=\"selectionMode\" value=\"DROPDOWN\" />\r\n        <DropdownSelection timestamp=\"2024-12-10T17:33:33.703711100Z\">\r\n          <Target type=\"DEFAULT_BOOT\">\r\n            <handle>\r\n              <DeviceId pluginId=\"LocalEmulator\" identifier=\"path=C:\\Users\\pilip\\.android\\avd\\qsdfghjuhki.avd\" />\r\n            </handle>\r\n          </Target>\r\n        </DropdownSelection>\r\n        <DialogSelection />\r\n      </SelectionState>\r\n    </selectionStates>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/deploymentTargetSelector.xml b/.idea/deploymentTargetSelector.xml
+--- a/.idea/deploymentTargetSelector.xml	(revision 83c46298b8dd0d9e68ae7c171ad31229ea4173e3)
++++ b/.idea/deploymentTargetSelector.xml	(date 1733905277266)
+@@ -4,10 +4,10 @@
+     <selectionStates>
+       <SelectionState runConfigName="main.RKSIhackaton.app">
+         <option name="selectionMode" value="DROPDOWN" />
+-        <DropdownSelection timestamp="2024-12-10T19:25:59.563761100Z">
++        <DropdownSelection timestamp="2024-12-11T06:16:13.180083700Z">
+           <Target type="DEFAULT_BOOT">
+             <handle>
+-              <DeviceId pluginId="PhysicalDevice" identifier="serial=11163553CC001966" />
++              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\pilip\.android\avd\Medium_Phone_API_35.avd" />
+             </handle>
+           </Target>
+         </DropdownSelection>
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AndroidLayouts\">\r\n    <shared>\r\n      <config />\r\n    </shared>\r\n    <layouts>\r\n      <layout url=\"file://$PROJECT_DIR$/main/app/src/main/res/layout/activity_home.xml\">\r\n        <config>\r\n          <theme>@style/Theme.RKSIhackaton</theme>\r\n        </config>\r\n      </layout>\r\n      <layout url=\"file://$PROJECT_DIR$/main/app/src/main/res/layout/activity_main.xml\">\r\n        <config>\r\n          <theme>@style/Theme.RKSIhackaton</theme>\r\n        </config>\r\n      </layout>\r\n    </layouts>\r\n  </component>\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"NONE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"8c455c64-c804-4111-8b4f-7fe317acb692\" name=\"Changes\" comment=\"Добавление отображения флагов\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/main/app/src/androidTest/java/com/example/rksihackaton/ExampleInstrumentedTest.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/main/app/src/androidTest/java/com/example/rksihackaton/ExampleInstrumentedTest.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/HomeActivity.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/HomeActivity.java\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/MainActivity.java\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/MainActivity.java\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"ClangdSettings\">\r\n    <option name=\"formatViaClangd\" value=\"false\" />\r\n  </component>\r\n  <component name=\"ExecutionTargetManager\" SELECTED_TARGET=\"device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=5HR6R20303005644)]\" />\r\n  <component name=\"ExternalProjectsData\">\r\n    <projectState path=\"$PROJECT_DIR$/main\">\r\n      <ProjectState />\r\n    </projectState>\r\n  </component>\r\n  <component name=\"ExternalProjectsManager\">\r\n    <system id=\"GRADLE\">\r\n      <state>\r\n        <task path=\"$PROJECT_DIR$/main/app\">\r\n          <activation />\r\n        </task>\r\n        <projects_view>\r\n          <tree_state>\r\n            <expand />\r\n            <select />\r\n          </tree_state>\r\n        </projects_view>\r\n      </state>\r\n    </system>\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Class\" />\r\n        <option value=\"layoutResourceFile\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"GitHubPullRequestSearchHistory\">{\r\n  &quot;lastFilter&quot;: {\r\n    &quot;state&quot;: &quot;OPEN&quot;,\r\n    &quot;assignee&quot;: &quot;AbsoluteSolver&quot;\r\n  }\r\n}</component>\r\n  <component name=\"GithubPullRequestsUISettings\">{\r\n  &quot;selectedUrlAndAccountId&quot;: {\r\n    &quot;url&quot;: &quot;https://github.com/MaxyUMus/RKSIHackaton&quot;,\r\n    &quot;accountId&quot;: &quot;af253521-ebf5-45f7-9359-ea0a5072c465&quot;\r\n  }\r\n}</component>\r\n  <component name=\"ProblemsViewState\">\r\n    <option name=\"selectedTabId\" value=\"CurrentFile\" />\r\n  </component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 6\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"2q1BNjmQw9otMaEANfpdq0K2vB0\" />\r\n  <component name=\"ProjectLevelVcsManager\" settingsEditedManually=\"true\">\r\n    <OptionsSetting value=\"false\" id=\"Update\" />\r\n    <ConfirmationsSetting value=\"2\" id=\"Add\" />\r\n  </component>\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">{\r\n  &quot;keyToString&quot;: {\r\n    &quot;Android App.RKSI_Hackaton.app.main.executor&quot;: &quot;Run&quot;,\r\n    &quot;Android App.main.RKSIhackaton.app.executor&quot;: &quot;Run&quot;,\r\n    &quot;Notification.DisplayName-DoNotAsk-Android Gradle Upgrade Notification&quot;: &quot;Android Gradle Upgrade Notification&quot;,\r\n    &quot;Notification.DoNotAsk-Android Gradle Upgrade Notification&quot;: &quot;true&quot;,\r\n    &quot;ResourceManagerPrefKey.ModuleName&quot;: &quot;RKSIhackaton.app.main&quot;,\r\n    &quot;ResourceManagerPrefKey.ResourceType&quot;: &quot;DRAWABLE&quot;,\r\n    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,\r\n    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,\r\n    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,\r\n    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,\r\n    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,\r\n    &quot;git-widget-placeholder&quot;: &quot;main&quot;,\r\n    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,\r\n    &quot;last_opened_file_path&quot;: &quot;/home/solver/AndroidStudioProjects/RKSIHackaton/main/app/src/main/res/drawable&quot;,\r\n    &quot;project.structure.last.edited&quot;: &quot;Dependencies&quot;,\r\n    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,\r\n    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;\r\n  }\r\n}</component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CopyFile.RECENT_KEYS\">\r\n      <recent name=\"$PROJECT_DIR$/main/app/src/main/res/drawable\" />\r\n    </key>\r\n    <key name=\"android.template.214438224\">\r\n      <recent name=\"com.example.rksihackaton\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"RunManager\" selected=\"Android App.main.RKSIhackaton.app\">\r\n    <configuration name=\"RKSI_Hackaton.app\" type=\"AndroidRunConfigurationType\" factoryName=\"Android App\" activateToolWindowBeforeRun=\"false\">\r\n      <module name=\"RKSI_Hackaton.app\" />\r\n      <option name=\"DEPLOY\" value=\"true\" />\r\n      <option name=\"DEPLOY_APK_FROM_BUNDLE\" value=\"false\" />\r\n      <option name=\"DEPLOY_AS_INSTANT\" value=\"false\" />\r\n      <option name=\"ARTIFACT_NAME\" value=\"\" />\r\n      <option name=\"PM_INSTALL_OPTIONS\" value=\"\" />\r\n      <option name=\"ALL_USERS\" value=\"false\" />\r\n      <option name=\"ALWAYS_INSTALL_WITH_PM\" value=\"false\" />\r\n      <option name=\"CLEAR_APP_STORAGE\" value=\"false\" />\r\n      <option name=\"DYNAMIC_FEATURES_DISABLED_LIST\" value=\"\" />\r\n      <option name=\"ACTIVITY_EXTRA_FLAGS\" value=\"\" />\r\n      <option name=\"MODE\" value=\"default_activity\" />\r\n      <option name=\"CLEAR_LOGCAT\" value=\"false\" />\r\n      <option name=\"SHOW_LOGCAT_AUTOMATICALLY\" value=\"false\" />\r\n      <option name=\"TARGET_SELECTION_MODE\" value=\"DEVICE_AND_SNAPSHOT_COMBO_BOX\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_CONFIGURATION_ID\" value=\"-1\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_PROJECT_ID\" value=\"\" />\r\n      <option name=\"DEBUGGER_TYPE\" value=\"Auto\" />\r\n      <Auto>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Auto>\r\n      <Hybrid>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Hybrid>\r\n      <Java>\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Java>\r\n      <Native>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Native>\r\n      <Profilers>\r\n        <option name=\"ADVANCED_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_CONFIGURATION_NAME\" value=\"Java/Kotlin Method Sample (legacy)\" />\r\n        <option name=\"STARTUP_NATIVE_MEMORY_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"NATIVE_MEMORY_SAMPLE_RATE_BYTES\" value=\"2048\" />\r\n      </Profilers>\r\n      <option name=\"DEEP_LINK\" value=\"\" />\r\n      <option name=\"ACTIVITY_CLASS\" value=\"\" />\r\n      <option name=\"SEARCH_ACTIVITY_IN_GLOBAL_SCOPE\" value=\"false\" />\r\n      <option name=\"SKIP_ACTIVITY_VALIDATION\" value=\"false\" />\r\n      <method v=\"2\">\r\n        <option name=\"Android.Gradle.BeforeRunTask\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"RKSI_Hackaton.app.androidTest\" type=\"AndroidRunConfigurationType\" factoryName=\"Android App\" activateToolWindowBeforeRun=\"false\">\r\n      <module name=\"RKSI_Hackaton.app.androidTest\" />\r\n      <option name=\"DEPLOY\" value=\"true\" />\r\n      <option name=\"DEPLOY_APK_FROM_BUNDLE\" value=\"false\" />\r\n      <option name=\"DEPLOY_AS_INSTANT\" value=\"false\" />\r\n      <option name=\"ARTIFACT_NAME\" value=\"\" />\r\n      <option name=\"PM_INSTALL_OPTIONS\" value=\"\" />\r\n      <option name=\"ALL_USERS\" value=\"false\" />\r\n      <option name=\"ALWAYS_INSTALL_WITH_PM\" value=\"false\" />\r\n      <option name=\"CLEAR_APP_STORAGE\" value=\"false\" />\r\n      <option name=\"DYNAMIC_FEATURES_DISABLED_LIST\" value=\"\" />\r\n      <option name=\"ACTIVITY_EXTRA_FLAGS\" value=\"\" />\r\n      <option name=\"MODE\" value=\"default_activity\" />\r\n      <option name=\"CLEAR_LOGCAT\" value=\"false\" />\r\n      <option name=\"SHOW_LOGCAT_AUTOMATICALLY\" value=\"false\" />\r\n      <option name=\"TARGET_SELECTION_MODE\" value=\"DEVICE_AND_SNAPSHOT_COMBO_BOX\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_CONFIGURATION_ID\" value=\"-1\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_PROJECT_ID\" value=\"\" />\r\n      <option name=\"DEBUGGER_TYPE\" value=\"Auto\" />\r\n      <Auto>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Auto>\r\n      <Hybrid>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Hybrid>\r\n      <Java>\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Java>\r\n      <Native>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Native>\r\n      <Profilers>\r\n        <option name=\"ADVANCED_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_CONFIGURATION_NAME\" value=\"Java/Kotlin Method Sample (legacy)\" />\r\n        <option name=\"STARTUP_NATIVE_MEMORY_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"NATIVE_MEMORY_SAMPLE_RATE_BYTES\" value=\"2048\" />\r\n      </Profilers>\r\n      <option name=\"DEEP_LINK\" value=\"\" />\r\n      <option name=\"ACTIVITY_CLASS\" value=\"\" />\r\n      <option name=\"SEARCH_ACTIVITY_IN_GLOBAL_SCOPE\" value=\"false\" />\r\n      <option name=\"SKIP_ACTIVITY_VALIDATION\" value=\"false\" />\r\n      <method v=\"2\">\r\n        <option name=\"Android.Gradle.BeforeRunTask\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"RKSI_Hackaton.app.main\" type=\"AndroidRunConfigurationType\" factoryName=\"Android App\" activateToolWindowBeforeRun=\"false\">\r\n      <module name=\"RKSIhackaton.app.main\" />\r\n      <option name=\"DEPLOY\" value=\"true\" />\r\n      <option name=\"DEPLOY_APK_FROM_BUNDLE\" value=\"false\" />\r\n      <option name=\"DEPLOY_AS_INSTANT\" value=\"false\" />\r\n      <option name=\"ARTIFACT_NAME\" value=\"\" />\r\n      <option name=\"PM_INSTALL_OPTIONS\" value=\"\" />\r\n      <option name=\"ALL_USERS\" value=\"false\" />\r\n      <option name=\"ALWAYS_INSTALL_WITH_PM\" value=\"false\" />\r\n      <option name=\"CLEAR_APP_STORAGE\" value=\"false\" />\r\n      <option name=\"DYNAMIC_FEATURES_DISABLED_LIST\" value=\"\" />\r\n      <option name=\"ACTIVITY_EXTRA_FLAGS\" value=\"\" />\r\n      <option name=\"MODE\" value=\"default_activity\" />\r\n      <option name=\"CLEAR_LOGCAT\" value=\"false\" />\r\n      <option name=\"SHOW_LOGCAT_AUTOMATICALLY\" value=\"false\" />\r\n      <option name=\"TARGET_SELECTION_MODE\" value=\"DEVICE_AND_SNAPSHOT_COMBO_BOX\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_CONFIGURATION_ID\" value=\"-1\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_PROJECT_ID\" value=\"\" />\r\n      <option name=\"DEBUGGER_TYPE\" value=\"Auto\" />\r\n      <Auto>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Auto>\r\n      <Hybrid>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Hybrid>\r\n      <Java>\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Java>\r\n      <Native>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Native>\r\n      <Profilers>\r\n        <option name=\"ADVANCED_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_CONFIGURATION_NAME\" value=\"Java/Kotlin Method Sample (legacy)\" />\r\n        <option name=\"STARTUP_NATIVE_MEMORY_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"NATIVE_MEMORY_SAMPLE_RATE_BYTES\" value=\"2048\" />\r\n      </Profilers>\r\n      <option name=\"DEEP_LINK\" value=\"\" />\r\n      <option name=\"ACTIVITY_CLASS\" value=\"\" />\r\n      <option name=\"SEARCH_ACTIVITY_IN_GLOBAL_SCOPE\" value=\"false\" />\r\n      <option name=\"SKIP_ACTIVITY_VALIDATION\" value=\"false\" />\r\n      <method v=\"2\">\r\n        <option name=\"Android.Gradle.BeforeRunTask\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"RKSI_Hackaton.app.unitTest\" type=\"AndroidRunConfigurationType\" factoryName=\"Android App\" activateToolWindowBeforeRun=\"false\">\r\n      <module name=\"RKSI_Hackaton.app.unitTest\" />\r\n      <option name=\"DEPLOY\" value=\"true\" />\r\n      <option name=\"DEPLOY_APK_FROM_BUNDLE\" value=\"false\" />\r\n      <option name=\"DEPLOY_AS_INSTANT\" value=\"false\" />\r\n      <option name=\"ARTIFACT_NAME\" value=\"\" />\r\n      <option name=\"PM_INSTALL_OPTIONS\" value=\"\" />\r\n      <option name=\"ALL_USERS\" value=\"false\" />\r\n      <option name=\"ALWAYS_INSTALL_WITH_PM\" value=\"false\" />\r\n      <option name=\"CLEAR_APP_STORAGE\" value=\"false\" />\r\n      <option name=\"DYNAMIC_FEATURES_DISABLED_LIST\" value=\"\" />\r\n      <option name=\"ACTIVITY_EXTRA_FLAGS\" value=\"\" />\r\n      <option name=\"MODE\" value=\"default_activity\" />\r\n      <option name=\"CLEAR_LOGCAT\" value=\"false\" />\r\n      <option name=\"SHOW_LOGCAT_AUTOMATICALLY\" value=\"false\" />\r\n      <option name=\"TARGET_SELECTION_MODE\" value=\"DEVICE_AND_SNAPSHOT_COMBO_BOX\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_CONFIGURATION_ID\" value=\"-1\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_PROJECT_ID\" value=\"\" />\r\n      <option name=\"DEBUGGER_TYPE\" value=\"Auto\" />\r\n      <Auto>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Auto>\r\n      <Hybrid>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Hybrid>\r\n      <Java>\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Java>\r\n      <Native>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Native>\r\n      <Profilers>\r\n        <option name=\"ADVANCED_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_CONFIGURATION_NAME\" value=\"Java/Kotlin Method Sample (legacy)\" />\r\n        <option name=\"STARTUP_NATIVE_MEMORY_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"NATIVE_MEMORY_SAMPLE_RATE_BYTES\" value=\"2048\" />\r\n      </Profilers>\r\n      <option name=\"DEEP_LINK\" value=\"\" />\r\n      <option name=\"ACTIVITY_CLASS\" value=\"\" />\r\n      <option name=\"SEARCH_ACTIVITY_IN_GLOBAL_SCOPE\" value=\"false\" />\r\n      <option name=\"SKIP_ACTIVITY_VALIDATION\" value=\"false\" />\r\n      <method v=\"2\">\r\n        <option name=\"Android.Gradle.BeforeRunTask\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"app\" type=\"AndroidRunConfigurationType\" factoryName=\"Android App\" activateToolWindowBeforeRun=\"false\">\r\n      <module name=\"RKSIhackaton.app\" />\r\n      <option name=\"DEPLOY\" value=\"true\" />\r\n      <option name=\"DEPLOY_APK_FROM_BUNDLE\" value=\"false\" />\r\n      <option name=\"DEPLOY_AS_INSTANT\" value=\"false\" />\r\n      <option name=\"ARTIFACT_NAME\" value=\"\" />\r\n      <option name=\"PM_INSTALL_OPTIONS\" value=\"\" />\r\n      <option name=\"ALL_USERS\" value=\"false\" />\r\n      <option name=\"ALWAYS_INSTALL_WITH_PM\" value=\"false\" />\r\n      <option name=\"CLEAR_APP_STORAGE\" value=\"false\" />\r\n      <option name=\"DYNAMIC_FEATURES_DISABLED_LIST\" value=\"\" />\r\n      <option name=\"ACTIVITY_EXTRA_FLAGS\" value=\"\" />\r\n      <option name=\"MODE\" value=\"default_activity\" />\r\n      <option name=\"CLEAR_LOGCAT\" value=\"false\" />\r\n      <option name=\"SHOW_LOGCAT_AUTOMATICALLY\" value=\"false\" />\r\n      <option name=\"TARGET_SELECTION_MODE\" value=\"DEVICE_AND_SNAPSHOT_COMBO_BOX\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_CONFIGURATION_ID\" value=\"-1\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_PROJECT_ID\" value=\"\" />\r\n      <option name=\"DEBUGGER_TYPE\" value=\"Auto\" />\r\n      <Auto>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Auto>\r\n      <Hybrid>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Hybrid>\r\n      <Java>\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Java>\r\n      <Native>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Native>\r\n      <Profilers>\r\n        <option name=\"ADVANCED_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_CONFIGURATION_NAME\" value=\"Java/Kotlin Method Sample (legacy)\" />\r\n        <option name=\"STARTUP_NATIVE_MEMORY_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"NATIVE_MEMORY_SAMPLE_RATE_BYTES\" value=\"2048\" />\r\n      </Profilers>\r\n      <option name=\"DEEP_LINK\" value=\"\" />\r\n      <option name=\"ACTIVITY_CLASS\" value=\"\" />\r\n      <option name=\"SEARCH_ACTIVITY_IN_GLOBAL_SCOPE\" value=\"false\" />\r\n      <option name=\"SKIP_ACTIVITY_VALIDATION\" value=\"false\" />\r\n      <method v=\"2\">\r\n        <option name=\"Android.Gradle.BeforeRunTask\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"app.androidTest\" type=\"AndroidRunConfigurationType\" factoryName=\"Android App\" activateToolWindowBeforeRun=\"false\">\r\n      <module name=\"RKSIhackaton.app.androidTest\" />\r\n      <option name=\"DEPLOY\" value=\"true\" />\r\n      <option name=\"DEPLOY_APK_FROM_BUNDLE\" value=\"false\" />\r\n      <option name=\"DEPLOY_AS_INSTANT\" value=\"false\" />\r\n      <option name=\"ARTIFACT_NAME\" value=\"\" />\r\n      <option name=\"PM_INSTALL_OPTIONS\" value=\"\" />\r\n      <option name=\"ALL_USERS\" value=\"false\" />\r\n      <option name=\"ALWAYS_INSTALL_WITH_PM\" value=\"false\" />\r\n      <option name=\"CLEAR_APP_STORAGE\" value=\"false\" />\r\n      <option name=\"DYNAMIC_FEATURES_DISABLED_LIST\" value=\"\" />\r\n      <option name=\"ACTIVITY_EXTRA_FLAGS\" value=\"\" />\r\n      <option name=\"MODE\" value=\"default_activity\" />\r\n      <option name=\"CLEAR_LOGCAT\" value=\"false\" />\r\n      <option name=\"SHOW_LOGCAT_AUTOMATICALLY\" value=\"false\" />\r\n      <option name=\"TARGET_SELECTION_MODE\" value=\"DEVICE_AND_SNAPSHOT_COMBO_BOX\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_CONFIGURATION_ID\" value=\"-1\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_PROJECT_ID\" value=\"\" />\r\n      <option name=\"DEBUGGER_TYPE\" value=\"Auto\" />\r\n      <Auto>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Auto>\r\n      <Hybrid>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Hybrid>\r\n      <Java>\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Java>\r\n      <Native>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Native>\r\n      <Profilers>\r\n        <option name=\"ADVANCED_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_CONFIGURATION_NAME\" value=\"Java/Kotlin Method Sample (legacy)\" />\r\n        <option name=\"STARTUP_NATIVE_MEMORY_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"NATIVE_MEMORY_SAMPLE_RATE_BYTES\" value=\"2048\" />\r\n      </Profilers>\r\n      <option name=\"DEEP_LINK\" value=\"\" />\r\n      <option name=\"ACTIVITY_CLASS\" value=\"\" />\r\n      <option name=\"SEARCH_ACTIVITY_IN_GLOBAL_SCOPE\" value=\"false\" />\r\n      <option name=\"SKIP_ACTIVITY_VALIDATION\" value=\"false\" />\r\n      <method v=\"2\">\r\n        <option name=\"Android.Gradle.BeforeRunTask\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"app.main\" type=\"AndroidRunConfigurationType\" factoryName=\"Android App\" activateToolWindowBeforeRun=\"false\">\r\n      <module name=\"RKSIhackaton.app.main\" />\r\n      <option name=\"DEPLOY\" value=\"true\" />\r\n      <option name=\"DEPLOY_APK_FROM_BUNDLE\" value=\"false\" />\r\n      <option name=\"DEPLOY_AS_INSTANT\" value=\"false\" />\r\n      <option name=\"ARTIFACT_NAME\" value=\"\" />\r\n      <option name=\"PM_INSTALL_OPTIONS\" value=\"\" />\r\n      <option name=\"ALL_USERS\" value=\"false\" />\r\n      <option name=\"ALWAYS_INSTALL_WITH_PM\" value=\"false\" />\r\n      <option name=\"CLEAR_APP_STORAGE\" value=\"false\" />\r\n      <option name=\"DYNAMIC_FEATURES_DISABLED_LIST\" value=\"\" />\r\n      <option name=\"ACTIVITY_EXTRA_FLAGS\" value=\"\" />\r\n      <option name=\"MODE\" value=\"default_activity\" />\r\n      <option name=\"CLEAR_LOGCAT\" value=\"false\" />\r\n      <option name=\"SHOW_LOGCAT_AUTOMATICALLY\" value=\"false\" />\r\n      <option name=\"TARGET_SELECTION_MODE\" value=\"DEVICE_AND_SNAPSHOT_COMBO_BOX\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_CONFIGURATION_ID\" value=\"-1\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_PROJECT_ID\" value=\"\" />\r\n      <option name=\"DEBUGGER_TYPE\" value=\"Auto\" />\r\n      <Auto>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Auto>\r\n      <Hybrid>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Hybrid>\r\n      <Java>\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Java>\r\n      <Native>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Native>\r\n      <Profilers>\r\n        <option name=\"ADVANCED_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_CONFIGURATION_NAME\" value=\"Java/Kotlin Method Sample (legacy)\" />\r\n        <option name=\"STARTUP_NATIVE_MEMORY_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"NATIVE_MEMORY_SAMPLE_RATE_BYTES\" value=\"2048\" />\r\n      </Profilers>\r\n      <option name=\"DEEP_LINK\" value=\"\" />\r\n      <option name=\"ACTIVITY_CLASS\" value=\"\" />\r\n      <option name=\"SEARCH_ACTIVITY_IN_GLOBAL_SCOPE\" value=\"false\" />\r\n      <option name=\"SKIP_ACTIVITY_VALIDATION\" value=\"false\" />\r\n      <method v=\"2\">\r\n        <option name=\"Android.Gradle.BeforeRunTask\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"app.unitTest\" type=\"AndroidRunConfigurationType\" factoryName=\"Android App\" activateToolWindowBeforeRun=\"false\">\r\n      <module name=\"RKSIhackaton.app.unitTest\" />\r\n      <option name=\"DEPLOY\" value=\"true\" />\r\n      <option name=\"DEPLOY_APK_FROM_BUNDLE\" value=\"false\" />\r\n      <option name=\"DEPLOY_AS_INSTANT\" value=\"false\" />\r\n      <option name=\"ARTIFACT_NAME\" value=\"\" />\r\n      <option name=\"PM_INSTALL_OPTIONS\" value=\"\" />\r\n      <option name=\"ALL_USERS\" value=\"false\" />\r\n      <option name=\"ALWAYS_INSTALL_WITH_PM\" value=\"false\" />\r\n      <option name=\"CLEAR_APP_STORAGE\" value=\"false\" />\r\n      <option name=\"DYNAMIC_FEATURES_DISABLED_LIST\" value=\"\" />\r\n      <option name=\"ACTIVITY_EXTRA_FLAGS\" value=\"\" />\r\n      <option name=\"MODE\" value=\"default_activity\" />\r\n      <option name=\"CLEAR_LOGCAT\" value=\"false\" />\r\n      <option name=\"SHOW_LOGCAT_AUTOMATICALLY\" value=\"false\" />\r\n      <option name=\"TARGET_SELECTION_MODE\" value=\"DEVICE_AND_SNAPSHOT_COMBO_BOX\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_CONFIGURATION_ID\" value=\"-1\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_PROJECT_ID\" value=\"\" />\r\n      <option name=\"DEBUGGER_TYPE\" value=\"Auto\" />\r\n      <Auto>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Auto>\r\n      <Hybrid>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Hybrid>\r\n      <Java>\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Java>\r\n      <Native>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Native>\r\n      <Profilers>\r\n        <option name=\"ADVANCED_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_CONFIGURATION_NAME\" value=\"Java/Kotlin Method Sample (legacy)\" />\r\n        <option name=\"STARTUP_NATIVE_MEMORY_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"NATIVE_MEMORY_SAMPLE_RATE_BYTES\" value=\"2048\" />\r\n      </Profilers>\r\n      <option name=\"DEEP_LINK\" value=\"\" />\r\n      <option name=\"ACTIVITY_CLASS\" value=\"\" />\r\n      <option name=\"SEARCH_ACTIVITY_IN_GLOBAL_SCOPE\" value=\"false\" />\r\n      <option name=\"SKIP_ACTIVITY_VALIDATION\" value=\"false\" />\r\n      <method v=\"2\">\r\n        <option name=\"Android.Gradle.BeforeRunTask\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n    <configuration name=\"main.RKSIhackaton.app\" type=\"AndroidRunConfigurationType\" factoryName=\"Android App\">\r\n      <module name=\"main.RKSIhackaton.app.main\" />\r\n      <option name=\"DEPLOY\" value=\"true\" />\r\n      <option name=\"DEPLOY_APK_FROM_BUNDLE\" value=\"false\" />\r\n      <option name=\"DEPLOY_AS_INSTANT\" value=\"false\" />\r\n      <option name=\"ARTIFACT_NAME\" value=\"\" />\r\n      <option name=\"PM_INSTALL_OPTIONS\" value=\"\" />\r\n      <option name=\"ALL_USERS\" value=\"false\" />\r\n      <option name=\"ALWAYS_INSTALL_WITH_PM\" value=\"false\" />\r\n      <option name=\"CLEAR_APP_STORAGE\" value=\"false\" />\r\n      <option name=\"DYNAMIC_FEATURES_DISABLED_LIST\" value=\"\" />\r\n      <option name=\"ACTIVITY_EXTRA_FLAGS\" value=\"\" />\r\n      <option name=\"MODE\" value=\"default_activity\" />\r\n      <option name=\"CLEAR_LOGCAT\" value=\"false\" />\r\n      <option name=\"SHOW_LOGCAT_AUTOMATICALLY\" value=\"false\" />\r\n      <option name=\"TARGET_SELECTION_MODE\" value=\"DEVICE_AND_SNAPSHOT_COMBO_BOX\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_CONFIGURATION_ID\" value=\"-1\" />\r\n      <option name=\"SELECTED_CLOUD_MATRIX_PROJECT_ID\" value=\"\" />\r\n      <option name=\"DEBUGGER_TYPE\" value=\"Auto\" />\r\n      <Auto>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Auto>\r\n      <Hybrid>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Hybrid>\r\n      <Java>\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Java>\r\n      <Native>\r\n        <option name=\"USE_JAVA_AWARE_DEBUGGER\" value=\"false\" />\r\n        <option name=\"SHOW_STATIC_VARS\" value=\"true\" />\r\n        <option name=\"WORKING_DIR\" value=\"\" />\r\n        <option name=\"TARGET_LOGGING_CHANNELS\" value=\"lldb process:gdb-remote packets\" />\r\n        <option name=\"SHOW_OPTIMIZED_WARNING\" value=\"true\" />\r\n        <option name=\"ATTACH_ON_WAIT_FOR_DEBUGGER\" value=\"false\" />\r\n        <option name=\"DEBUG_SANDBOX_SDK\" value=\"false\" />\r\n      </Native>\r\n      <Profilers>\r\n        <option name=\"ADVANCED_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"STARTUP_CPU_PROFILING_CONFIGURATION_NAME\" value=\"Java/Kotlin Method Sample (legacy)\" />\r\n        <option name=\"STARTUP_NATIVE_MEMORY_PROFILING_ENABLED\" value=\"false\" />\r\n        <option name=\"NATIVE_MEMORY_SAMPLE_RATE_BYTES\" value=\"2048\" />\r\n      </Profilers>\r\n      <option name=\"DEEP_LINK\" value=\"\" />\r\n      <option name=\"ACTIVITY_CLASS\" value=\"\" />\r\n      <option name=\"SEARCH_ACTIVITY_IN_GLOBAL_SCOPE\" value=\"false\" />\r\n      <option name=\"SKIP_ACTIVITY_VALIDATION\" value=\"false\" />\r\n      <method v=\"2\">\r\n        <option name=\"Android.Gradle.BeforeRunTask\" enabled=\"true\" />\r\n      </method>\r\n    </configuration>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"8c455c64-c804-4111-8b4f-7fe317acb692\" name=\"Changes\" comment=\"\" />\r\n      <created>1733820166165</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1733820166165</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"Удаление лишнего\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1733820341715</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1733820341715</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"Добавление графиков\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1733833816515</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1733833816515</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"Доработка и тестирование графиков 0.1\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1733834442054</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1733834442054</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00004\" summary=\"Добавление главной страницы\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1733848705195</created>\r\n      <option name=\"number\" value=\"00004\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00004\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1733848705195</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00005\" summary=\"Добавление главной страницы\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1733854657322</created>\r\n      <option name=\"number\" value=\"00005\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00005\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1733854657322</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00006\" summary=\"Добавление страницы с графиками\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1733855683472</created>\r\n      <option name=\"number\" value=\"00006\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00006\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1733855683472</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00007\" summary=\"Добавление страницы с графиками\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1733855694356</created>\r\n      <option name=\"number\" value=\"00007\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00007\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1733855694356</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00008\" summary=\"Добавление страницы с графиками\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1733856341967</created>\r\n      <option name=\"number\" value=\"00008\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00008\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1733856341967</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00009\" summary=\"Добавление функционала для кнопок главной активности\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1733866416889</created>\r\n      <option name=\"number\" value=\"00009\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00009\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1733866416889</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00010\" summary=\"Исправление\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1733867948843</created>\r\n      <option name=\"number\" value=\"00010\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00010\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1733867948843</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00011\" summary=\"Добавление отображения флагов\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1733900095393</created>\r\n      <option name=\"number\" value=\"00011\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00011\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1733900095393</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"12\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"Удаление лишнего\" />\r\n    <MESSAGE value=\"Тестовый комит\" />\r\n    <MESSAGE value=\"Добавление графиков\" />\r\n    <MESSAGE value=\"Доработка и тестирование графиков 0.1\" />\r\n    <MESSAGE value=\"Добавление главной страницы\" />\r\n    <MESSAGE value=\"Добавление страницы с графиками\" />\r\n    <MESSAGE value=\"Добавление функционала для кнопок главной активности\" />\r\n    <MESSAGE value=\"Исправление\" />\r\n    <MESSAGE value=\"Добавление отображения флагов\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"Добавление отображения флагов\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 83c46298b8dd0d9e68ae7c171ad31229ea4173e3)
++++ b/.idea/workspace.xml	(date 1733910988501)
+@@ -21,11 +21,17 @@
+     <option name="autoReloadType" value="NONE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="8c455c64-c804-4111-8b4f-7fe317acb692" name="Changes" comment="Добавление отображения флагов">
++    <list default="true" id="8c455c64-c804-4111-8b4f-7fe317acb692" name="Changes" comment="Исправление">
++      <change afterPath="$PROJECT_DIR$/main/app/src/main/res/drawable/app_icon.png" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/deploymentTargetSelector.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/main/app/src/androidTest/java/com/example/rksihackaton/ExampleInstrumentedTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/androidTest/java/com/example/rksihackaton/ExampleInstrumentedTest.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/HomeActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/HomeActivity.java" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/MainActivity.java" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_home.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_home.xml" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_main.xml" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+@@ -35,7 +41,7 @@
+   <component name="ClangdSettings">
+     <option name="formatViaClangd" value="false" />
+   </component>
+-  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=5HR6R20303005644)]" />
++  <component name="ExecutionTargetManager" SELECTED_TARGET="device_and_snapshot_combo_box_target[DeviceId(pluginId=PhysicalDevice, isTemplate=false, identifier=serial=11163553CC001966)]" />
+   <component name="ExternalProjectsData">
+     <projectState path="$PROJECT_DIR$/main">
+       <ProjectState />
+@@ -138,6 +144,8 @@
+       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+       <option name="MODE" value="default_activity" />
++      <option name="RESTORE_ENABLED" value="false" />
++      <option name="RESTORE_FILE" value="" />
+       <option name="CLEAR_LOGCAT" value="false" />
+       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+@@ -204,6 +212,8 @@
+       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+       <option name="MODE" value="default_activity" />
++      <option name="RESTORE_ENABLED" value="false" />
++      <option name="RESTORE_FILE" value="" />
+       <option name="CLEAR_LOGCAT" value="false" />
+       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+@@ -270,6 +280,8 @@
+       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+       <option name="MODE" value="default_activity" />
++      <option name="RESTORE_ENABLED" value="false" />
++      <option name="RESTORE_FILE" value="" />
+       <option name="CLEAR_LOGCAT" value="false" />
+       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+@@ -336,6 +348,8 @@
+       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+       <option name="MODE" value="default_activity" />
++      <option name="RESTORE_ENABLED" value="false" />
++      <option name="RESTORE_FILE" value="" />
+       <option name="CLEAR_LOGCAT" value="false" />
+       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+@@ -402,6 +416,8 @@
+       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+       <option name="MODE" value="default_activity" />
++      <option name="RESTORE_ENABLED" value="false" />
++      <option name="RESTORE_FILE" value="" />
+       <option name="CLEAR_LOGCAT" value="false" />
+       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+@@ -468,6 +484,8 @@
+       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+       <option name="MODE" value="default_activity" />
++      <option name="RESTORE_ENABLED" value="false" />
++      <option name="RESTORE_FILE" value="" />
+       <option name="CLEAR_LOGCAT" value="false" />
+       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+@@ -534,6 +552,8 @@
+       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+       <option name="MODE" value="default_activity" />
++      <option name="RESTORE_ENABLED" value="false" />
++      <option name="RESTORE_FILE" value="" />
+       <option name="CLEAR_LOGCAT" value="false" />
+       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+@@ -600,6 +620,8 @@
+       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+       <option name="MODE" value="default_activity" />
++      <option name="RESTORE_ENABLED" value="false" />
++      <option name="RESTORE_FILE" value="" />
+       <option name="CLEAR_LOGCAT" value="false" />
+       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+@@ -654,7 +676,7 @@
+       </method>
+     </configuration>
+     <configuration name="main.RKSIhackaton.app" type="AndroidRunConfigurationType" factoryName="Android App">
+-      <module name="main.RKSIhackaton.app.main" />
++      <module name="RKSIhackaton.app.main" />
+       <option name="DEPLOY" value="true" />
+       <option name="DEPLOY_APK_FROM_BUNDLE" value="false" />
+       <option name="DEPLOY_AS_INSTANT" value="false" />
+@@ -666,6 +688,8 @@
+       <option name="DYNAMIC_FEATURES_DISABLED_LIST" value="" />
+       <option name="ACTIVITY_EXTRA_FLAGS" value="" />
+       <option name="MODE" value="default_activity" />
++      <option name="RESTORE_ENABLED" value="false" />
++      <option name="RESTORE_FILE" value="" />
+       <option name="CLEAR_LOGCAT" value="false" />
+       <option name="SHOW_LOGCAT_AUTOMATICALLY" value="false" />
+       <option name="TARGET_SELECTION_MODE" value="DEVICE_AND_SNAPSHOT_COMBO_BOX" />
+@@ -809,15 +833,7 @@
+       <option name="project" value="LOCAL" />
+       <updated>1733867948843</updated>
+     </task>
+-    <task id="LOCAL-00011" summary="Добавление отображения флагов">
+-      <option name="closed" value="true" />
+-      <created>1733900095393</created>
+-      <option name="number" value="00011" />
+-      <option name="presentableId" value="LOCAL-00011" />
+-      <option name="project" value="LOCAL" />
+-      <updated>1733900095393</updated>
+-    </task>
+-    <option name="localTasksCounter" value="12" />
++    <option name="localTasksCounter" value="11" />
+     <servers />
+   </component>
+   <component name="Vcs.Log.Tabs.Properties">
+@@ -840,7 +856,6 @@
+     <MESSAGE value="Добавление страницы с графиками" />
+     <MESSAGE value="Добавление функционала для кнопок главной активности" />
+     <MESSAGE value="Исправление" />
+-    <MESSAGE value="Добавление отображения флагов" />
+-    <option name="LAST_COMMIT_MESSAGE" value="Добавление отображения флагов" />
++    <option name="LAST_COMMIT_MESSAGE" value="Исправление" />
+   </component>
+ </project>
+\ No newline at end of file
+Index: .idea/gradle.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"GradleMigrationSettings\" migrationVersion=\"1\" />\r\n  <component name=\"GradleSettings\">\r\n    <option name=\"linkedExternalProjectsSettings\">\r\n      <GradleProjectSettings>\r\n        <option name=\"externalProjectPath\" value=\"$PROJECT_DIR$/main\" />\r\n        <option name=\"gradleJvm\" value=\"#GRADLE_LOCAL_JAVA_HOME\" />\r\n        <option name=\"modules\">\r\n          <set>\r\n            <option value=\"$PROJECT_DIR$/main\" />\r\n            <option value=\"$PROJECT_DIR$/main/app\" />\r\n          </set>\r\n        </option>\r\n        <option name=\"resolveExternalAnnotations\" value=\"false\" />\r\n      </GradleProjectSettings>\r\n    </option>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/gradle.xml b/.idea/gradle.xml
+--- a/.idea/gradle.xml	(revision 83c46298b8dd0d9e68ae7c171ad31229ea4173e3)
++++ b/.idea/gradle.xml	(date 1733905288761)
+@@ -4,6 +4,7 @@
+   <component name="GradleSettings">
+     <option name="linkedExternalProjectsSettings">
+       <GradleProjectSettings>
++        <option name="testRunner" value="CHOOSE_PER_TEST" />
+         <option name="externalProjectPath" value="$PROJECT_DIR$/main" />
+         <option name="gradleJvm" value="#GRADLE_LOCAL_JAVA_HOME" />
+         <option name="modules">
+Index: .idea/misc.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ExternalStorageConfigurationManager\" enabled=\"true\" />\r\n  <component name=\"ProjectRootManager\" version=\"2\" languageLevel=\"JDK_17\" default=\"true\" project-jdk-name=\"jbr-17\" project-jdk-type=\"JavaSDK\">\r\n    <output url=\"file://$PROJECT_DIR$/out\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/misc.xml b/.idea/misc.xml
+--- a/.idea/misc.xml	(revision 83c46298b8dd0d9e68ae7c171ad31229ea4173e3)
++++ b/.idea/misc.xml	(date 1733905288769)
+@@ -1,7 +1,7 @@
+ <?xml version="1.0" encoding="UTF-8"?>
+ <project version="4">
+   <component name="ExternalStorageConfigurationManager" enabled="true" />
+-  <component name="ProjectRootManager" version="2" languageLevel="JDK_17" default="true" project-jdk-name="jbr-17" project-jdk-type="JavaSDK">
++  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="jbr-21" project-jdk-type="JavaSDK">
+     <output url="file://$PROJECT_DIR$/out" />
+   </component>
+ </project>
+\ No newline at end of file

@@ -1,0 +1,29 @@
+<changelist name="Uncommitted_changes_before_Update_at_10_12_2024_21_57_[Changes]" date="1733857076976" recycled="true" deleted="true">
+  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_10_12_2024_21_57_[Changes]/shelved.patch" />
+  <option name="DESCRIPTION" value="Uncommitted changes before Update at 10.12.2024 21:57 [Changes]" />
+  <binary>
+    <option name="BEFORE_PATH" value="main/app/src/main/res/drawable/rosneft_logo.png" />
+  </binary>
+  <binary>
+    <option name="AFTER_PATH" value="main/app/src/main/res/drawable/rneft.png" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_10_12_2024_21_57_[Changes]/rneft.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="main/app/src/main/res/drawable/sber_logo.png" />
+  </binary>
+  <binary>
+    <option name="AFTER_PATH" value="main/app/src/main/res/drawable/gprom.png" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_10_12_2024_21_57_[Changes]/gprom.png" />
+  </binary>
+  <binary>
+    <option name="AFTER_PATH" value="main/app/src/main/res/drawable/sber.png" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_10_12_2024_21_57_[Changes]/sber.png" />
+  </binary>
+  <binary>
+    <option name="BEFORE_PATH" value="main/app/src/main/res/drawable/gazprom_logo.png" />
+  </binary>
+  <binary>
+    <option name="AFTER_PATH" value="main/app/src/main/res/drawable/mel.png" />
+    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Update_at_10_12_2024_21_57_[Changes]/mel.png" />
+  </binary>
+</changelist>

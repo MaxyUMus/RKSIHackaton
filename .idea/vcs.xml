@@ -2,5 +2,6 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/SERVER/MobileInvestor/out/build/x64-release/_deps/libpqxx-src" vcs="Git" />
   </component>
 </project>
