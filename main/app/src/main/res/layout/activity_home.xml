@@ -13,7 +13,7 @@
         android:id="@+id/majorContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <Button
             android:id="@+id/more_currencies_btn"
@@ -427,7 +427,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/cardView_color"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <com.github.mikephil.charting.charts.LineChart
             android:id="@+id/investorsChart"

@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="main.RKSIhackaton.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-12-10T19:25:59.563761100Z">
+        <DropdownSelection timestamp="2024-12-11T06:16:13.180083700Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=11163553CC001966" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\pilip\.android\avd\Medium_Phone_API_35.avd" />
             </handle>
           </Target>
         </DropdownSelection>

@@ -20,8 +20,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -37,6 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 public class HomeActivity extends AppCompatActivity {
     private Button more_currencies_btn, back_btn, back_btn2, ag_btn, au_btn, pt_btn, pd_btn;
@@ -90,16 +94,11 @@ public class HomeActivity extends AppCompatActivity {
         currenciesNgraphs = findViewById(R.id.currenciesNgraphs);
         majorContent = findViewById(R.id.majorContent);
         investorsRates = findViewById(R.id.investorsRates);
-
-
-        majorContent.setVisibility(View.VISIBLE);
-        currenciesNgraphs.setVisibility(View.GONE);
-        investorsRates.setVisibility(View.GONE);
         //----------------------------------------------------------//
 
         Map<Integer, String> investorDescr = new HashMap<>();
-        investorDescr.put(R.id.gazprom, "Газпром — российская энергетическая компания, одна из крупнейших нефтегазовых компаний мира.");
-        investorDescr.put(R.id.moex, "MOEX — московская финансовая компания, организующая биржевых торгов.");
+        investorDescr.put(R.id.gazprom, "«Газпром» — российская энергетическая компания, одна из крупнейших нефтегазовых компаний мира. ");
+        investorDescr.put(R.id.moex, "Московская биржа — финансовая компания, основной деятельностью которой является организация биржевых торгов.");
         investorDescr.put(R.id.sberbank, "Сбер — крупнейший российский банк, предлагающий разнообразные финансовые услуги.");
         investorDescr.put(R.id.rosneft, "Роснефть — крупнейшая нефтяная компания России, занимающаяся добычей, переработкой и продажей нефти.");
 
@@ -194,38 +193,6 @@ public class HomeActivity extends AppCompatActivity {
 
         String metalsJson = "{\"metals\":{\"metal\":[{\"date\":\"11.12.2024\",\"gold_price\":\"8593.1299999999992\",\"silver_price\":\"101.73\",\"platinum_price\":\"3058.52\",\"palladium_price\":\"3161.4400000000001\"},{\"date\":\"10.12.2024\",\"gold_price\":\"8426.1900000000005\",\"silver_price\":\"99.400000000000006\",\"platinum_price\":\"2990.5300000000002\",\"palladium_price\":\"3089.5700000000002\"},{\"date\":\"07.12.2024\",\"gold_price\":\"8439.1700000000001\",\"silver_price\":\"100.19\",\"platinum_price\":\"3011.0799999999999\",\"palladium_price\":\"3116.5599999999999\"},{\"date\":\"06.12.2024\",\"gold_price\":\"8803.7399999999998\",\"silver_price\":\"102.48999999999999\",\"platinum_price\":\"3131.0799999999999\",\"palladium_price\":\"3250.7399999999998\"},{\"date\":\"05.12.2024\",\"gold_price\":\"8849.5200000000004\",\"silver_price\":\"103.56999999999999\",\"platinum_price\":\"3200.46\",\"palladium_price\":\"3327.8099999999999\"},{\"date\":\"04.12.2024\",\"gold_price\":\"9020.3400000000001\",\"silver_price\":\"103.97\",\"platinum_price\":\"3216\",\"palladium_price\":\"3369.6300000000001\"},{\"date\":\"03.12.2024\",\"gold_price\":\"9134.9300000000003\",\"silver_price\":\"105.79000000000001\",\"platinum_price\":\"3239.0300000000002\",\"palladium_price\":\"3387.1999999999998\"}]}}";
 
-        Gson gson = new Gson();
-        JsonObject metalsJsonObject = gson.fromJson(metalsJson, JsonObject.class);
-        JsonObject metals = metalsJsonObject.getAsJsonObject("metals");
-        JsonArray metalArray = metals.getAsJsonArray("metal");
-
-        List<Entry> goldPrices = new ArrayList<>();
-        List<Entry> silverPrices = new ArrayList<>();
-        List<Entry> platinumPrices = new ArrayList<>();
-        List<Entry> palladiumPrices = new ArrayList<>();
-
-        for (int i = 0; i < metalArray.size(); i++) {
-            JsonObject metalData = metalArray.get(i).getAsJsonObject();
-            String date = metalData.get("date").getAsString();
-            float goldPrice = metalData.get("gold_price").getAsFloat();
-            float silverPrice = metalData.get("silver_price").getAsFloat();
-            float platinumPrice = metalData.get("platinum_price").getAsFloat();
-            float palladiumPrice = metalData.get("palladium_price").getAsFloat();
-
-            goldPrices.add(new Entry(i, goldPrice));
-            silverPrices.add(new Entry(i, silverPrice));
-            platinumPrices.add(new Entry(i, platinumPrice));
-            palladiumPrices.add(new Entry(i, palladiumPrice));
-        }
-
-        LineDataSet gold_set = new LineDataSet(goldPrices, "Золото");
-        LineDataSet silver_set = new LineDataSet(silverPrices, "Серебро");
-        LineDataSet platinum_set = new LineDataSet(platinumPrices, "Платина");
-        LineDataSet palladium_set = new LineDataSet(palladiumPrices, "Палладий");
-        gold_set.setColor(ColorTemplate.rgb("FFD700"));
-        silver_set.setColor(ColorTemplate.rgb("C0C0C0"));
-        platinum_set.setColor(ColorTemplate.rgb("e5e4e2"));
-        palladium_set.setColor(ColorTemplate.rgb("b1b1b1"));
 
         //----------------------------------------------------------//
 
@@ -248,7 +215,7 @@ public class HomeActivity extends AppCompatActivity {
             currenciesNgraphs.setVisibility(View.VISIBLE);
             currenciesScroll.setVisibility(View.GONE);
             metalsChart.setVisibility(View.VISIBLE);
-            GraphBuilder.BuildLineGraph(metalsChart, silver_set);
+            GraphBuilder.BuildLineGraph(metalsChart, SetupMetalGraph(metalsJson, metalsChart)[1]);
 
         });
 
@@ -257,7 +224,7 @@ public class HomeActivity extends AppCompatActivity {
             currenciesNgraphs.setVisibility(View.VISIBLE);
             currenciesScroll.setVisibility(View.GONE);
             metalsChart.setVisibility(View.VISIBLE);
-            GraphBuilder.BuildLineGraph(metalsChart, gold_set);
+            GraphBuilder.BuildLineGraph(metalsChart, SetupMetalGraph(metalsJson, metalsChart)[0]);
 
         });
 
@@ -266,7 +233,7 @@ public class HomeActivity extends AppCompatActivity {
             currenciesNgraphs.setVisibility(View.VISIBLE);
             currenciesScroll.setVisibility(View.GONE);
             metalsChart.setVisibility(View.VISIBLE);
-            GraphBuilder.BuildLineGraph(metalsChart, platinum_set);
+            GraphBuilder.BuildLineGraph(metalsChart, SetupMetalGraph(metalsJson, metalsChart)[2]);
 
         });
 
@@ -276,7 +243,7 @@ public class HomeActivity extends AppCompatActivity {
             currenciesNgraphs.setVisibility(View.VISIBLE);
             currenciesScroll.setVisibility(View.GONE);
             metalsChart.setVisibility(View.VISIBLE);
-            GraphBuilder.BuildLineGraph(metalsChart, palladium_set);
+            GraphBuilder.BuildLineGraph(metalsChart, SetupMetalGraph(metalsJson, metalsChart)[3]);
         });
 
         back_btn2.setOnClickListener(view -> {
@@ -291,12 +258,22 @@ public class HomeActivity extends AppCompatActivity {
                 investorsRates.setVisibility(View.VISIBLE);
                 majorContent.setVisibility(View.GONE);
 
-                investorDescription.setText(investorDescr.get(investorsLayout.getChildAt(loop_id).getId()));
+                String inv = investorDescr.get(investorsLayout.getChildAt(loop_id).getId());
+                investorDescription.setText(inv);
                 int colorResId = getColorId(loop_id);
 
                 investorDescription.setTextColor(ContextCompat.getColor(HomeActivity.this, colorResId));
-                gold_set.setColor(ContextCompat.getColor(HomeActivity.this, colorResId));
-                GraphBuilder.BuildLineGraph(investorsChart, gold_set);
+                List<Entry> actions = new ArrayList<>();
+                Random rand = new Random();
+                actions.add(new Entry(0, rand.nextFloat() * (40 - 12) + 12));
+                actions.add(new Entry(1, rand.nextFloat() * (40 - 12) + 12));
+                actions.add(new Entry(2, rand.nextFloat() * (40 - 12) + 12));
+                actions.add(new Entry(3, rand.nextFloat() * (40 - 12) + 12));
+
+                LineDataSet set = new LineDataSet(actions, inv);
+                set.setColor(ContextCompat.getColor(HomeActivity.this, colorResId));
+
+                GraphBuilder.BuildLineGraph(investorsChart, set);
 
                 int logoID = getLogoId(loop_id);
                 investorLogo.setImageResource(logoID);
@@ -306,6 +283,52 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
+public LineDataSet[] SetupMetalGraph(String json, LineChart lineChart){
+    Gson gson = new Gson();
+    JsonObject metalsJsonObject = gson.fromJson(json, JsonObject.class);
+    JsonObject metals = metalsJsonObject.getAsJsonObject("metals");
+    JsonArray metalArray = metals.getAsJsonArray("metal");
+
+    List<Entry> goldPrices = new ArrayList<>();
+    List<Entry> silverPrices = new ArrayList<>();
+    List<Entry> platinumPrices = new ArrayList<>();
+    List<Entry> palladiumPrices = new ArrayList<>();
+
+    List<String> dates = new ArrayList<>();
+
+    for (int i = 0; i < metalArray.size(); i++) {
+        JsonObject metalData = metalArray.get(i).getAsJsonObject();
+        dates.add(metalData.get("date").getAsString());
+        float goldPrice = metalData.get("gold_price").getAsFloat();
+        float silverPrice = metalData.get("silver_price").getAsFloat();
+        float platinumPrice = metalData.get("platinum_price").getAsFloat();
+        float palladiumPrice = metalData.get("palladium_price").getAsFloat();
+
+        goldPrices.add(new Entry(i, goldPrice));
+        silverPrices.add(new Entry(i, silverPrice));
+        platinumPrices.add(new Entry(i, platinumPrice));
+        palladiumPrices.add(new Entry(i, palladiumPrice));
+    }
+
+    LineDataSet[] sets = new LineDataSet[4];
+    sets[0] = new LineDataSet(goldPrices, "Золото");
+    sets[1] = new LineDataSet(silverPrices, "Серебро");
+    sets[2] = new LineDataSet(platinumPrices, "Платина");
+    sets[3] = new LineDataSet(palladiumPrices, "Палладий");
+    sets[0].setColor(ColorTemplate.rgb("FFD700"));
+    sets[1].setColor(ColorTemplate.rgb("C0C0C0"));
+    sets[2].setColor(ColorTemplate.rgb("e5e4e2"));
+    sets[3].setColor(ColorTemplate.rgb("b1b1b1"));
+
+    XAxis xAxis = lineChart.getXAxis();
+    xAxis.setValueFormatter(new IndexAxisValueFormatter(dates)); // dateValues - ваш список дат
+    xAxis.setGranularity(1f); // шаг генерации меток
+    xAxis.setPosition(XAxis.XAxisPosition.TOP); // позиция меток оси X
+    xAxis.setLabelRotationAngle(45); // угол поворота меток для улучшения читаемости
+    xAxis.setTextSize(12); // размер шрифта меток
+
+    return sets;
+}
 
     private int getColorId(int id) {
         switch (id) {
