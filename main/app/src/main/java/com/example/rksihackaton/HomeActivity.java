@@ -36,15 +36,13 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 public class HomeActivity extends AppCompatActivity {
     private Button more_currencies_btn, back_btn, back_btn2, ag_btn, au_btn, pt_btn, pd_btn;
-    private TextView investorDescription;
+    private TextView investorDescription, dollarRate, euroRate, uanRate;
     private ImageView investorLogo;
     private ImageButton gazprom, moex, sberbank, rosneft;
     private LinearLayout currenciesLayout, investorsLayout;
@@ -72,6 +70,10 @@ public class HomeActivity extends AppCompatActivity {
         currenciesLayout = findViewById(R.id.currenciesLayout);
         currenciesScroll = findViewById(R.id.currenciesScroll);
 
+        dollarRate = findViewById(R.id.dollarRate);
+        euroRate = findViewById(R.id.euroRate);
+        uanRate = findViewById(R.id.uanRate);
+
         //Драг. металлы
         metalsChart = findViewById(R.id.metalsChart);
         ag_btn = findViewById(R.id.ag_btn);
@@ -94,16 +96,21 @@ public class HomeActivity extends AppCompatActivity {
         currenciesNgraphs = findViewById(R.id.currenciesNgraphs);
         majorContent = findViewById(R.id.majorContent);
         investorsRates = findViewById(R.id.investorsRates);
+
+        majorContent.setVisibility(View.VISIBLE);
+        currenciesNgraphs.setVisibility(View.GONE);
+        investorsRates.setVisibility(View.GONE);
+
         //----------------------------------------------------------//
 
         Map<Integer, String> investorDescr = new HashMap<>();
-        investorDescr.put(R.id.gazprom, "«Газпром» — российская энергетическая компания, одна из крупнейших нефтегазовых компаний мира. ");
-        investorDescr.put(R.id.moex, "Московская биржа — финансовая компания, основной деятельностью которой является организация биржевых торгов.");
+        investorDescr.put(R.id.gazprom, "Газпром — российская энергетическая компания, одна из крупнейших нефтегазовых компаний мира.");
+        investorDescr.put(R.id.moex, "MOEX — московская финансовая компания, организующая биржевые торги.");
         investorDescr.put(R.id.sberbank, "Сбер — крупнейший российский банк, предлагающий разнообразные финансовые услуги.");
         investorDescr.put(R.id.rosneft, "Роснефть — крупнейшая нефтяная компания России, занимающаяся добычей, переработкой и продажей нефти.");
 
-
         String currenciesJson = "{ \"currencies\": [ {\"currency\": \"AUD\", \"value\": \"63\"}, {\"currency\": \"AZN\", \"value\": \"58\"}, {\"currency\": \"AMD\", \"value\": \"25\"}, {\"currency\": \"BYN\", \"value\": \"29\"}, {\"currency\": \"BGN\", \"value\": \"54\"}, {\"currency\": \"BRL\", \"value\": \"16\"}, {\"currency\": \"HUF\", \"value\": \"25\"}, {\"currency\": \"KRW\", \"value\": \"69\"}, {\"currency\": \"VND\", \"value\": \"41\"}, {\"currency\": \"HKD\", \"value\": \"12\"}, {\"currency\": \"GEL\", \"value\": \"35\"}, {\"currency\": \"DKK\", \"value\": \"14\"}, {\"currency\": \"AED\", \"value\": \"27\"}, {\"currency\": \"USD\", \"value\": \"100\"}, {\"currency\": \"EUR\", \"value\": \"106\"}, {\"currency\": \"EGP\", \"value\": \"19\"}, {\"currency\": \"INR\", \"value\": \"11\"}, {\"currency\": \"IDR\", \"value\": \"63\"}, {\"currency\": \"KZT\", \"value\": \"19\"}, {\"currency\": \"CAD\", \"value\": \"70\"}, {\"currency\": \"QAR\", \"value\": \"27\"}, {\"currency\": \"KGS\", \"value\": \"11\"}, {\"currency\": \"CNY\", \"value\": \"13\"}, {\"currency\": \"MDL\", \"value\": \"54\"}, {\"currency\": \"NZD\", \"value\": \"58\"}, {\"currency\": \"TMT\", \"value\": \"28\"}, {\"currency\": \"NOK\", \"value\": \"90\"}, {\"currency\": \"PLN\", \"value\": \"24\"}, {\"currency\": \"RON\", \"value\": \"21\"}, {\"currency\": \"XDR\", \"value\": \"131\"}, {\"currency\": \"RSD\", \"value\": \"90\"}, {\"currency\": \"SGD\", \"value\": \"74\"}, {\"currency\": \"TJS\", \"value\": \"91\"}, {\"currency\": \"THB\", \"value\": \"29\"}, {\"currency\": \"TRY\", \"value\": \"28\"}, {\"currency\": \"UZS\", \"value\": \"77\"}, {\"currency\": \"UAH\", \"value\": \"24\"},\n {\"currency\": \"GBP\", \"value\": \"128\"},\n {\"currency\": \"CZK\", \"value\": \"42\"},\n {\"currency\": \"SEK\", \"value\": \"91\"}, {\"currency\": \"CHF\", \"value\": \"113\"}, {\"currency\": \"ZAR\", \"value\": \"56\"}, {\"currency\": \"JPY\", \"value\": \"66\"} ] }";
+        String metalsJson = "{\"metals\":{\"metal\":[{\"date\":\"11.12.2024\",\"gold_price\":\"8593.1299999999992\",\"silver_price\":\"101.73\",\"platinum_price\":\"3058.52\",\"palladium_price\":\"3161.4400000000001\"},{\"date\":\"10.12.2024\",\"gold_price\":\"8426.1900000000005\",\"silver_price\":\"99.400000000000006\",\"platinum_price\":\"2990.5300000000002\",\"palladium_price\":\"3089.5700000000002\"},{\"date\":\"07.12.2024\",\"gold_price\":\"8439.1700000000001\",\"silver_price\":\"100.19\",\"platinum_price\":\"3011.0799999999999\",\"palladium_price\":\"3116.5599999999999\"},{\"date\":\"06.12.2024\",\"gold_price\":\"8803.7399999999998\",\"silver_price\":\"102.48999999999999\",\"platinum_price\":\"3131.0799999999999\",\"palladium_price\":\"3250.7399999999998\"},{\"date\":\"05.12.2024\",\"gold_price\":\"8849.5200000000004\",\"silver_price\":\"103.56999999999999\",\"platinum_price\":\"3200.46\",\"palladium_price\":\"3327.8099999999999\"},{\"date\":\"04.12.2024\",\"gold_price\":\"9020.3400000000001\",\"silver_price\":\"103.97\",\"platinum_price\":\"3216\",\"palladium_price\":\"3369.6300000000001\"},{\"date\":\"03.12.2024\",\"gold_price\":\"9134.9300000000003\",\"silver_price\":\"105.79000000000001\",\"platinum_price\":\"3239.0300000000002\",\"palladium_price\":\"3387.1999999999998\"}]}}";
 
         Map<String, String> flagMap = new HashMap<>();
 
@@ -155,7 +162,6 @@ public class HomeActivity extends AppCompatActivity {
             JSONObject currenciesJsonObject = new JSONObject(currenciesJson);
             JSONArray currencies = currenciesJsonObject.getJSONArray("currencies");
 
-
             TableRow.LayoutParams row_p = new TableRow.LayoutParams(
                     TableRow.LayoutParams.MATCH_PARENT,
                     100);
@@ -180,6 +186,18 @@ public class HomeActivity extends AppCompatActivity {
                 TableRow tableRow = new TableRow(HomeActivity.this);
                 tableRow.setLayoutParams(row_params);
 
+                switch (currency) {
+                    case "USD":
+                        dollarRate.setText(value);
+                        break;
+                    case "EUR":
+                        euroRate.setText(value);
+                        break;
+                    case "CNY":
+                        uanRate.setText(value);
+                        break;
+                }
+
                 CreateTextView(currency + " (" +flagMap.get(currency) + ")", tableRow, 1.5f);
                 CreateTextView(value, tableRow, 1);
 
@@ -188,11 +206,6 @@ public class HomeActivity extends AppCompatActivity {
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
-
-        //----------------------------------------------------------//
-
-        String metalsJson = "{\"metals\":{\"metal\":[{\"date\":\"11.12.2024\",\"gold_price\":\"8593.1299999999992\",\"silver_price\":\"101.73\",\"platinum_price\":\"3058.52\",\"palladium_price\":\"3161.4400000000001\"},{\"date\":\"10.12.2024\",\"gold_price\":\"8426.1900000000005\",\"silver_price\":\"99.400000000000006\",\"platinum_price\":\"2990.5300000000002\",\"palladium_price\":\"3089.5700000000002\"},{\"date\":\"07.12.2024\",\"gold_price\":\"8439.1700000000001\",\"silver_price\":\"100.19\",\"platinum_price\":\"3011.0799999999999\",\"palladium_price\":\"3116.5599999999999\"},{\"date\":\"06.12.2024\",\"gold_price\":\"8803.7399999999998\",\"silver_price\":\"102.48999999999999\",\"platinum_price\":\"3131.0799999999999\",\"palladium_price\":\"3250.7399999999998\"},{\"date\":\"05.12.2024\",\"gold_price\":\"8849.5200000000004\",\"silver_price\":\"103.56999999999999\",\"platinum_price\":\"3200.46\",\"palladium_price\":\"3327.8099999999999\"},{\"date\":\"04.12.2024\",\"gold_price\":\"9020.3400000000001\",\"silver_price\":\"103.97\",\"platinum_price\":\"3216\",\"palladium_price\":\"3369.6300000000001\"},{\"date\":\"03.12.2024\",\"gold_price\":\"9134.9300000000003\",\"silver_price\":\"105.79000000000001\",\"platinum_price\":\"3239.0300000000002\",\"palladium_price\":\"3387.1999999999998\"}]}}";
-
 
         //----------------------------------------------------------//
 
@@ -270,7 +283,7 @@ public class HomeActivity extends AppCompatActivity {
                 actions.add(new Entry(2, rand.nextFloat() * (40 - 12) + 12));
                 actions.add(new Entry(3, rand.nextFloat() * (40 - 12) + 12));
 
-                LineDataSet set = new LineDataSet(actions, inv);
+                LineDataSet set = new LineDataSet(actions, "Инвестор");
                 set.setColor(ContextCompat.getColor(HomeActivity.this, colorResId));
 
                 GraphBuilder.BuildLineGraph(investorsChart, set);

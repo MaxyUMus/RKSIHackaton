@@ -25,6 +25,8 @@
             android:textColor="@color/btns_color"
             android:textSize="15sp"
             app:cornerRadius="6sp"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:elevation="10sp"
             app:layout_constraintBottom_toBottomOf="@+id/cardView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.96"
@@ -374,7 +376,6 @@
             android:layout_width="match_parent"
             android:layout_height="450sp"
             android:visibility="gone"
-            android:background="@color/cardView_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.3"
@@ -385,19 +386,18 @@
         <ScrollView
             android:id="@+id/currenciesScroll"
             android:layout_width="match_parent"
-            android:layout_height="560sp"
+            android:layout_height="580sp"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.3"
+            app:layout_constraintVertical_bias="0.231"
             tools:layout_editor_absoluteX="0dp">
 
             <LinearLayout
                 android:id="@+id/currenciesLayout"
                 android:layout_width="match_parent"
                 android:layout_height="550sp"
-                android:orientation="vertical">
-            </LinearLayout>
+                android:orientation="vertical"></LinearLayout>
         </ScrollView>
 
         <Button
@@ -407,10 +407,12 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="50sp"
             android:text="Назад"
-            android:textColor="@color/btns_color"
+            android:textColor="@color/white"
             android:textSize="15sp"
             app:cornerRadius="10sp"
-            android:backgroundTint="@color/white"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:elevation="10sp"
+            android:backgroundTint="@color/cardView_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.494"
@@ -418,7 +420,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.921"
             app:strokeColor="@color/black"
-            app:strokeWidth="3px" />
+            app:strokeWidth="1px"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -426,7 +428,6 @@
         android:id="@+id/investorsRates"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/cardView_color"
         android:visibility="gone">
 
         <com.github.mikephil.charting.charts.LineChart
@@ -462,10 +463,10 @@
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.097"
+            app:layout_constraintHorizontal_bias="0.095"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.026" />
+            app:layout_constraintVertical_bias="0.05" />
 
         <Button
             android:id="@+id/back_btn2"
@@ -474,10 +475,12 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="50sp"
             android:text="Назад"
-            android:textColor="@color/gazprom"
+            android:textColor="@color/white"
             android:textSize="15sp"
             app:cornerRadius="10sp"
-            android:backgroundTint="@color/white"
+            style="@style/Widget.Material3.Button.OutlinedButton"
+            android:elevation="10sp"
+            android:backgroundTint="@color/cardView_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.494"
@@ -485,7 +488,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.921"
             app:strokeColor="@color/black"
-            app:strokeWidth="3px" />
+            app:strokeWidth="1px" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
