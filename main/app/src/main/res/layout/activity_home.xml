@@ -346,7 +346,7 @@
         <ScrollView
             android:id="@+id/currenciesScroll"
             android:layout_width="match_parent"
-            android:layout_height="550sp"
+            android:layout_height="580sp"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toTopOf="parent"

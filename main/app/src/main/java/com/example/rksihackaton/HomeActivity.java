@@ -120,6 +120,19 @@ public class HomeActivity extends AppCompatActivity {
             JSONObject currenciesJsonObject = new JSONObject(currenciesJson);
             JSONArray currencies = currenciesJsonObject.getJSONArray("currencies");
 
+
+            TableRow.LayoutParams row_p = new TableRow.LayoutParams(
+                    TableRow.LayoutParams.MATCH_PARENT,
+                    100);
+
+            TableRow row = new TableRow(HomeActivity.this);
+            row.setLayoutParams(row_p);
+
+            CreateTextView("Валюты", row, 1.5f);
+            CreateTextView("Стоимость в рублях", row, 1);
+
+            currenciesLayout.addView(row);
+
             for (int i = 0; i < currencies.length(); i++) {
                 JSONObject currencyObject = currencies.getJSONObject(i);
                 String currency = currencyObject.getString("currency");
@@ -132,12 +145,11 @@ public class HomeActivity extends AppCompatActivity {
                 TableRow tableRow = new TableRow(HomeActivity.this);
                 tableRow.setLayoutParams(row_params);
 
-                CreateTextView(currency + " (" +flagMap.get(currency) + ")", tableRow);
-                CreateTextView(value, tableRow);
+                CreateTextView(currency + " (" +flagMap.get(currency) + ")", tableRow, 1.5f);
+                CreateTextView(value, tableRow, 1);
 
                 currenciesLayout.addView(tableRow);
             }
-
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -229,11 +241,11 @@ public class HomeActivity extends AppCompatActivity {
 
     }
 
-    void CreateTextView(String text, TableRow TR){
+    void CreateTextView(String text, TableRow TR, float weight){
         TableRow.LayoutParams params = new TableRow.LayoutParams(
                 TableRow.LayoutParams.WRAP_CONTENT,
                 TableRow.LayoutParams.WRAP_CONTENT);
-        params.weight = 1;
+        params.weight = weight;
 
         TextView textView = new TextView(HomeActivity.this);
         textView.setLayoutParams(params);
