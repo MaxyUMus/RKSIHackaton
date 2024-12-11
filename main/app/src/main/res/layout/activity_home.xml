@@ -441,8 +441,8 @@
 
         <ImageView
             android:id="@+id/investorLogo"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="100sp"
+            android:layout_height="100sp"
             android:scaleType="fitCenter"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -454,18 +454,18 @@
 
         <TextView
             android:id="@+id/investorDescription"
-            android:layout_width="247dp"
-            android:layout_height="127dp"
+            android:layout_width="247sp"
+            android:layout_height="127sp"
             android:fontFamily="sans-serif-medium"
             android:text="Здесь находится описание компаний..."
             android:textColor="@color/gazprom"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.05"
+            app:layout_constraintHorizontal_bias="0.097"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.025" />
+            app:layout_constraintVertical_bias="0.026" />
 
         <Button
             android:id="@+id/back_btn2"

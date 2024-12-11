@@ -21,15 +21,13 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8c455c64-c804-4111-8b4f-7fe317acb692" name="Changes" comment="Небольшие добавления">
+    <list default="true" id="8c455c64-c804-4111-8b4f-7fe317acb692" name="Changes" comment="Акции инвесторов">
       <change afterPath="$PROJECT_DIR$/main/app/src/main/res/drawable/app_icon.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/app/src/androidTest/java/com/example/rksihackaton/ExampleInstrumentedTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/androidTest/java/com/example/rksihackaton/ExampleInstrumentedTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/HomeActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/HomeActivity.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/MainActivity.java" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/java/com/example/rksihackaton/MainActivity.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/drawable/moscow_logo.png" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_home.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/layout/activity_home.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main/app/src/main/res/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/main/app/src/main/res/values/colors.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -830,7 +828,15 @@
       <option name="project" value="LOCAL" />
       <updated>1733900880443</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Акции инвесторов">
+      <option name="closed" value="true" />
+      <created>1733913057586</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1733913057586</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -855,6 +861,7 @@
     <MESSAGE value="Исправление" />
     <MESSAGE value="Добавление отображения флагов" />
     <MESSAGE value="Небольшие добавления" />
-    <option name="LAST_COMMIT_MESSAGE" value="Небольшие добавления" />
+    <MESSAGE value="Акции инвесторов" />
+    <option name="LAST_COMMIT_MESSAGE" value="Акции инвесторов" />
   </component>
 </project>

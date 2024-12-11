@@ -90,11 +90,16 @@ public class HomeActivity extends AppCompatActivity {
         currenciesNgraphs = findViewById(R.id.currenciesNgraphs);
         majorContent = findViewById(R.id.majorContent);
         investorsRates = findViewById(R.id.investorsRates);
+
+
+        majorContent.setVisibility(View.VISIBLE);
+        currenciesNgraphs.setVisibility(View.GONE);
+        investorsRates.setVisibility(View.GONE);
         //----------------------------------------------------------//
 
         Map<Integer, String> investorDescr = new HashMap<>();
-        investorDescr.put(R.id.gazprom, "«Газпром» — российская энергетическая компания, одна из крупнейших нефтегазовых компаний мира. ");
-        investorDescr.put(R.id.moex, "Московская биржа — финансовая компания, основной деятельностью которой является организация биржевых торгов.");
+        investorDescr.put(R.id.gazprom, "Газпром — российская энергетическая компания, одна из крупнейших нефтегазовых компаний мира.");
+        investorDescr.put(R.id.moex, "MOEX — московская финансовая компания, организующая биржевых торгов.");
         investorDescr.put(R.id.sberbank, "Сбер — крупнейший российский банк, предлагающий разнообразные финансовые услуги.");
         investorDescr.put(R.id.rosneft, "Роснефть — крупнейшая нефтяная компания России, занимающаяся добычей, переработкой и продажей нефти.");
 
