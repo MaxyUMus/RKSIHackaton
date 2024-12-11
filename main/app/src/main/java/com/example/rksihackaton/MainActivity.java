@@ -1,6 +1,7 @@
 package com.example.rksihackaton;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -45,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         email = findViewById(R.id.et_email);
         password = findViewById(R.id.et_password);
 
@@ -55,63 +56,57 @@ public class MainActivity extends AppCompatActivity {
         reg = findViewById(R.id.btn_register);
 
         aut.setOnClickListener(view -> {
+            String emailText = email.getText().toString().trim();
+            String passwordText = password.getText().toString().trim();
 
-            Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-            startActivity(intent);
+            if (emailText.isEmpty() || passwordText.isEmpty()) {
+                Toast.makeText(MainActivity.this, "Email and password cannot be empty", Toast.LENGTH_LONG).show();
+                return;
+            }
 
-//            String emailText = email.getText().toString().trim();
-//            String passwordText = password.getText().toString().trim();
-//
-//            if (emailText.isEmpty() || passwordText.isEmpty()) {
-//                Toast.makeText(MainActivity.this, "Email and password cannot be empty", Toast.LENGTH_LONG).show();
-//                return;
-//            }
-//
-//            String json = "{\"email\":\"" + emailText + "\", \"password\":\"" + passwordText + "\", \"action\":\"login\"}";
-//
-//            new Thread(() -> {
-//                RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
-//
-//                Request request = new Request.Builder()
-//                        .url("https://0a0d-94-141-124-197.ngrok-free.app/login")
-//                        .post(body)
-//                        .build();
-//
-//                try (Response response = client.newCall(request).execute()) {
-//                    if (response.isSuccessful() && response.body() != null) {
-//                        String responseBody = response.body().string();
-//                        runOnUiThread(() -> {
-//                            try {
-//                                JSONObject jsonResponse = new JSONObject(responseBody);
-//                                String status = jsonResponse.getString("status");
-//                                String message = jsonResponse.getString("message");
-//
-//
-//                                if ("success".equals(status)) {
-//                                    Toast.makeText(MainActivity.this, "Login successful: " + message, Toast.LENGTH_LONG).show();
-//                                    // Переход на вторую активность
-//                                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
-//                                    startActivity(intent);
-//                                } else {
-//                                    Toast.makeText(MainActivity.this, "Login failed: " + message, Toast.LENGTH_LONG).show();
-//                                }
-//                            } catch (JSONException e) {
-//                                Toast.makeText(MainActivity.this, "Error parsing response", Toast.LENGTH_LONG).show();
-//                            }
-//                        });
-//                    } else {
-//                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "Authorization failed. Server error.", Toast.LENGTH_LONG).show());
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                    runOnUiThread(() -> {
-//                        Toast.makeText(MainActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-//                    });
-//                }
-//            }).start();
+            String json = "{\"email\":\"" + emailText + "\", \"password\":\"" + passwordText + "\", \"action\":\"login\"}";
+
+            new Thread(() -> {
+                RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
+
+                Request request = new Request.Builder()
+                        .url(Constants.server_url)
+                        .post(body)
+                        .build();
+
+                try (Response response = client.newCall(request).execute()) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        String responseBody = response.body().string();
+                        runOnUiThread(() -> {
+                            try {
+                                JSONObject jsonResponse = new JSONObject(responseBody);
+                                String status = jsonResponse.getString("status");
+                                String message = jsonResponse.getString("message");
+
+
+                                if ("success".equals(status)) {
+                                    Toast.makeText(MainActivity.this, "Login successful: " + message, Toast.LENGTH_LONG).show();
+                                    // Переход на вторую активность
+                                    Intent intent = new Intent(MainActivity.this, HomeActivity.class);
+                                    startActivity(intent);
+                                } else {
+                                    Toast.makeText(MainActivity.this, "Login failed: " + message, Toast.LENGTH_LONG).show();
+                                }
+                            } catch (JSONException e) {
+                                Toast.makeText(MainActivity.this, "Error parsing response", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                    } else {
+                        runOnUiThread(() -> Toast.makeText(MainActivity.this, "Authorization failed. Server error.", Toast.LENGTH_LONG).show());
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    runOnUiThread(() -> {
+                        Toast.makeText(MainActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    });
+                }
+            }).start();
         });
-
-
 
         reg.setOnClickListener(view -> {
 
@@ -123,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
                 RequestBody body = RequestBody.create(json, MediaType.get("application/json; charset=utf-8"));
 
                 Request request = new Request.Builder()
-                        .url("https://0a0d-94-141-124-197.ngrok-free.app/register")
+                        .url(Constants.server_url)
                         .post(body)
                         .build();
 
@@ -158,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private OkHttpClient createHttpClient() {
+    public static OkHttpClient createHttpClient() {
         try {
             TrustManagerFactory trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             trustManagerFactory.init((java.security.KeyStore) null);
