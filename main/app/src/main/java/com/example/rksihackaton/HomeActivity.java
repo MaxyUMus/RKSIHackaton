@@ -29,7 +29,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 
 public class HomeActivity extends AppCompatActivity {
     private Button more_currencies_btn, back_btn, ag_btn, au_btn, pt_btn, pd_btn;
@@ -63,9 +67,54 @@ public class HomeActivity extends AppCompatActivity {
         currenciesNgraphs = findViewById(R.id.currenciesNgraphs);
         majorContent = findViewById(R.id.majorContent);
 
-
-
         String currenciesJson = "{ \"currencies\": [ {\"currency\": \"AUD\", \"value\": \"63\"}, {\"currency\": \"AZN\", \"value\": \"58\"}, {\"currency\": \"AMD\", \"value\": \"25\"}, {\"currency\": \"BYN\", \"value\": \"29\"}, {\"currency\": \"BGN\", \"value\": \"54\"}, {\"currency\": \"BRL\", \"value\": \"16\"}, {\"currency\": \"HUF\", \"value\": \"25\"}, {\"currency\": \"KRW\", \"value\": \"69\"}, {\"currency\": \"VND\", \"value\": \"41\"}, {\"currency\": \"HKD\", \"value\": \"12\"}, {\"currency\": \"GEL\", \"value\": \"35\"}, {\"currency\": \"DKK\", \"value\": \"14\"}, {\"currency\": \"AED\", \"value\": \"27\"}, {\"currency\": \"USD\", \"value\": \"100\"}, {\"currency\": \"EUR\", \"value\": \"106\"}, {\"currency\": \"EGP\", \"value\": \"19\"}, {\"currency\": \"INR\", \"value\": \"11\"}, {\"currency\": \"IDR\", \"value\": \"63\"}, {\"currency\": \"KZT\", \"value\": \"19\"}, {\"currency\": \"CAD\", \"value\": \"70\"}, {\"currency\": \"QAR\", \"value\": \"27\"}, {\"currency\": \"KGS\", \"value\": \"11\"}, {\"currency\": \"CNY\", \"value\": \"13\"}, {\"currency\": \"MDL\", \"value\": \"54\"}, {\"currency\": \"NZD\", \"value\": \"58\"}, {\"currency\": \"TMT\", \"value\": \"28\"}, {\"currency\": \"NOK\", \"value\": \"90\"}, {\"currency\": \"PLN\", \"value\": \"24\"}, {\"currency\": \"RON\", \"value\": \"21\"}, {\"currency\": \"XDR\", \"value\": \"131\"}, {\"currency\": \"RSD\", \"value\": \"90\"}, {\"currency\": \"SGD\", \"value\": \"74\"}, {\"currency\": \"TJS\", \"value\": \"91\"}, {\"currency\": \"THB\", \"value\": \"29\"}, {\"currency\": \"TRY\", \"value\": \"28\"}, {\"currency\": \"UZS\", \"value\": \"77\"}, {\"currency\": \"UAH\", \"value\": \"24\"},\n {\"currency\": \"GBP\", \"value\": \"128\"},\n {\"currency\": \"CZK\", \"value\": \"42\"},\n {\"currency\": \"SEK\", \"value\": \"91\"}, {\"currency\": \"CHF\", \"value\": \"113\"}, {\"currency\": \"ZAR\", \"value\": \"56\"}, {\"currency\": \"JPY\", \"value\": \"66\"} ] }";
+
+        Map<String, String> flagMap = new HashMap<>();
+
+          flagMap.put("AUD",	"Австралия 🇦🇺");
+          flagMap.put("AZN",	"Азербайджан	🇦🇿");
+          flagMap.put("AMD",	"Армения	🇦🇲");
+          flagMap.put("BYN",	"Беларусь 🇧🇾");
+          flagMap.put("BGN",	"Болгария 🇧🇬");
+          flagMap.put("BRL",	"Бразилия 🇧🇷");
+          flagMap.put("HUF",	"Венгрия	🇭🇺");
+          flagMap.put("KRW",	"Южная Корея	🇰🇷");
+          flagMap.put("VND",	"Вьетнам	🇻🇳");
+          flagMap.put("HKD",	"Гонконг	🇭🇰");
+          flagMap.put("GEL",	"Грузия	🇬🇪");
+          flagMap.put("DKK",	"Дания 🇩🇰");
+          flagMap.put("AED",	"ОАЭ	🇦🇪");
+          flagMap.put("USD",	"США	🇺🇸");
+          flagMap.put("EUR",	"Еврозона 🇪🇺");
+          flagMap.put("EGP",	"Египет 🇪🇬");
+          flagMap.put("INR",	"Индия 🇮🇳");
+          flagMap.put("IDR",	"Индонезия 🇮🇩");
+          flagMap.put("KZT",	"Казахстан 🇰🇿");
+          flagMap.put("CAD",	"Канада 🇨🇦");
+          flagMap.put("QAR",	"Катар 🇶🇦");
+          flagMap.put("KGS",	"Кыргызстан 🇰🇬");
+          flagMap.put("CNY",	"Китай 🇨🇳");
+          flagMap.put("MDL",	"Молдова	🇲🇩");
+          flagMap.put("NZD",	"Новая Зеландия 🇳🇿");
+          flagMap.put("TMT",	"Туркменистан 🇹🇲");
+          flagMap.put("NOK",	"Норвегия 🇳🇴");
+          flagMap.put("PLN",	"Польша	🇵🇱");
+          flagMap.put("RON",	"Румыния	🇷🇴");
+          flagMap.put("XDR",	"МВФ");
+          flagMap.put("RSD",	"Сербия 🇷🇸");
+          flagMap.put("SGD",	"Сингапур 🇸🇬");
+          flagMap.put("TJS",	"Таджикистан	🇹🇯");
+          flagMap.put("THB",	"Таиланд	🇹🇭");
+          flagMap.put("TRY",	"Турция 🇹🇷");
+          flagMap.put("UZS",	"Узбекистан 🇺🇿");
+          flagMap.put("UAH",	"Украина	🇺🇦");
+          flagMap.put("GBP",	"Великобритания 🇬🇧");
+          flagMap.put("CZK",	"Чехия 🇨🇿");
+          flagMap.put("SEK",	"Швеция 🇸🇪");
+          flagMap.put("CHF",	"Швейцария 🇨🇭");
+          flagMap.put("ZAR",	"Южноафриканская Республика	🇿🇦");
+          flagMap.put("JPY",	"Япония 🇯🇵");
+
 
         try {
             JSONObject currenciesJsonObject = new JSONObject(currenciesJson);
@@ -83,7 +132,7 @@ public class HomeActivity extends AppCompatActivity {
                 TableRow tableRow = new TableRow(HomeActivity.this);
                 tableRow.setLayoutParams(row_params);
 
-                CreateTextView(currency, tableRow);
+                CreateTextView(currency + " (" +flagMap.get(currency) + ")", tableRow);
                 CreateTextView(value, tableRow);
 
                 currenciesLayout.addView(tableRow);
@@ -102,13 +151,11 @@ public class HomeActivity extends AppCompatActivity {
         JsonObject metals = metalsJsonObject.getAsJsonObject("metals");
         JsonArray metalArray = metals.getAsJsonArray("metal");
 
-        // Создаем списки для хранения данных графика
         List<Entry> goldPrices = new ArrayList<>();
         List<Entry> silverPrices = new ArrayList<>();
         List<Entry> platinumPrices = new ArrayList<>();
         List<Entry> palladiumPrices = new ArrayList<>();
 
-        // Заполняем списки данными
         for (int i = 0; i < metalArray.size(); i++) {
             JsonObject metalData = metalArray.get(i).getAsJsonObject();
             String date = metalData.get("date").getAsString();
@@ -117,17 +164,16 @@ public class HomeActivity extends AppCompatActivity {
             float platinumPrice = metalData.get("platinum_price").getAsFloat();
             float palladiumPrice = metalData.get("palladium_price").getAsFloat();
 
-            // Добавляем данные в соответствующий список
             goldPrices.add(new Entry(i, goldPrice));
             silverPrices.add(new Entry(i, silverPrice));
             platinumPrices.add(new Entry(i, platinumPrice));
             palladiumPrices.add(new Entry(i, palladiumPrice));
         }
 
-        LineDataSet gold_set = new LineDataSet(goldPrices, "Золото"); // Название графика
-        LineDataSet silver_set = new LineDataSet(silverPrices, "Серебро"); // Название графика
-        LineDataSet platinum_set = new LineDataSet(platinumPrices, "Платина"); // Название графика
-        LineDataSet palladium_set = new LineDataSet(palladiumPrices, "Палладий"); // Название графика
+        LineDataSet gold_set = new LineDataSet(goldPrices, "Золото");
+        LineDataSet silver_set = new LineDataSet(silverPrices, "Серебро");
+        LineDataSet platinum_set = new LineDataSet(platinumPrices, "Платина");
+        LineDataSet palladium_set = new LineDataSet(palladiumPrices, "Палладий");
         gold_set.setColor(ColorTemplate.rgb("FFD700"));
         silver_set.setColor(ColorTemplate.rgb("C0C0C0"));
         platinum_set.setColor(ColorTemplate.rgb("e5e4e2"));
